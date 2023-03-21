@@ -2,61 +2,225 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Necessary for Next auth
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String?
-    access_token      String?
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String?
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  projects       Project[]
+  createdIssues  Issue[]         @relation("createdBy")
+  comments       Comment[]
+  issue          Issue?          @relation(fields: [issueId], references: [id])
+  issueId        String?
+  checkListItems CheckListItem[]
+  userActions    UserActions[]
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
+}
+
+enum ProjectType {
+  KANBAN
+  SCRUM
+}
+
+enum ViewType {
+  LIST
+  KANBAN_BOARD
+  TABLE
+}
+
+enum ProjectStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  createdAt   DateTime      @default(now())
+  projectType ProjectType
+  viewType    ViewType      @default(KANBAN_BOARD)
+  members     User[]
+  status      ProjectStatus @default(ACTIVE)
+  workflows   WorkFlow[]
+  userActions UserActions[]
+}
+
+model WorkFlow {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  index     Int
+  issue     Issue[]
+}
+
+model Label {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  color     String
+  issue     Issue?   @relation(fields: [issueId], references: [id])
+  issueId   String?
+}
+
+model Issue {
+  id           String      @id @default(cuid())
+  title        String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  index        Int
+  createdBy    User        @relation("createdBy", fields: [createdById], references: [id])
+  createdById  String
+  assignees    User[]
+  workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id])
+  workFlowId   String
+  description  String?
+  labels       Label[]
+  comments     Comment[]
+  flagged      Boolean     @default(false)
+  dueDate      DateTime?
+  issueId      String?
+  issue        Issue?      @relation("linkedIssues", fields: [issueId], references: [id])
+  linkedIssues Issue[]     @relation("linkedIssues")
+  checkLists   CheckList[]
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  issue       Issue    @relation(fields: [issueId], references: [id])
+  issueId     String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  message     String
+}
+
+model CheckList {
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  title     String
+  items     CheckListItem[]
+  issue     Issue?          @relation(fields: [issueId], references: [id])
+  issueId   String?
+}
+
+model CheckListItem {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  checkList    CheckList @relation(fields: [checkListId], references: [id])
+  checkListId  String
+  title        String
+  checked      Boolean   @default(false)
+  dueDate      DateTime?
+  assignedTo   User?     @relation(fields: [assignedToId], references: [id])
+  assignedToId String?
+}
+
+model UserActions {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  action    Action
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+}
+
+enum Action {
+  CREATED_PROJECT
+  UPDATED_PROJECT
+  DELETED_PROJECT
+  CREATED_ISSUE
+  UPDATED_ISSUE
+  DELETED_ISSUE
+  CREATED_COMMENT
+  UPDATED_COMMENT
+  DELETED_COMMENT
+  CREATED_CHECKLIST
+  UPDATED_CHECKLIST
+  DELETED_CHECKLIST
+  CREATED_CHECKLISTITEM
+  UPDATED_CHECKLISTITEM
+  DELETED_CHECKLISTITEM
+  CREATED_LABEL
+  UPDATED_LABEL
+  DELETED_LABEL
+  CREATED_WORKFLOW
+  UPDATED_WORKFLOW
+  DELETED_WORKFLOW
+  CREATED_USER
+  UPDATED_USER
+  DELETED_USER
+  ASSIGNED_USER_TO_ISSUE
+  UNASSIGNED_USER_FROM_ISSUE
+  ASSIGNED_USER_TO_CHECKLISTITEM
+  UNASSIGNED_USER_FROM_CHECKLISTITEM
+  ADDED_USER_TO_PROJECT
+  REMOVED_USER_FROM_PROJECT
+  ADDED_LABEL_TO_ISSUE
+  REMOVED_LABEL_FROM_ISSUE
+  ADDED_A_DEADLINE_TO_ISSUE
+  REMOVED_DEADLINE_FROM_ISSUE
+  ADDED_A_DEADLINE_TO_CHECKLISTITEM
+  REMOVED_DEADLINE_FROM_CHECKLISTITEM
+  ADDED_A_CHECKLIST_TO_ISSUE
+  REMOVED_A_CHECKLIST_FROM_ISSUE
 }
