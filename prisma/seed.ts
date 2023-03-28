@@ -34,6 +34,9 @@ async function main() {
             members: {
                 connect: [{ id: user1.id }, { id: user2.id }],
             },
+            projectLead: {
+                connect: { id: user1.id },
+            },
 
         },
     })
@@ -45,6 +48,7 @@ async function main() {
             members: {
                 connect: { id: user1.id },
             },
+            projectLeadId: user2.id,
 
         },
     })
