@@ -41,6 +41,25 @@ export const projectRouter = createTRPCRouter({
         });
     }
     ),
+    //This is also avilable in the userRouter: getUserAllProjects
+    getUserProjects: protectedProcedure.query(({ ctx }) => {
+        return ctx.prisma.project.findMany({
+            where: {
+                OR: [
+                    {
+                        members: {
+                            some: {
+                                id: ctx.session.user.id,
+                            },
+                        },
+                    },
+                    {
+                        projectLeadId: ctx.session.user.id,
+                    },
+                ],
+            },
+        });
+    }),
     createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType), })).mutation(async ({ ctx, input }) => {
         const defaultWorkflows = projectTypesList[input.projectType].defaultWorkflows;
         return ctx.prisma.project.create({
