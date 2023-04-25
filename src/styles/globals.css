@@ -63,6 +63,10 @@ a {
   flex: 1 1 auto;
 }
 
+.flex-col{
+  flex-direction: column;
+}
+
 .items-center {
   align-items: center;
 }
@@ -170,6 +174,22 @@ a {
   margin: 0;
 }
 
+.m-1 {
+  margin: 4px;
+}
+
+.m-2 {
+  margin: 8px;
+}
+
+.m-3 {
+  margin: 12px;
+}
+
+.m-4 {
+  margin: 16px;
+}
+
 .mb-1-2 {
   margin-bottom: 0.5rem;
 }
@@ -198,6 +218,21 @@ a {
   margin-top: 16px;
   margin-bottom: 16px;
 }
+.mt-1 {
+  margin-top: 4px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
 
 .mb-1 {
   margin-bottom: 4px;
@@ -219,6 +254,11 @@ a {
   margin-right: 4px;
 }
 
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .w-100 {
   width: 100%;
 }
@@ -233,4 +273,8 @@ a {
 
 .overflow-x-scroll {
   overflow-x: scroll;
+}
+
+.text-center {
+  text-align: center;
 }
