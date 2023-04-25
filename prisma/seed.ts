@@ -1,7 +1,10 @@
 import type { User } from '@prisma/client';
 import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker';
+import { createRange } from '../src/utils/createRange';
+
 const prisma = new PrismaClient()
+
 async function main() {
 
     function createRandomUser(): User {
@@ -27,6 +30,15 @@ async function main() {
 
     console.log(user1, user2);
 
+    const getRandomIssues=(count:number) => createRange(count).map((index) => {
+        return {
+            title: `Issue ${index}`,
+            description: `Issue ${index} description`,
+            index: index,
+            createdById: user1.id,
+        }
+    })
+
     const project1 = await prisma.project.create({
         data: {
             name: 'Project 1',
@@ -37,6 +49,33 @@ async function main() {
             projectLead: {
                 connect: { id: user1.id },
             },
+            workflows: {
+                create: [
+                    {
+                        title: 'To Do',
+                        index: 1,
+                        issue:{
+                            createMany:{
+                                data:getRandomIssues(10)
+                            }
+                        }
+                    },
+                    {
+                        title: 'Doing',
+                        index: 1,
+                        issue:{
+                            createMany:{
+                                data:getRandomIssues(5)
+                            }
+                        }
+                    },
+                    {
+                        title: 'Done',
+                        index: 1,
+                    }
+                    
+                ]
+            }
 
         },
     })
