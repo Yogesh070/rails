@@ -58,6 +58,13 @@ export const projectRouter = createTRPCRouter({
                     },
                 ],
             },
+            include: {
+                projectLead: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
         });
     }),
     createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType), })).mutation(async ({ ctx, input }) => {
@@ -66,6 +73,8 @@ export const projectRouter = createTRPCRouter({
             data: {
                 name: input.name,
                 projectType: input.projectType,
+                //DEFAULT set the project lead to the user who created the project
+                projectLeadId: ctx.session.user.id,
                 workflows: {
                     createMany: {
                         data: defaultWorkflows.map((workflow, index) => ({
