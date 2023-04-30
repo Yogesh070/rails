@@ -14,5 +14,12 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    WS_URL: process.env.WS_URL,
+  },
 };
 export default config;
