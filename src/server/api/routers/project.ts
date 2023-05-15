@@ -121,5 +121,24 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
+
+    getProjectWorkflows: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.project.findUnique({
+            where: {
+                id: input.projectId,
+            },
+            select: {
+                workflows: {
+                    orderBy: {
+                        index: "asc",
+                    },
+                    include: {
+                        issue: true,
+                    },
+                },
+            },
+        });
+    }
+    ),
 }
 );
