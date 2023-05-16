@@ -66,6 +66,9 @@ a {
 .flex-col{
   flex-direction: column;
 }
+.flex-1 {
+  flex: 1;
+}
 
 .items-center {
   align-items: center;
@@ -273,6 +276,9 @@ a {
 
 .overflow-x-scroll {
   overflow-x: scroll;
+}
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .text-center {
