@@ -1,18 +1,23 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import classNames from 'classnames';
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
-import type {Transform} from '@dnd-kit/utilities';
 
-import styles from './Item.module.scss';
 import {Avatar, Button} from 'antd';
 import CustomDivider from '../CustomDivider/CustomDivider';
 import LabelIndicator from '../LabelIndicator/LabelIndicator';
+
 import {
   EllipsisHorizontalIcon,
   ChatBubbleBottomCenterIcon,
   FlagIcon,
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
+
+import type {Issue} from '@prisma/client';
+import type {DraggableSyntheticListeners} from '@dnd-kit/core';
+import type {Transform} from '@dnd-kit/utilities';
+
+import styles from './Item.module.scss';
+import ItemDetailsModal from './ItemDetailsModal';
 
 export interface Props {
   dragOverlay?: boolean;
@@ -31,19 +36,7 @@ export interface Props {
   wrapperStyle?: React.CSSProperties;
   value: React.ReactNode;
   onRemove?(): void;
-  renderItem?(args: {
-    dragOverlay: boolean;
-    dragging: boolean;
-    sorting: boolean;
-    index: number | undefined;
-    fadeIn: boolean;
-    listeners: DraggableSyntheticListeners;
-    ref: React.Ref<HTMLElement>;
-    style: React.CSSProperties | undefined;
-    transform: Props['transform'];
-    transition: Props['transition'];
-    value: Props['value'];
-  }): React.ReactElement;
+  item: Issue;
 }
 
 const Item = React.memo(
@@ -60,17 +53,27 @@ const Item = React.memo(
         index,
         listeners,
         onRemove,
-        renderItem,
         sorting,
         style,
         transition,
         transform,
         value,
         wrapperStyle,
+        item,
         ...props
       },
       ref
     ) => {
+      const [isModalOpen, setIsModalOpen] = useState(false);
+
+      const showModal = () => {
+        setIsModalOpen(true);
+      };
+
+      const handleCancel = () => {
+        setIsModalOpen(false);
+      };
+
       useEffect(() => {
         if (!dragOverlay) {
           return;
@@ -83,21 +86,7 @@ const Item = React.memo(
         };
       }, [dragOverlay]);
 
-      return renderItem ? (
-        renderItem({
-          dragOverlay: Boolean(dragOverlay),
-          dragging: Boolean(dragging),
-          sorting: Boolean(sorting),
-          index,
-          fadeIn: Boolean(fadeIn),
-          listeners,
-          ref,
-          style,
-          transform,
-          transition,
-          value,
-        })
-      ) : (
+      return (
         <li
           className={classNames(
             styles.Wrapper,
@@ -141,9 +130,9 @@ const Item = React.memo(
             {...(!handle ? listeners : undefined)}
             {...props}
             tabIndex={!handle ? 0 : undefined}
-            onClick={()=>{
+            onClick={() => {
               //TODO: Open Modal to show details
-              console.log('Open Modal to show details')
+              showModal();
             }}
           >
             <div className="flex justify-between">
@@ -154,24 +143,29 @@ const Item = React.memo(
               </div>
 
               <Button
-                icon={<EllipsisHorizontalIcon height={20} color='#8C8C8C'/>}
+                icon={<EllipsisHorizontalIcon height={20} color="#8C8C8C" />}
                 size="small"
                 type="text"
               />
             </div>
-            <p className="m-0">{value}</p>
-            {/* <p className="m-0">{description}</p> */}
+            <p className="m-0"> {item.title}</p>
 
-            <Avatar.Group size={'small'} className='my-2'>
+            <Avatar.Group size={'small'} className="my-2">
               <Avatar style={{backgroundColor: '#f56a00'}}>K</Avatar>
             </Avatar.Group>
             <CustomDivider className="mb-1" />
             <div className="flex flex-end gap-1-2-3 py-1">
-              <PaperClipIcon height={14} color='#8C8C8C' />
-              <FlagIcon height={14} color='#8C8C8C' />
-              <ChatBubbleBottomCenterIcon height={14} color='#8C8C8C' />
+              <PaperClipIcon height={14} color="#8C8C8C" />
+              <FlagIcon height={14} color="#8C8C8C" />
+              <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
             </div>
           </div>
+          <ItemDetailsModal
+            open={isModalOpen}
+            title={item.title}
+            item={item}
+            onCancel={handleCancel}
+          />
         </li>
       );
     }
