@@ -6,6 +6,7 @@ import { Layout, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import React from 'react';
+import { Content } from 'antd/es/layout/layout';
 
 const { Header, Sider } = Layout;
 
@@ -69,7 +70,9 @@ const Board = ({ children }: { children: ReactNode }) => {
           />
         </Sider>
         <Layout className='bg-white p-3 gap-1-2 overflow-x-scroll' style={{ height: "calc(100vh - 64px)" }}>
-          {children}
+          <Content>
+            {children}
+          </Content>
         </Layout>
       </Layout>
     </Layout>
