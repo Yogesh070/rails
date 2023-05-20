@@ -284,3 +284,9 @@ a {
 .text-center {
   text-align: center;
 }
+.bottom-0 {
+  bottom: 0;
+}
+.h-97 {
+  height: 97%;
+}
