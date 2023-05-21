@@ -4,7 +4,6 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const issueProp = z.object({
     title: z.string(),
-    projectId: z.string(),
     workflowId: z.string(),
     index: z.number(),
     description: z.string().optional(),
