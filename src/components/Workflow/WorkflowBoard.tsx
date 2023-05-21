@@ -99,7 +99,6 @@ export function WorkflowContainers({
   wrapperStyle = () => ({}),
   minimal = false,
   modifiers,
-  renderItem,
   strategy = verticalListSortingStrategy,
   trashable = false,
   vertical = false,
@@ -430,7 +429,6 @@ export function WorkflowContainers({
                       handle={handle}
                       style={getItemStyles}
                       wrapperStyle={wrapperStyle}
-                      renderItem={renderItem}
                       containerId={containerId}
                       getIndex={getIndex}
                     />
@@ -582,7 +580,6 @@ interface SortableItemProps {
   disabled?: boolean;
   style(args: any): React.CSSProperties;
   getIndex(id: UniqueIdentifier): number;
-  renderItem(): React.ReactElement;
   wrapperStyle({ index }: { index: number }): React.CSSProperties;
   item: Issue;
 }
@@ -592,7 +589,6 @@ function SortableItem({
   id,
   index,
   handle,
-  renderItem,
   style,
   containerId,
   getIndex,
