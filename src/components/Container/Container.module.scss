@@ -14,9 +14,12 @@
   font-size: 1em;
 
   ul {
-    display: grid;
-    grid-gap: 10px;
-    grid-template-columns: repeat(var(--columns, 1), 1fr);
+    // display: grid;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    // grid-gap: 10px;
+    // grid-template-columns: repeat(var(--columns, 1), 1fr);
     list-style: none;
     padding: 12px;
     margin: 0;

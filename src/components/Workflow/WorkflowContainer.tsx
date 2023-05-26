@@ -7,6 +7,7 @@ import {
     defaultAnimateLayoutChanges,
 } from '@dnd-kit/sortable';
 import Container, { ContainerProps } from '../Container/Container';
+import type { Issue } from '@prisma/client';
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -18,11 +19,12 @@ export default function WorkflowContainer({
     id,
     items,
     style,
+    hasAdd,
     ...props
 }: ContainerProps & {
     disabled?: boolean;
     id: UniqueIdentifier;
-    items: UniqueIdentifier[];
+    items: Issue[];
     style?: React.CSSProperties;
 }): JSX.Element {
     const {
@@ -41,7 +43,7 @@ export default function WorkflowContainer({
     });
     const isOverContainer = over
         ? (id === over.id && active?.data.current?.type !== 'container') ||
-        items.includes(over.id)
+        items.map(item=>item.id).includes(over.id as string)
         : false;
 
     return (
@@ -60,6 +62,7 @@ export default function WorkflowContainer({
             }}
             columns={columns}
             {...props}
+            hasAdd={hasAdd}
         >
             {children}
         </Container>

@@ -37,10 +37,7 @@ import { createRange } from '../../utils/createRange';
 import WorkflowContainer from './WorkflowContainer';
 import Item from '../Item/Item';
 import Container from '../Container/Container';
-
-export default {
-  title: 'Presets/Sortable/Multiple Containers',
-};
+import type { Issue } from '@prisma/client';
 
 
 const dropAnimation: DropAnimation = {
@@ -53,7 +50,7 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
+type Items = Record<UniqueIdentifier, Issue[]>;
 
 interface Props {
   adjustScale?: boolean;
@@ -85,7 +82,7 @@ interface Props {
 
 export const TRASH_ID = 'void';
 const PLACEHOLDER_ID = 'placeholder';
-const empty: UniqueIdentifier[] = [];
+const empty: Issue[] = [];
 
 //renders a list of workflow containers with items
 
@@ -102,7 +99,6 @@ export function WorkflowContainers({
   wrapperStyle = () => ({}),
   minimal = false,
   modifiers,
-  renderItem,
   strategy = verticalListSortingStrategy,
   trashable = false,
   vertical = false,
@@ -171,7 +167,7 @@ export function WorkflowContainers({
               droppableContainers: args.droppableContainers.filter(
                 (container) =>
                   container.id !== overId &&
-                  containerItems!.includes(container.id)
+                  containerItems!.map(item=>item.id).includes(container.id as string)
               ),
             })[0]?.id!;
           }
@@ -217,7 +213,7 @@ export function WorkflowContainers({
       return id;
     }
 
-    return Object.keys(items).find((key) => items[key]!.includes(id));
+    return Object.keys(items).find((key) => items[key]?.map(item=>item.id)!.includes(id as string));
   };
 
   const getIndex = (id: UniqueIdentifier) => {
@@ -227,7 +223,7 @@ export function WorkflowContainers({
       return -1;
     }
 
-    const index = items[container]!.indexOf(id);
+    const index = items[container]!.map(item=>item.id).indexOf(id as string);
 
     return index;
   };
@@ -280,8 +276,8 @@ export function WorkflowContainers({
           setItems((items) => {
             const activeItems = items[activeContainer];
             const overItems = items[overContainer];
-            const overIndex = overItems!.indexOf(overId);
-            const activeIndex = activeItems!.indexOf(active.id);
+            const overIndex = overItems!.map(item=>item.id).indexOf(overId as string);
+            const activeIndex = activeItems!.map(item=>item.id).indexOf(active.id as string);
 
             let newIndex: number;
 
@@ -303,9 +299,9 @@ export function WorkflowContainers({
             recentlyMovedToNewContainer.current = true;
 
             return {
-              ...items,
+              ...items as Items,
               [activeContainer]: items[activeContainer]!.filter(
-                (item) => item !== active.id
+                (item) => item.id !== active.id
               ),
               [overContainer]: [
                 ...items[overContainer]!.slice(0, newIndex),
@@ -347,7 +343,7 @@ export function WorkflowContainers({
           setItems((items) => ({
             ...items,
             [activeContainer]: items[activeContainer]!.filter(
-              (id) => id !== activeId
+              (id) => id.id !== activeId
             ),
           }));
           setActiveId(null);
@@ -360,9 +356,9 @@ export function WorkflowContainers({
           unstable_batchedUpdates(() => {
             setContainers((containers) => [...containers, newContainerId]);
             setItems((items) => ({
-              ...items,
+              ...items as any,
               [activeContainer]: items[activeContainer]!.filter(
-                (id) => id !== activeId
+                (id) => id.id !== activeId
               ),
               [newContainerId]: [active.id],
             }));
@@ -374,8 +370,8 @@ export function WorkflowContainers({
         const overContainer = findContainer(overId);
 
         if (overContainer) {
-          const activeIndex = items[activeContainer]!.indexOf(active.id);
-          const overIndex = items[overContainer]!.indexOf(overId);
+          const activeIndex = items[activeContainer]!.map(item=>item.id).indexOf(active.id as string);
+          const overIndex = items[overContainer]!.map(item=>item.id).indexOf(overId as string);
 
           if (activeIndex !== overIndex) {
             setItems((items) => ({
@@ -399,7 +395,7 @@ export function WorkflowContainers({
         style={{
           gridAutoFlow: vertical ? 'row' : 'column',
         }}
-        className='gap-1-2 inline-grid'
+        className='gap-1-2 inline-grid flex-1 h-97'
       >
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
@@ -413,7 +409,7 @@ export function WorkflowContainers({
             <WorkflowContainer
               key={containerId}
               id={containerId}
-              label={minimal ? undefined : `Column ${containerId}`}
+              label={minimal ? undefined : `${containerId}`}
               columns={columns}
               items={items[containerId]!}
               scrollable={scrollable}
@@ -425,14 +421,14 @@ export function WorkflowContainers({
                 {items[containerId]!.map((value, index) => {
                   return (
                     <SortableItem
+                      item={value}
                       disabled={isSortingContainer}
-                      key={value}
-                      id={value}
+                      key={value.id}
+                      id={value.id}
                       index={index}
                       handle={handle}
                       style={getItemStyles}
                       wrapperStyle={wrapperStyle}
-                      renderItem={renderItem}
                       containerId={containerId}
                       getIndex={getIndex}
                     />
@@ -448,6 +444,7 @@ export function WorkflowContainers({
               items={empty}
               onClick={handleAddColumn}
               placeholder
+              hasAdd={false}
             >
               + Add column
             </WorkflowContainer>
@@ -473,6 +470,7 @@ export function WorkflowContainers({
   function renderSortableItemDragOverlay(id: UniqueIdentifier) {
     return (
       <Item
+        item={items[findContainer(id)!]?.find((item) => item.id === id)!}
         value={id}
         handle={handle}
         style={getItemStyles({
@@ -485,7 +483,6 @@ export function WorkflowContainers({
           isDragOverlay: true,
         })}
         wrapperStyle={wrapperStyle({ index: 0 })}
-        renderItem={renderItem}
         dragOverlay
       />
     );
@@ -494,30 +491,27 @@ export function WorkflowContainers({
   function renderWorkflowContainerDragOverlay(containerId: UniqueIdentifier) {
     return (
       <Container
-        label={`Column ${containerId}`}
+        label={`${containerId}`}
         columns={columns}
-        style={{
-          height: '100%',
-        }}
         shadow
         unstyled={false}
       >
         {items[containerId]!.map((item, index) => (
           <Item
-            key={item}
-            value={item}
+          item={item}
+            key={item.id}
+            value={item.id}
             handle={handle}
             style={getItemStyles({
               containerId,
               overIndex: -1,
-              index: getIndex(item),
-              value: item,
+              index: getIndex(item.id),
+              value: item.id,
               isDragging: false,
               isSorting: false,
               isDragOverlay: false,
             })}
             wrapperStyle={wrapperStyle({ index })}
-            renderItem={renderItem}
           />
         ))}
       </Container>
@@ -586,8 +580,8 @@ interface SortableItemProps {
   disabled?: boolean;
   style(args: any): React.CSSProperties;
   getIndex(id: UniqueIdentifier): number;
-  renderItem(): React.ReactElement;
   wrapperStyle({ index }: { index: number }): React.CSSProperties;
+  item: Issue;
 }
 
 function SortableItem({
@@ -595,11 +589,11 @@ function SortableItem({
   id,
   index,
   handle,
-  renderItem,
   style,
   containerId,
   getIndex,
   wrapperStyle,
+  item,
 }: SortableItemProps) {
   const {
     setNodeRef,
@@ -639,7 +633,7 @@ function SortableItem({
       transform={transform}
       fadeIn={mountedWhileDragging}
       listeners={listeners}
-      renderItem={renderItem}
+      item={item}
     />
   );
 }
