@@ -6,6 +6,7 @@ import { Layout, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import React from 'react';
+import Image from 'next/image';
 
 type SidebarOption = {
   icon: React.ElementType,
@@ -56,7 +57,7 @@ const Board = ({ children }: { children: ReactNode }) => {
   return (
     <Layout >
       <Header style={{ color: "white" }} className="flex justify-between items-center">
-        <p>logo</p>
+      <Image src="/logo.svg" width={32} height={32} alt={'dp'} />
         <Button type="dashed" onClick={() => { void signOut() }}>Logout</Button>
       </Header>
       <Layout>
