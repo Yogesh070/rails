@@ -1,7 +1,7 @@
 import {DndContext, UniqueIdentifier} from '@dnd-kit/core';
-import NoSSR from '../../components/NoSSR';
-import Board from '../../layout/Board';
-import {api} from '../../utils/api';
+import NoSSR from '../../../components/NoSSR';
+import Board from '../../../layout/Board';
+import {api} from '../../../utils/api';
 import {useRouter} from 'next/router';
 
 import type {Issue} from '@prisma/client';
@@ -13,7 +13,7 @@ const {Option} = Select;
 
 const WorkflowContainers = dynamic(
   () =>
-    import('../../components/Workflow/WorkflowBoard').then(
+    import('../../../components/Workflow/WorkflowBoard').then(
       (mod) => mod.WorkflowContainers
     ),
   {ssr: false}
