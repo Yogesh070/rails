@@ -6,9 +6,7 @@ import { Layout, Menu } from 'antd';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import React from 'react';
-import { Content } from 'antd/es/layout/layout';
-
-const { Header, Sider } = Layout;
+import Image from 'next/image';
 
 type SidebarOption = {
   icon: React.ElementType,
@@ -17,7 +15,7 @@ type SidebarOption = {
 }
 
 const Board = ({ children }: { children: ReactNode }) => {
-
+  const { Header, Sider } = Layout;
   const router = useRouter();
   const [collapsed, setCollapsed] = React.useState(false);
 
@@ -25,17 +23,17 @@ const Board = ({ children }: { children: ReactNode }) => {
     {
       icon: UserOutlined,
       label: "home",
-      route: '/'
+      route: ''
     },
     {
       icon: LaptopOutlined,
-      label: "test",
-      route: '/test'
+      label: "Backlog",
+      route: 'backlog'
     },
     {
       icon: NotificationOutlined,
-      label: "test",
-      route: '/'
+      label: "Settings",
+      route: 'settings'
     },
   ];
 
@@ -48,7 +46,9 @@ const Board = ({ children }: { children: ReactNode }) => {
         icon: React.createElement(option.icon),
         label: option.label,
         onClick: async () => {
-          await router.push(option.route);
+          await router.push({
+            pathname: `/projects/${router.query.projectId}/${option.route}`,
+          });
         },
       };
     },
@@ -57,7 +57,7 @@ const Board = ({ children }: { children: ReactNode }) => {
   return (
     <Layout >
       <Header style={{ color: "white" }} className="flex justify-between items-center">
-        <p>logo</p>
+      <Image src="/logo.svg" width={32} height={32} alt={'dp'} />
         <Button type="dashed" onClick={() => { void signOut() }}>Logout</Button>
       </Header>
       <Layout>
@@ -70,9 +70,7 @@ const Board = ({ children }: { children: ReactNode }) => {
           />
         </Sider>
         <Layout className='bg-white p-3 gap-1-2 overflow-x-scroll' style={{ height: "calc(100vh - 64px)" }}>
-          <Content>
-            {children}
-          </Content>
+          {children}
         </Layout>
       </Layout>
     </Layout>

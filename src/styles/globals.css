@@ -262,6 +262,24 @@ a {
   margin-right: auto;
 }
 
+.mx-1 {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.mx-2 {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.mx-3 {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+.mx-4 {
+  margin-left: 16px;
+  margin-right: 16px;
+}
 .w-100 {
   width: 100%;
 }
