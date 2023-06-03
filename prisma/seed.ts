@@ -13,8 +13,7 @@ async function main() {
             email: faker.internet.email(),
             name: faker.name.fullName(),
             image: faker.image.avatar(),
-            emailVerified: faker.datatype.datetime(),
-            issueId: null
+            emailVerified: true,
         }
     }
 
