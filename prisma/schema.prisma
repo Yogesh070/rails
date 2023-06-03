@@ -45,14 +45,13 @@ model User {
   email                   String?         @unique
   emailVerified           Boolean         @default(false)
   image                   String?
-  issueId                 String?
   accounts                Account[]
   checkListItems          CheckListItem[]
   comments                Comment[]
   createdIssues           Issue[]         @relation("createdBy")
   leadProjects            Project[]
   sessions                Session[]
-  issue                   Issue?          @relation(fields: [issueId], references: [id])
+  issue                   Issue[]
   userActions             UserActions[]
   projects                Project[]       @relation("projectMembers")
   defaultAssigneeProjects Project[]       @relation("defaultAssignee")
