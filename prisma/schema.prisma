@@ -40,21 +40,22 @@ model Session {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  name           String
-  email          String?         @unique
-  emailVerified  Boolean         @default(false)
-  image          String?
-  issueId        String?
-  accounts       Account[]
-  checkListItems CheckListItem[]
-  comments       Comment[]
-  createdIssues  Issue[]         @relation("createdBy")
-  leadProjects   Project[]
-  sessions       Session[]
-  issue          Issue?          @relation(fields: [issueId], references: [id])
-  userActions    UserActions[]
-  projects       Project[]       @relation("projectMembers")
+  id                      String          @id @default(cuid())
+  name                    String
+  email                   String?         @unique
+  emailVerified           Boolean         @default(false)
+  image                   String?
+  issueId                 String?
+  accounts                Account[]
+  checkListItems          CheckListItem[]
+  comments                Comment[]
+  createdIssues           Issue[]         @relation("createdBy")
+  leadProjects            Project[]
+  sessions                Session[]
+  issue                   Issue?          @relation(fields: [issueId], references: [id])
+  userActions             UserActions[]
+  projects                Project[]       @relation("projectMembers")
+  defaultAssigneeProjects Project[]       @relation("defaultAssignee")
 }
 
 model VerificationToken {
@@ -66,17 +67,19 @@ model VerificationToken {
 }
 
 model Project {
-  id            String        @id @default(cuid())
-  name          String
-  createdAt     DateTime      @default(now())
-  projectType   ProjectType
-  viewType      ViewType      @default(KANBAN_BOARD)
-  status        ProjectStatus @default(ACTIVE)
-  projectLeadId String?
-  projectLead   User?         @relation(fields: [projectLeadId], references: [id])
-  userActions   UserActions[]
-  workflows     WorkFlow[]
-  members       User[]        @relation("projectMembers")
+  id                String        @id @default(cuid())
+  name              String
+  createdAt         DateTime      @default(now())
+  projectType       ProjectType
+  viewType          ViewType      @default(KANBAN_BOARD)
+  status            ProjectStatus @default(ACTIVE)
+  projectLeadId     String
+  projectLead       User          @relation(fields: [projectLeadId], references: [id])
+  userActions       UserActions[]
+  workflows         WorkFlow[]
+  members           User[]        @relation("projectMembers")
+  defaultAssigneeId String?
+  defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
 }
 
 model WorkFlow {
