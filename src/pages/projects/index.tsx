@@ -1,16 +1,18 @@
 import { useRouter } from 'next/router';
-import { api } from '../../utils/api';
-import { Button, Table } from 'antd';
+import { RouterOutputs, api } from '../../utils/api';
+import { Button, Table, Avatar } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
-import type { Project } from '@prisma/client';
+import Image from 'next/image';
+
+type ProjectWithLead = RouterOutputs['project']['getUserProjects'][number];
 
 const Projects = () => {
 
     const router = useRouter();
     const projectsQuery = api.project.getUserProjects.useQuery();
 
-    const columns: ColumnsType<Project> = [
+    const columns: ColumnsType<ProjectWithLead> = [
         {
             title: 'Name',
             dataIndex: 'name',
@@ -21,7 +23,10 @@ const Projects = () => {
         },
         {
             title: 'Project Lead',
-            dataIndex: ["projectLead", "name"],
+            dataIndex: ["projectLead", "image"],
+            render: (text, record) => {
+                return <Avatar size="small"> {record.projectLead?.image ? <Image src={text || '/logo.svg'} width={24} height={24} alt={text} style={{ objectFit: "contain" }} /> : text}</Avatar>
+            }
         },
         {
             title: 'Project Status',
@@ -29,7 +34,7 @@ const Projects = () => {
         },
     ];
 
-    const data: Project[] = projectsQuery.data || [];
+    const data: ProjectWithLead[] = projectsQuery.data || [];
 
     return (
         <div className='p-4 m-4'>
