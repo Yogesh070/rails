@@ -38,6 +38,9 @@ export const projectRouter = createTRPCRouter({
             where: {
                 id: input.id,
             },
+            include:{
+                members: true,
+            }
         });
     }
     ),
