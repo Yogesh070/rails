@@ -68,7 +68,6 @@ const SingleProject = () => {
 
   return (
     <NoSSR>
-      <Board>
         <div className="flex justify-between">
           <h1>{projectQuery.data?.name}</h1>
           <div className="flex items-center gap-1-2 justify-between">
@@ -118,9 +117,12 @@ const SingleProject = () => {
             <WorkflowContainers items={items} scrollable />
           </Suspense>
         </DndContext>
-      </Board>
     </NoSSR>
   );
+};
+
+SingleProject.getLayout = (page:React.ReactElement) => {
+  return <Board>{page}</Board>;
 };
 
 export default SingleProject;
