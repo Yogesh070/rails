@@ -1,6 +1,7 @@
 import { ProjectType } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 interface ProjectInfo {
     defaultWorkflows: string[];
@@ -40,6 +41,8 @@ export const projectRouter = createTRPCRouter({
             },
             include:{
                 members: true,
+                projectLead : true,
+                defaultAssignee: true,
             }
         });
     }
@@ -92,23 +95,47 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-    updateProject: protectedProcedure.input(z.object({ id: z.string(), name: z.string(), projectType: z.nativeEnum(ProjectType), })).mutation(({ ctx, input }) => {
+    updateProject: protectedProcedure.input(z.object({ id: z.string(), name: z.string(), defaultAssigneeId:z.string().nullable(),projectLeadId:z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.project.update({
             where: {
                 id: input.id,
             },
             data: {
                 name: input.name,
-                projectType: input.projectType,
+                defaultAssigneeId: input.defaultAssigneeId,
+                projectLeadId: input.projectLeadId,
             },
         });
     }),
-    deleteProject: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.project.delete({
-            where: {
-                id: input.id,
-            },
-        });
+    deleteProject: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+        try{
+            const projectToDelete = await ctx.prisma.project.findFirst({
+                where:{
+                    id:input.id
+                },
+                include:{
+                    projectLead : true,
+                }
+            });
+            if (ctx.session.user.id === projectToDelete?.projectLeadId ) {
+                return ctx.prisma.project.delete({
+                    where: {
+                        id: input.id,
+                    },
+                });
+            }else{
+                throw new TRPCError({
+                    code: "UNAUTHORIZED",
+                    message:"You Dont have access to delete the Project"
+                })
+            }
+            
+        }catch(err){
+            throw new TRPCError({
+                code : "BAD_REQUEST",
+                message:"An unexpected error occurred"
+            })
+        }
     }),
 
     assignUserToProject: protectedProcedure.input(z.object({ projectId: z.string(), userId: z.string() })).mutation(({ ctx, input }) => {
