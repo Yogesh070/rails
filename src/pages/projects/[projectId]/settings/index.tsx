@@ -54,7 +54,8 @@ const Settings = () => {
     }
   }, [projectDetails]);
 
-  const { mutate: updateProject } = api.project.updateProject.useMutation({
+  //TODO: Handle null values as initial values on input fields
+  const { mutate: updateProject, isLoading: isUpdating } = api.project.updateProject.useMutation({
     onSuccess: () => {
       message.success('Project updated successfully');
       projectDetails.refetch();
@@ -63,7 +64,7 @@ const Settings = () => {
       message.error('Error updating project');
     },
   });
-  const { mutate: deleteProject } = api.project.deleteProject.useMutation({
+  const { mutate: deleteProject, isLoading: isDeleting } = api.project.deleteProject.useMutation({
     onSuccess: () => {
       message.success('Project delete successfully');
       router.push('/projects')
@@ -147,12 +148,13 @@ const Settings = () => {
         <Form.Item>
           <SubmitButton form={form} initialValues={
             {
-
               name: projectDetails.data?.name,
               projectLead: projectDetails.data?.projectLeadId,
               defaultAssignee: projectDetails.data?.defaultAssigneeId,
             }
-          } />
+          }
+            isLoading={isUpdating}
+          />
         </Form.Item>
       </Form>
       <CustomDivider className='my-4' />
@@ -162,7 +164,7 @@ const Settings = () => {
           <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
           </p>
         </div>
-        <Button type="primary" danger onClick={handleProjectDelete}>
+        <Button type="primary" danger onClick={handleProjectDelete} loading={isDeleting}>
           Delete Project
         </Button>
       </div>
@@ -178,7 +180,7 @@ Settings.getLayout = function getLayout(page: React.ReactElement) {
 }
 export default Settings
 
-const SubmitButton = ({ form, initialValues }: { form: FormInstance, initialValues: FormInitialValues }) => {
+const SubmitButton = ({ form, initialValues, isLoading }: { form: FormInstance, initialValues: FormInitialValues, isLoading: boolean }) => {
   const [submittable, setSubmittable] = React.useState(false);
 
   const values: FormInitialValues = Form.useWatch([], form);
@@ -186,8 +188,6 @@ const SubmitButton = ({ form, initialValues }: { form: FormInstance, initialValu
   React.useEffect(() => {
     form.validateFields({ validateOnly: true }).then(
       () => {
-        console.log('changes vals', values);
-        console.log('initial vals', initialValues);
         if (values && initialValues) {
           if (values.name !== initialValues.name || values.projectLead !== initialValues.projectLead || values.defaultAssignee !== initialValues.defaultAssignee) {
             setSubmittable(true);
@@ -203,7 +203,7 @@ const SubmitButton = ({ form, initialValues }: { form: FormInstance, initialValu
   }, [values]);
 
   return (
-    <Button type="primary" htmlType="submit" disabled={!submittable}>
+    <Button type="primary" htmlType="submit" disabled={!submittable} loading={isLoading}>
       Submit
     </Button>
   );
