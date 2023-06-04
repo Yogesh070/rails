@@ -8,6 +8,7 @@ import "../styles/globals.css";
 
 import type { NextPage } from 'next'
 import Head from "next/head";
+import { ConfigProvider } from 'antd';
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode
@@ -24,7 +25,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component: NextPageWithLayout,
   pageProps: PagePropsWithSession
 }) => {
-  const getLayout = Component.getLayout ?? ((page) => page)
+  // const { defaultAlgorithm, darkAlgorithm } = theme;
+  
+  const getLayout = Component.getLayout ?? ((page) =>page)
   return (
     <>
       <Head>
@@ -33,9 +36,20 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SessionProvider session={session}>
-        {
-          getLayout(<Component {...pageProps} />)
-        }
+        <ConfigProvider
+          theme={{
+            token: {
+              "colorPrimary": "#fe4365",
+              "borderRadius": 4,
+              "wireframe": true,
+            },
+            // algorithm: darkAlgorithm,
+          }}
+        >   
+          {
+            getLayout(<Component {...pageProps} />)
+          }
+        </ConfigProvider>
       </SessionProvider>
     </>
   );

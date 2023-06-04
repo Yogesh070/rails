@@ -40,21 +40,21 @@ model Session {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  name           String?
-  email          String?         @unique
-  emailVerified  DateTime?
-  image          String?
-  issueId        String?
-  accounts       Account[]
-  checkListItems CheckListItem[]
-  comments       Comment[]
-  createdIssues  Issue[]         @relation("createdBy")
-  leadProjects   Project[]
-  sessions       Session[]
-  issue          Issue?          @relation(fields: [issueId], references: [id])
-  userActions    UserActions[]
-  projects       Project[]       @relation("projectMembers")
+  id                      String          @id @default(cuid())
+  name                    String
+  email                   String?         @unique
+  emailVerified           Boolean?        @default(false)
+  image                   String?
+  accounts                Account[]
+  checkListItems          CheckListItem[]
+  comments                Comment[]
+  createdIssues           Issue[]         @relation("createdBy")
+  leadProjects            Project[]
+  sessions                Session[]
+  issue                   Issue[]
+  userActions             UserActions[]
+  projects                Project[]       @relation("projectMembers")
+  defaultAssigneeProjects Project[]       @relation("defaultAssignee")
 }
 
 model VerificationToken {
@@ -66,17 +66,19 @@ model VerificationToken {
 }
 
 model Project {
-  id            String        @id @default(cuid())
-  name          String
-  createdAt     DateTime      @default(now())
-  projectType   ProjectType
-  viewType      ViewType      @default(KANBAN_BOARD)
-  status        ProjectStatus @default(ACTIVE)
-  projectLeadId String?
-  projectLead   User?         @relation(fields: [projectLeadId], references: [id])
-  userActions   UserActions[]
-  workflows     WorkFlow[]
-  members       User[]        @relation("projectMembers")
+  id                String        @id @default(cuid())
+  name              String
+  createdAt         DateTime      @default(now())
+  projectType       ProjectType
+  viewType          ViewType      @default(KANBAN_BOARD)
+  status            ProjectStatus @default(ACTIVE)
+  projectLeadId     String
+  projectLead       User          @relation(fields: [projectLeadId], references: [id])
+  userActions       UserActions[]
+  workflows         WorkFlow[]
+  members           User[]        @relation("projectMembers")
+  defaultAssigneeId String?
+  defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
 }
 
 model WorkFlow {
@@ -87,7 +89,7 @@ model WorkFlow {
   projectId String
   index     Int
   issue     Issue[]
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Label {
@@ -117,7 +119,7 @@ model Issue {
   createdBy    User        @relation("createdBy", fields: [createdById], references: [id])
   issue        Issue?      @relation("linkedIssues", fields: [issueId], references: [id])
   linkedIssues Issue[]     @relation("linkedIssues")
-  workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id])
+  workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id], onDelete: Cascade)
   labels       Label[]
   assignees    User[]
 }
@@ -130,7 +132,7 @@ model Comment {
   createdById String
   message     String
   createdBy   User     @relation(fields: [createdById], references: [id])
-  issue       Issue    @relation(fields: [issueId], references: [id])
+  issue       Issue    @relation(fields: [issueId], references: [id], onDelete: Cascade)
 }
 
 model CheckList {
@@ -139,7 +141,7 @@ model CheckList {
   updatedAt DateTime        @updatedAt
   title     String
   issueId   String?
-  issue     Issue?          @relation(fields: [issueId], references: [id])
+  issue     Issue?          @relation(fields: [issueId], references: [id], onDelete: Cascade)
   items     CheckListItem[]
 }
 
@@ -153,7 +155,7 @@ model CheckListItem {
   dueDate      DateTime?
   assignedToId String?
   assignedTo   User?     @relation(fields: [assignedToId], references: [id])
-  checkList    CheckList @relation(fields: [checkListId], references: [id])
+  checkList    CheckList @relation(fields: [checkListId], references: [id], onDelete: Cascade)
 }
 
 model UserActions {
@@ -163,8 +165,8 @@ model UserActions {
   userId    String
   action    Action
   projectId String?
-  project   Project? @relation(fields: [projectId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum ProjectType {

@@ -137,6 +137,9 @@ a {
 .p-4 {
   padding: 16px;
 }
+.p-5{
+  padding: 20px;
+}
 
 .px-1 {
   padding-left: 4px;
@@ -151,6 +154,11 @@ a {
 .px-3 {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.px-4 {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .py-1 {

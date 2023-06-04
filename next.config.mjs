@@ -21,5 +21,8 @@ const config = {
     // Will be available on both server and client
     WS_URL: process.env.WS_URL,
   },
+  images: {
+    domains: ["lh3.googleusercontent.com"],
+  }
 };
 export default config;

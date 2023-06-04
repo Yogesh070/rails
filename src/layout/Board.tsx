@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Button } from 'antd';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, theme } from 'antd';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 import React from 'react';
@@ -17,12 +17,12 @@ type SidebarOption = {
 const Board = ({ children }: { children: ReactNode }) => {
   const { Header, Sider } = Layout;
   const router = useRouter();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const [collapsed, setCollapsed] = React.useState(true);
 
   const sidebarOptions: SidebarOption[] = [
     {
       icon: UserOutlined,
-      label: "home",
+      label: "Home",
       route: ''
     },
     {
@@ -54,22 +54,25 @@ const Board = ({ children }: { children: ReactNode }) => {
     },
   );
 
+  const { token: { colorBgContainer } } = theme.useToken();
+
   return (
     <Layout >
-      <Header style={{ color: "white" }} className="flex justify-between items-center">
-      <Image src="/logo.svg" width={32} height={32} alt={'dp'} />
+      <Header className="flex justify-between items-center p-5" style={{ backgroundColor: colorBgContainer }}>
+        <Image src="/logo.svg" width={32} height={32} alt={'logo'} />
         <Button type="dashed" onClick={() => { void signOut() }}>Logout</Button>
       </Header>
-      <Layout>
-        <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Layout hasSider style={{ backgroundColor: colorBgContainer }}>
+        <Sider color={colorBgContainer} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} defaultCollapsed={true} className='h-100 mt-4' theme='light' style={{ backgroundColor: colorBgContainer }}>
           <Menu
             mode="inline"
             defaultSelectedKeys={['sub1']}
             defaultOpenKeys={['sub1']}
             items={sidebarMenu}
+            className='p-2'
           />
         </Sider>
-        <Layout className='bg-white p-3 gap-1-2 overflow-x-scroll' style={{ height: "calc(100vh - 64px)" }}>
+        <Layout className='px-4 gap-1-2 overflow-x-scroll' style={{ height: "calc(100vh - 64px)", backgroundColor: colorBgContainer }}>
           {children}
         </Layout>
       </Layout>
