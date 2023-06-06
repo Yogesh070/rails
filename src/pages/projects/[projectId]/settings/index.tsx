@@ -158,7 +158,7 @@ const Settings = () => {
         </Form.Item>
       </Form>
       <CustomDivider className='my-4' />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div>
           <h1>Danger Zone</h1>
           <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
