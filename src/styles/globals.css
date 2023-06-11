@@ -141,6 +141,11 @@ a {
   padding: 20px;
 }
 
+.px-0 {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 .px-1 {
   padding-left: 4px;
   padding-right: 4px;
@@ -159,6 +164,11 @@ a {
 .px-4 {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.py-0 {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .py-1 {

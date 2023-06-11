@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 
-import {Avatar, Button} from 'antd';
+import { Button } from 'antd';
 import CustomDivider from '../CustomDivider/CustomDivider';
 import LabelIndicator from '../LabelIndicator/LabelIndicator';
 
@@ -12,9 +12,9 @@ import {
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
 
-import type {Issue} from '@prisma/client';
-import type {DraggableSyntheticListeners} from '@dnd-kit/core';
-import type {Transform} from '@dnd-kit/utilities';
+import type { Issue } from '@prisma/client';
+import type { DraggableSyntheticListeners } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
 
 import styles from './Item.module.scss';
 import ItemDetailsModal from './ItemDetailsModal';
@@ -149,10 +149,6 @@ const Item = React.memo(
               />
             </div>
             <p className="m-0"> {item.title}</p>
-
-            <Avatar.Group size={'small'} className="my-2">
-              <Avatar style={{backgroundColor: '#f56a00'}}>K</Avatar>
-            </Avatar.Group>
             <CustomDivider className="mb-1" />
             <div className="flex flex-end gap-1-2-3 py-1">
               <PaperClipIcon height={14} color="#8C8C8C" />

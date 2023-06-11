@@ -1,8 +1,8 @@
 import Comment from '../Comment/Comment';
-import {Avatar, Button, Modal, Input, Layout} from 'antd';
-import {PaperClipIcon} from '@heroicons/react/24/outline';
+import { Avatar, Button, Input, Layout, Drawer, theme } from 'antd';
+import { PaperClipIcon } from '@heroicons/react/24/outline';
 
-import type {Issue} from '@prisma/client';
+import type { Issue } from '@prisma/client';
 
 interface DetailsModalProps {
   open: boolean;
@@ -11,23 +11,25 @@ interface DetailsModalProps {
   onCancel: () => void;
 }
 
-const {Sider, Content} = Layout;
+const { Sider, Content } = Layout;
 const ItemDetailsModal: React.FC<DetailsModalProps> = (
   props: DetailsModalProps
 ) => {
-  const {TextArea} = Input;
+  const { TextArea } = Input;
   const OPTIONS = ['Members', 'CheckList', 'Dates', 'Attachment'];
+
+  const { token: { colorBgElevated } } = theme.useToken();
   return (
     <>
-      <Modal {...props} width={1000} footer={null}>
-        <Layout className="gap-1 bg-white">
-          <Content>
-            <div className="flex flex-col gap-1-2 bg-white">
+      <Drawer placement="right" title={<Input bordered={false} defaultValue={props.title} />} width={800} open={props.open} onClose={props.onCancel}>
+        <Layout className="gap-1" hasSider style={{ backgroundColor: colorBgElevated }} >
+          <Content style={{ backgroundColor: colorBgElevated }} >
+            <div className="flex flex-col gap-1-2">
               <div className="flex gap-1-2-3">
                 <div>
                   <p>Members</p>
                   <Avatar.Group size={'small'} className="my-2">
-                    <Avatar style={{backgroundColor: '#f56a00'}}>K</Avatar>
+                    <Avatar style={{ backgroundColor: '#f56a00' }}>K</Avatar>
                   </Avatar.Group>
                 </div>
                 <div>
@@ -41,7 +43,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 <Button
                   type="primary"
                   icon={<PaperClipIcon height={14} />}
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="flex items-center gap-1-2-3"
                   size="small"
                 >
@@ -50,7 +52,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 <Button
                   type="primary"
                   icon={<PaperClipIcon height={14} />}
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="flex items-center gap-1-2-3"
                   size="small"
                 >
@@ -62,8 +64,8 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
               <Comment />
             </div>
           </Content>
-          <Sider>
-            <div className="flex flex-col gap-1-2 bg-white h-100">
+          <Sider style={{ backgroundColor: colorBgElevated }}>
+            <div className="flex flex-col gap-1-2">
               <h5>Add to Card</h5>
               {OPTIONS.map((item, idx) => {
                 return <Button key={idx}>{item}</Button>;
@@ -71,7 +73,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
             </div>
           </Sider>
         </Layout>
-      </Modal>
+      </Drawer>
     </>
   );
 };
