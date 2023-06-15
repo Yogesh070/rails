@@ -30,8 +30,10 @@ const CommentSection = (props: CommmentSectionProps) => {
     });
 
   React.useEffect(() => {
-    setComments(commentsQuery.data ?? []);
-  }, []);
+    if (commentsQuery.isSuccess){
+      setComments(commentsQuery.data ?? []);
+    }
+  }, [commentsQuery.isSuccess]);
 
   const memberOptions = props.members?.map((member) => ({
     value: member.name,
