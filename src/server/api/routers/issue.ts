@@ -129,4 +129,107 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
+
+    //checklist routes
+    getChecklistsInIssue: protectedProcedure.input(z.object({ issueId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.checkList.findMany({
+            where: {
+                issueId: input.issueId,
+            },
+        });
+    }),
+
+    createChecklist: protectedProcedure.input(z.object({
+        issueId: z.string(),title: z.string(),
+    })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkList.create({
+            data: {
+                title: input.title,
+                issueId: input.issueId,
+            },
+        });
+    }),
+
+    updateChecklist: protectedProcedure.input(z.object({
+        issueId: z.string(), checklist: z.object({
+            id: z.string(),
+            title: z.string(),
+        })
+    })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkList.update({
+            where: {
+                id: input.checklist.id,
+            },
+            data: {
+                title: input.checklist.title,
+            },
+        });
+    }),
+
+    deleteChecklist: protectedProcedure.input(z.object({ checklistId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkList.delete({
+            where: {
+                id: input.checklistId,
+            },
+        });
+    }),
+
+    //checklist item routes
+    getChecklistItemsInChecklist: protectedProcedure.input(z.object({ checklistId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.checkListItem.findMany({
+            where: {
+                checkListId: input.checklistId,
+            },
+        });
+    }),
+
+    createChecklistItem: protectedProcedure.input(z.object({
+        checklistId: z.string(),title: z.string(),
+    })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkListItem.create({
+            data: {
+                title: input.title,
+                checkListId: input.checklistId,
+            },
+        });
+    }),
+
+    updateChecklistItem: protectedProcedure.input(z.object({
+        checklistId: z.string(), checklistItem: z.object({
+            id: z.string(),
+            title: z.string(),
+        })
+    })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkListItem.update({
+            where: {
+                id: input.checklistItem.id,
+            },
+            data: {
+                title: input.checklistItem.title,
+            },
+        });
+    }
+    ),
+
+    deleteChecklistItem: protectedProcedure.input(z.object({ checklistItemId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkListItem.delete({
+            where: {
+                id: input.checklistItemId,
+            },
+        });
+    }
+    ),
+
+    changeChecklistItemStatus: protectedProcedure.input(z.object({
+        checklistItemId: z.string(), checked: z.boolean(),
+    })).mutation(({ ctx, input }) => {
+        return ctx.prisma.checkListItem.update({
+            where: {
+                id: input.checklistItemId,
+            },
+            data: {
+                checked: input.checked,
+            },
+        });
+    }),
 });
