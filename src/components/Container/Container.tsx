@@ -115,7 +115,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
           <>
           {/* TODO: Reduce the padding in the modal body and optimize the modal */}
             <Modal
-              bodyStyle={{width: '100%', padding: 0}}
+              bodyStyle={{width: '100%', padding: 0,bottom:'10px',position:'absolute'}}
               open={modal1Open}
               onCancel={() => setModal1Open(false)}
               footer={null}
@@ -132,6 +132,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 ref={inputRef}
                 allowClear
                 onPressEnter={handleEnterClick}
+                autoFocus={modal1Open}
               />
             </Modal>
             <Button
