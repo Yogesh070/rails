@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import AddUserPopUp from '../../../components/AddUserPopUp.tsx/AddUserPopUp';
 
 import type { Issue } from '@prisma/client';
+import { useProjectStore } from '../../../store/project.store';
 
 const WorkflowContainers = dynamic(
   () =>
@@ -42,32 +43,38 @@ const SingleProject = () => {
     id: projectId as string,
   });
 
-  const projectMembersQuery = api.project.getProjectMembers.useQuery({
-    projectId: projectId as string,
-  });
+  React.useEffect(() => {
+    if (projectQuery.isSuccess) {
+      setProjectMembers(projectQuery.data?.members ?? []);
+      setProject(projectQuery.data!);
+    }
+  }, [projectQuery.isSuccess]);
+  const setProjectMembers = useProjectStore((state) => state.setProjectMembers);
+  const setProject = useProjectStore((state) => state.setProject);
 
+  const projectMembers = useProjectStore((state) => state.members);
   return (
     <NoSSR>
       <div className="flex justify-between">
         <h1>{projectQuery.data?.name}</h1>
         <div className="flex items-center gap-1-2 justify-between">
-          <Skeleton loading={projectMembersQuery.isLoading} active paragraph>
+          <Segmented
+            options={[
+              {
+                value: 'List',
+                icon: <BarsOutlined rev={undefined} />,
+              },
+              {
+                value: 'Kanban',
+                icon: <AppstoreOutlined rev={undefined} />,
+              },
+            ]}
+            onChange={(value) => console.log(value)}
+          />
+          <Skeleton loading={projectQuery.isLoading} active paragraph>
             <div className="flex items-center gap-1-2">
-              <Segmented
-                options={[
-                  {
-                    value: 'List',
-                    icon: <BarsOutlined rev={undefined} />,
-                  },
-                  {
-                    value: 'Kanban',
-                    icon: <AppstoreOutlined rev={undefined} />,
-                  },
-                ]}
-                onChange={(value) => console.log(value)}
-              />
               <Avatar.Group size={'small'}>
-                {projectMembersQuery.data?.members.map((member, idx) => {
+                {projectMembers.map((member, idx) => {
                   return (
                     <Avatar key={idx} src={member.image}>
                       {member.name}
@@ -75,7 +82,13 @@ const SingleProject = () => {
                   );
                 })}
               </Avatar.Group>
-              <AddUserPopUp render={<Button type="dashed" size="small">+</Button>} />
+              <AddUserPopUp
+                render={
+                  <Button type="dashed" size="small">
+                    +
+                  </Button>
+                }
+              />
             </div>
           </Skeleton>
         </div>
