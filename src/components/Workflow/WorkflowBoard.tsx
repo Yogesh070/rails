@@ -305,7 +305,7 @@ export function WorkflowContainers({
               ),
               [overContainer]: [
                 ...items[overContainer]!.slice(0, newIndex),
-                items[activeContainer]![activeIndex],
+                items[activeContainer]![activeIndex]!,
                 ...items[overContainer]!.slice(
                   newIndex,
                   items[overContainer]!.length
