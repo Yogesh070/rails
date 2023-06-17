@@ -59,6 +59,10 @@ a {
   justify-content: flex-end;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .flex-auto {
   flex: 1 1 auto;
 }
@@ -321,7 +325,7 @@ a {
   text-align: center;
 }
 .bottom-0 {
-  bottom: 0;
+  bottom: 10px;
 }
 .h-97 {
   height: 97%;

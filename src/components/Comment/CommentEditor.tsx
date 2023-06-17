@@ -30,7 +30,6 @@ const CommentEditor = (props: CommentProps) => {
   return (
     <>
       <Form
-        name="comment-editor"
         ref={formRef}
         onFinish={handleCommentSubmit}
         autoComplete="off"

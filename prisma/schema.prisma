@@ -79,6 +79,7 @@ model Project {
   members           User[]        @relation("projectMembers")
   defaultAssigneeId String?
   defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
+  labels            Label[]
 }
 
 model WorkFlow {
@@ -100,6 +101,8 @@ model Label {
   color     String
   issueId   String?
   issue     Issue?   @relation(fields: [issueId], references: [id])
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
 }
 
 model Issue {
