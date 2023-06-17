@@ -330,3 +330,7 @@ a {
 .h-97 {
   height: 97%;
 }
+
+.line-through {
+  text-decoration: line-through;
+}

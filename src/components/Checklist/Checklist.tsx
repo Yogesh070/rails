@@ -100,7 +100,7 @@ const Checklist = (props: CheckList) => {
                   handleCheckboxChange(e, item.id);
                 }}
               >
-                {item.title}
+                <p className={item.checked ? 'line-through': '' } >{item.title}</p>
               </Checkbox>
               <Button
                 type="ghost"
