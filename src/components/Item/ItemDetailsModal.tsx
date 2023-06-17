@@ -1,4 +1,4 @@
-import {Avatar, Button, Input, Layout, Drawer, theme, Select} from 'antd';
+import {Avatar, Button, Layout, Drawer, theme, Select, Typography, Input} from 'antd';
 import {PaperClipIcon} from '@heroicons/react/24/outline';
 
 import type {Issue, User} from '@prisma/client';
@@ -6,6 +6,7 @@ import CommentSection from '../Comment/Comment';
 import {api} from '../../utils/api';
 import Checklist from '../Checklist/Checklist';
 import {useProjectStore} from '../../store/project.store';
+import {useState} from 'react';
 
 interface DetailsModalProps {
   open: boolean;
@@ -15,11 +16,12 @@ interface DetailsModalProps {
 }
 
 const {Sider, Content} = Layout;
+const { Title ,Paragraph ,Text} = Typography;
+const {TextArea} = Input;
+
 const ItemDetailsModal: React.FC<DetailsModalProps> = (
   props: DetailsModalProps
 ) => {
-  const {TextArea} = Input;
-
   const {
     token: {colorBgElevated},
   } = theme.useToken();
@@ -42,12 +44,32 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   };
   const projectMembers = useProjectStore((state) => state.members);
   const userOptions = getUserOptions(useProjectStore((state) => state.members));
+
+  const {mutate: updateIssueTitle} = api.issue.updateIssueTitle.useMutation();
+  const {mutate: updateDescription} = api.issue.updateIssueDescription.useMutation();
+
+  const [issueTitle, setIssueTitle] = useState(props.item.title);
+  const [issueDescription, setIssueDescription] = useState(props.item.description);
+
   return (
     <>
       <Drawer
         placement="right"
-        title={<Input bordered={false} defaultValue={props.title} />}
-        width={800}
+        title={
+          <Paragraph
+            editable={{
+              onChange: (val) => {
+                setIssueTitle(val);
+                updateIssueTitle({issueId: props.item.id, title: issueTitle});
+              },
+              triggerType: ['text'],
+            }}
+            className="m-0"
+          >
+            {issueTitle}
+          </Paragraph>
+        }
+        width={900}
         open={props.open}
         onClose={props.onCancel}
       >
@@ -60,7 +82,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
             <div className="flex flex-col gap-1-2">
               <div className="flex gap-1-2">
                 <div>
-                  <p>Members</p>
+                  <Text> Assignees </Text>
                   <Avatar.Group size={'small'} className="my-2" maxCount={3}>
                     {projectMembers.map((member, idx) => {
                       return (
@@ -72,7 +94,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   </Avatar.Group>
                 </div>
                 <div>
-                  <p>Labels</p>
+                  <Text>Labels</Text>
                   <Button type="primary" size="small" className="mr-1">
                     Primary
                   </Button>
@@ -98,11 +120,21 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   Link Child Issue
                 </Button>
               </div>
-              <TextArea rows={4} />
+              <TextArea 
+                rows={4} 
+                placeholder='Add a more detailed description...'
+                defaultValue={issueDescription ?? ''}
+                onChange={(e)=>{
+                  setIssueDescription(e.target.value);
+                }}
+                onBlur={()=>{
+                  updateDescription({issueId: props.item.id, description: issueDescription});
+                }}
+              />
               {checkListQuery.data?.map((checklist, idx) => {
                 return <Checklist key={idx} {...checklist} />;
               })}
-              <h4>Activity</h4>
+              <Text strong>Activity</Text>
               <CommentSection
                 issueId={props.item.id}
                 members={projectMembers}
@@ -110,11 +142,11 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
               />
             </div>
           </Content>
-          <Sider style={{backgroundColor: colorBgElevated}}>
+          <Sider style={{backgroundColor: colorBgElevated}} width={250}>
             <div className="flex flex-col gap-1-2">
-              <h5>Details</h5>
+              <Title level={5}>Details</Title>
               <div className="flex flex-wrap items-center  justify-between">
-                <p>Assignee</p>
+                <Text>Assignee</Text>
                 <Select
                   bordered={false}
                   defaultActiveFirstOption={true}
