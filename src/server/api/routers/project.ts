@@ -180,7 +180,22 @@ export const projectRouter = createTRPCRouter({
                 },
             },
         });
-    }
-    ),
+    }),
+    createProjectLabels : protectedProcedure.input(z.object({projectId:z.string(),title:z.string(),color:z.string().min(7).max(7)})).mutation(({ctx,input})=>{
+        return ctx.prisma.label.create({
+            data:{
+                title : input.title,
+                color : input.color,
+                projectId : input.projectId,
+            },
+        })
+    }),
+    getProjectLabels: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.label.findMany({
+            where: {
+                projectId: input.projectId,
+            },
+        });
+    }),
 }
 );
