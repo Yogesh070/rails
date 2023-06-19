@@ -10,7 +10,11 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>
+<<<<<<< Updated upstream
         <p>Landing Page</p>
+=======
+        <p>Landing Page section</p>
+>>>>>>> Stashed changes
       </div>
     </>
   );
