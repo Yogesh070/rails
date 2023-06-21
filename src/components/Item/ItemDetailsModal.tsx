@@ -58,8 +58,8 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
     });
     return options;
   };
-  const projectMembers = useProjectStore((state) => state.members);
-  const userOptions = getUserOptions(useProjectStore((state) => state.members));
+  const projectMembers = useProjectStore((state) => state.project?.members);
+  const userOptions = getUserOptions(projectMembers ?? []);
 
   const {mutate: updateIssueTitle} = api.issue.updateIssueTitle.useMutation();
   const {mutate: updateDescription} =

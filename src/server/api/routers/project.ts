@@ -43,6 +43,7 @@ export const projectRouter = createTRPCRouter({
                 members: true,
                 projectLead : true,
                 defaultAssignee: true,
+                labels: true,
             }
         });
     }
@@ -165,7 +166,7 @@ export const projectRouter = createTRPCRouter({
     }),
 
     getProjectWorkflows: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
-        return ctx.prisma.project.findUnique({
+        return ctx.prisma.project.findUniqueOrThrow({
             where: {
                 id: input.projectId,
             },
