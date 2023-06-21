@@ -10,7 +10,7 @@ import {api} from '../../../utils/api';
 import {useRouter} from 'next/router';
 import AddUserPopUp from '../../../components/AddUserPopUp.tsx/AddUserPopUp';
 
-import type {Issue} from '@prisma/client';
+import type {Issue, WorkFlow} from '@prisma/client';
 import {useProjectStore} from '../../../store/project.store';
 
 const WorkflowContainers = dynamic(
@@ -51,17 +51,18 @@ const SingleProject = () => {
   );
 
   const project = useProjectStore((state) => state.project);
-  const workFlows = useProjectStore((state) => state.workflows);
 
-  const convertWorkFlowsToRecord = () => {
+  const convertWorkFlowsToRecord = (
+    workFlows: (WorkFlow & {
+      issue: Issue[];
+    })[]
+  ) => {
     const records: Record<UniqueIdentifier, Issue[]> = {};
     workFlows.forEach((workflow) => {
       records[workflow.id] = workflow.issue;
     });
     return records;
   };
-
-  const items = convertWorkFlowsToRecord();
 
   return (
     <NoSSR>
@@ -106,7 +107,12 @@ const SingleProject = () => {
       <DndContext>
         <Suspense fallback={<div>Loading...</div>}>
           <Skeleton loading={workflowQuery.isLoading} active paragraph>
-            <WorkflowContainers items={items} scrollable />
+            <WorkflowContainers
+              items={convertWorkFlowsToRecord(
+                workflowQuery.data?.workflows ?? []
+              )}
+              scrollable
+            />
           </Skeleton>
         </Suspense>
       </DndContext>
