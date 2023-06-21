@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router';
 import { RouterOutputs, api } from '../../utils/api';
-import { Button, Table, Avatar } from 'antd';
+import { Button, Table, Avatar, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
 import Image from 'next/image';
 
 type ProjectWithLead = RouterOutputs['project']['getUserProjects'][number];
+
+const { Title } = Typography;
 
 const Projects = () => {
 
@@ -34,17 +36,13 @@ const Projects = () => {
         },
     ];
 
-    const data: ProjectWithLead[] = projectsQuery.data || [];
-
     return (
         <div className='p-4 m-4'>
             <div className="flex justify-between">
-                <h2>All Projects</h2>
-                <Button type="primary" size='middle' onClick={() => {
-                    void router.push(`/projects/create`);
-                }}>Create Project</Button>
+                <Title level={4}>All Projects</Title >
+                <Button type="primary" onClick={() => { void router.push(`/projects/create`) }}>Create Project</Button>
             </div>
-            <Table columns={columns} dataSource={data} size="small" loading={projectsQuery.isLoading}
+            <Table columns={columns} dataSource={projectsQuery.data} size="small" loading={projectsQuery.isLoading}
                 className='mt-4'
                 onRow={(record) => ({
                     onClick: () => {
