@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
 import { api } from '../../utils/api';
 import { Button, Form, Input, Radio } from 'antd';
-import { Project, ProjectType } from '@prisma/client';
+import { ProjectType } from '@prisma/client';
 
+import type { Project } from '@prisma/client';
 import type { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 
 const CreateProject = () => {
