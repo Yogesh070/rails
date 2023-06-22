@@ -74,6 +74,7 @@ model Workspace {
   projects    Project[]
   createdBy   User      @relation("createdBy", fields: [createdById], references: [id])
   createdById String
+  color      String
 }
 
 model Project {
