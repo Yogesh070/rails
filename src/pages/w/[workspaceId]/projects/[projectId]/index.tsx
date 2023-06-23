@@ -4,18 +4,18 @@ import {DndContext, UniqueIdentifier} from '@dnd-kit/core';
 import {Button, Avatar, Skeleton, Segmented} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
-import NoSSR from '../../../components/NoSSR';
-import Board from '../../../layout/Board';
-import {api} from '../../../utils/api';
+import NoSSR from '../../../../../components/NoSSR';
+import Board from '../../../../../layout/Board';
+import {api} from '../../../../../utils/api';
 import {useRouter} from 'next/router';
-import AddUserPopUp from '../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import AddUserPopUp from '../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
 
 import type {Issue, WorkFlow} from '@prisma/client';
-import {useProjectStore} from '../../../store/project.store';
+import {useProjectStore} from '../../../../../store/project.store';
 
 const WorkflowContainers = dynamic(
   () =>
-    import('../../../components/Workflow/WorkflowBoard').then(
+    import('../../../../../components/Workflow/WorkflowBoard').then(
       (mod) => mod.WorkflowContainers
     ),
   {ssr: false}

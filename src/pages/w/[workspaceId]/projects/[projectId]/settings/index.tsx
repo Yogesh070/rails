@@ -1,11 +1,11 @@
 import React from 'react';
-import Board from '../../../../layout/Board';
+import Board from '../../../../../../layout/Board';
 import { Button, Input, Form, Select, Badge, Breadcrumb, message } from 'antd';
-import { api } from '../../../../utils/api';
+import { api } from '../../../../../../utils/api';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import AddUserPopUp from '../../../../components/AddUserPopUp.tsx/AddUserPopUp';
-import CustomDivider from '../../../../components/CustomDivider/CustomDivider';
+import AddUserPopUp from '../../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import CustomDivider from '../../../../../../components/CustomDivider/CustomDivider';
 import Link from 'next/link';
 import { ProjectStatus } from '@prisma/client'
 import { HomeOutlined } from '@ant-design/icons';
