@@ -1,20 +1,26 @@
 import { useRouter } from 'next/router';
-import { api } from '../../utils/api';
-import { Button, Form, Input, Radio } from 'antd';
+import { api } from '../../../../utils/api';
+import { Button, Form, Input, Radio, Typography, message } from 'antd';
 import { ProjectType } from '@prisma/client';
 
 import type { Project } from '@prisma/client';
 import type { ValidateErrorEntity } from 'rc-field-form/lib/interface';
+import WorkSpaceLayout from '../../../../layout/WorkspaceLayout';
+
+import { LeftOutlined } from '@ant-design/icons';
+
+const { Title } = Typography;
 
 const CreateProject = () => {
     const router = useRouter();
+    const { workspaceId } = router.query;
 
     const { mutate: createProject } = api.project.createProject.useMutation({
         onSuccess: (data) => {
-            void router.push(`/projects/${data?.id}`);
+            void router.push(`/w/${workspaceId}/projects/${data.id}`);
         },
         onError: () => {
-            console.log('error');
+            message.error('Something went wrong');
         },
     });
 
@@ -25,7 +31,7 @@ const CreateProject = () => {
             values.projectType
         );
 
-        createProject({ name: values.name, projectType: values.projectType });
+        createProject({ name: values.name, projectType: values.projectType, workspaceShortName: workspaceId as string });
     };
 
     const onFinishFailed = (errorInfo: ValidateErrorEntity<Project>) => {
@@ -33,9 +39,7 @@ const CreateProject = () => {
     };
 
     return (
-        <div className="m-4">
-            <h1>Create Project</h1>
-
+        <div className="mt-1">
             <Form
                 name="basic"
                 layout="vertical"
@@ -80,6 +84,17 @@ const CreateProject = () => {
             </Form>
         </div>
     );
+};
+
+CreateProject.getLayout = (page: React.ReactElement) => {
+    const router = useRouter();
+    return <WorkSpaceLayout>
+        <div className='flex items-center gap-1'>
+            <Button type="dashed" icon={<LeftOutlined />} onClick={() => router.back()}></Button>
+            <Title level={5} className='m-0'>Create Project</Title >
+        </div>
+        {page}
+    </WorkSpaceLayout>;
 };
 
 export default CreateProject;
