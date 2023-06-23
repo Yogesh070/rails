@@ -46,10 +46,38 @@ export const workspaceRouter = createTRPCRouter({
                 id: input.workspaceId,
             },
             include: {
-                members: true,
-                projects: true,
+                projects: {
+                    include: {
+                        projectLead: {
+                            select: {
+                                name: true,
+                                image: true,
+                            },
+                        },
+                    },
+                },
             },
         });
+    }),
+    getWorkspaceByShortName: protectedProcedure.input(z.object({shortname:z.string()})).query(async({ctx,input})=>{
+        const workspace = ctx.prisma.workspace.findFirst({
+            where:{
+                shortName: input.shortname,
+            },
+            include: {
+                projects: {
+                    include: {
+                        projectLead: {
+                            select: {
+                                name: true,
+                                image: true,
+                            },
+                        },
+                    },
+                },
+            },
+        })
+        return workspace;
     }),
     createWorkspace: protectedProcedure.input(z.object({ name: z.string(), description: z.string().nullable() })).mutation(async ({ ctx, input }) => {
         const shortName = await generateUniqueShortName(ctx, input.name);
@@ -60,6 +88,7 @@ export const workspaceRouter = createTRPCRouter({
                 shortName,
                 createdById: ctx.session.user.id,
                 color,
+                description: input.description,
             },
         });
     }),
