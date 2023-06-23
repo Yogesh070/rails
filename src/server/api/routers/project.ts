@@ -75,7 +75,7 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType), })).mutation(async ({ ctx, input }) => {
+    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceId:z.string() })).mutation(async ({ ctx, input }) => {
         const defaultWorkflows = projectTypesList[input.projectType].defaultWorkflows;
         return ctx.prisma.project.create({
             data: {
@@ -92,7 +92,7 @@ export const projectRouter = createTRPCRouter({
                         skipDuplicates: true,
                     },
                 },
-
+                workspaceId:input.workspaceId,
             },
         });
     }),
