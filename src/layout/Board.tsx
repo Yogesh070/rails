@@ -46,9 +46,7 @@ const Board = ({ children }: { children: ReactNode }) => {
         icon: React.createElement(option.icon),
         label: option.label,
         onClick: async () => {
-          await router.push({
-            pathname: `/projects/${router.query.projectId}/${option.route}`,
-          });
+          await router.push(`/w/${router.query.workspaceId}/projects/${router.query.projectId}/${option.route}`);
         },
       };
     },
