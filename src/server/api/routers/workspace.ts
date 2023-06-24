@@ -65,6 +65,13 @@ export const workspaceRouter = createTRPCRouter({
                 shortName: input.shortname,
             },
             include: {
+                members: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                    },
+                },
                 projects: {
                     include: {
                         projectLead: {
@@ -89,6 +96,11 @@ export const workspaceRouter = createTRPCRouter({
                 createdById: ctx.session.user.id,
                 color,
                 description: input.description,
+                members: {
+                    connect: {
+                        id: ctx.session.user.id,
+                    },
+                },
             },
         });
     }),
