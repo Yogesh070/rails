@@ -7,18 +7,29 @@ import { ColumnsType } from 'antd/es/table';
 
 import Image from 'next/image';
 import WorkSpaceLayout from '../../../../layout/WorkspaceLayout';
+import { useWorkspaceStore } from '../../../../store/workspace.store';
 
 type ProjectWithLead = RouterOutputs['project']['getUserProjects'][number];
 
+const { Title, Paragraph } = Typography;
 
-const { Title, Paragraph, Text } = Typography;
 const WorkSpace = () => {
   const router = useRouter();
   const { workspaceId } = router.query;
 
-  const { data: workspace, isLoading } = api.workspace.getWorkspaceByShortName.useQuery({
+  const workspaceQuery = api.workspace.getWorkspaceByShortName.useQuery({
     shortname: workspaceId as string,
   });
+
+  const setWorkspace = useWorkspaceStore((state) => state.setWorkspace);
+
+  React.useEffect(() => {
+    if (workspaceQuery.isSuccess) {
+      setWorkspace(workspaceQuery.data);
+    }
+  }, [workspaceQuery.isSuccess]);
+
+  const workspace = useWorkspaceStore((state) => state.workspace);
 
   const columns: ColumnsType<ProjectWithLead> = [
     {
@@ -42,7 +53,7 @@ const WorkSpace = () => {
     },
   ];
 
-  if (isLoading) {
+  if (workspaceQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -64,7 +75,7 @@ const WorkSpace = () => {
         <Title level={5} className='m-0'>All Projects</Title >
         <Button type="primary" onClick={() => { void router.push(`/w/${workspaceId}/projects/create`) }}>Create Project</Button>
       </div>
-      <Table columns={columns} dataSource={workspace?.projects} size="small" loading={isLoading}
+      <Table columns={columns} dataSource={workspace?.projects} size="small" loading={workspaceQuery.isLoading}
         className='mt-4'
         onRow={(record) => ({
           onClick: () => {
