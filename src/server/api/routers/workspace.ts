@@ -134,13 +134,27 @@ export const workspaceRouter = createTRPCRouter({
             },
         });
     }),
-    updateWorkspaceName: protectedProcedure.input(z.object({ id: z.string(), name: z.string() })).mutation(({ ctx, input }) => {
+    updateWorkspace: protectedProcedure.input(z.object({ workspaceName: z.string(), name: z.string(), description: z.string().nullable(), color:z.string(),website:z.string().nullable() })).mutation(async ({ ctx, input }) => {
+        const workspace = await ctx.prisma.workspace.findFirst({
+            where: {
+                shortName: input.workspaceName,
+            },
+        });
+        if (workspace?.createdById !== ctx.session.user.id) {
+            throw new TRPCError({
+                code: "UNAUTHORIZED",
+                message: "You Dont have access to update the Workspace",
+            });
+        }
         return ctx.prisma.workspace.update({
             where: {
-                id: input.id,
+                id: workspace?.id,
             },
             data: {
                 name: input.name,
+                description: input.description,
+                color: input.color,
+                website: input.website,
             },
         });
     }),
