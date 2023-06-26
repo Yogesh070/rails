@@ -14,6 +14,7 @@ async function main() {
             name: faker.name.fullName(),
             image: faker.image.avatar(),
             emailVerified: true,
+            workspaceId: null,
         }
     }
 
@@ -90,7 +91,23 @@ async function main() {
 
         },
     })
-    console.log(project1, project2);
+
+    const workspace  = await prisma.workspace.create({
+        data: {
+            name: 'Workspace 1',
+            shortName: 'workspace1',
+            members: {
+                connect: [{ id: user1.id }, { id: user2.id }],
+            },
+            createdById: user1.id,
+            projects: {
+                connect: [{ id: project1.id }, { id: project2.id }],
+            },
+            color: '#1f3a8a',
+        },
+    })
+
+    console.log(workspace);
 
 }
 main()
