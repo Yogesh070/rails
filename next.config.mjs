@@ -23,6 +23,20 @@ const config = {
   },
   images: {
     domains: ["lh3.googleusercontent.com"],
-  }
+  },
+  redirects: async () => {
+    return [
+      {
+        source: "/w",
+        destination: "/w/home",
+        permanent: true,
+      },
+      {
+        source: "/signin",
+        destination: "/auth/signin",
+        permanent: true,
+      }
+    ];
+  },
 };
 export default config;
