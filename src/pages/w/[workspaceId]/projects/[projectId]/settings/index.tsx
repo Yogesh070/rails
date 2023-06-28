@@ -89,7 +89,7 @@ const Settings = () => {
       <Breadcrumb
         items={[
           {
-            title: <Link href='/projects'><HomeOutlined rev={undefined} /></Link>,
+            title: <Link href='/w/home'><HomeOutlined rev={undefined} /></Link>,
           },
           {
             title: (
