@@ -51,6 +51,7 @@ const SingleProject = () => {
   );
 
   const project = useProjectStore((state) => state.project);
+  const workflow = useProjectStore((state) => state.workflows);
 
   const convertWorkFlowsToRecord = (
     workFlows: (WorkFlow & {
@@ -66,8 +67,10 @@ const SingleProject = () => {
 
   return (
     <NoSSR>
-      <div className="flex justify-between">
-        <h1>{projectQuery.data?.name}</h1>
+      <div className="flex items-center justify-between">
+        <Skeleton loading={projectQuery.isLoading} active paragraph={{rows:0,width:8}}>
+          <h1>{projectQuery.data?.name}</h1>
+        </Skeleton>
         <div className="flex items-center gap-1-2 justify-between">
           <Segmented
             options={[
@@ -108,9 +111,7 @@ const SingleProject = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <Skeleton loading={workflowQuery.isLoading} active paragraph>
             <WorkflowContainers
-              items={convertWorkFlowsToRecord(
-                workflowQuery.data?.workflows ?? []
-              )}
+              items={convertWorkFlowsToRecord(workflow)}
               scrollable
             />
           </Skeleton>
