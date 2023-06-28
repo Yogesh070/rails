@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
+import { LaptopOutlined, SettingOutlined, TableOutlined, LineChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Button } from 'antd';
 import { Layout, Menu, theme } from 'antd';
@@ -21,7 +21,7 @@ const Board = ({ children }: { children: ReactNode }) => {
 
   const sidebarOptions: SidebarOption[] = [
     {
-      icon: UserOutlined,
+      icon: TableOutlined,
       label: "Home",
       route: ''
     },
@@ -31,7 +31,12 @@ const Board = ({ children }: { children: ReactNode }) => {
       route: 'backlog'
     },
     {
-      icon: NotificationOutlined,
+      icon: LineChartOutlined,
+      label: "Analytics",
+      route: 'analytics'
+    },
+    {
+      icon: SettingOutlined,
       label: "Settings",
       route: 'settings'
     },
@@ -56,7 +61,7 @@ const Board = ({ children }: { children: ReactNode }) => {
 
   return (
     <Layout >
-      <Header className="flex justify-between items-center p-5" style={{ backgroundColor: colorBgContainer }}>
+      <Header className="flex justify-between items-center px-6 py-0 border-bottom" style={{ backgroundColor: colorBgContainer }}>
         <Image src="/logo.svg" width={32} height={32} alt={'logo'} />
         <Button type="dashed" onClick={() => { void signOut() }}>Logout</Button>
       </Header>
@@ -70,7 +75,7 @@ const Board = ({ children }: { children: ReactNode }) => {
             className='p-2'
           />
         </Sider>
-        <Layout className='px-4 gap-1-2 overflow-x-scroll' style={{ height: "calc(100vh - 64px)", backgroundColor: colorBgContainer }}>
+        <Layout className='px-4 gap-1-2 overflow-x-scroll mt-2' style={{ height: "calc(100vh - 76px)", backgroundColor: colorBgContainer }}>
           {children}
         </Layout>
       </Layout>
