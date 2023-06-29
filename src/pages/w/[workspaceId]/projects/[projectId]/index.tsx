@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
 import {DndContext, UniqueIdentifier} from '@dnd-kit/core';
 import {Button, Avatar, Skeleton, Segmented} from 'antd';
@@ -53,17 +53,15 @@ const SingleProject = () => {
   const project = useProjectStore((state) => state.project);
   const workflow = useProjectStore((state) => state.workflows);
 
-  const convertWorkFlowsToRecord = (
-    workFlows: (WorkFlow & {
-      issue: Issue[];
-    })[]
-  ) => {
-    const records: Record<UniqueIdentifier, Issue[]> = {};
-    workFlows.forEach((workflow) => {
-      records[workflow.id] = workflow.issue;
-    });
-    return records;
-  };
+  const convertWorkFlowsToRecord = useCallback(
+    (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
+      const records: Record<UniqueIdentifier, Issue[]> = {};
+      workFlows.forEach((workflow) => {
+        records[workflow.id] = workflow.issue;
+      });
+      return records;
+    }
+  ,[]);
 
   return (
     <NoSSR>
