@@ -13,7 +13,7 @@ import superjson from "superjson";
 import { wsLink, createWSClient } from '@trpc/client/links/wsLink';
 
 import { type AppRouter } from "../server/api/root";
-import { NextPageContext } from 'next';
+import type { NextPageContext } from 'next';
 import getConfig from 'next/config';
 
 import type { inferProcedureOutput } from '@trpc/server';

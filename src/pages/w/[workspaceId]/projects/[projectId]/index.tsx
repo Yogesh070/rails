@@ -1,6 +1,7 @@
 import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
-import {DndContext, UniqueIdentifier} from '@dnd-kit/core';
+import type { UniqueIdentifier} from '@dnd-kit/core';
+import {DndContext} from '@dnd-kit/core';
 import {Button, Avatar, Skeleton, Segmented} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 

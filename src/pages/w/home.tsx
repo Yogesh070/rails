@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {RouterOutputs, api} from '../../utils/api';
+import type {RouterOutputs} from '../../utils/api';
+import { api} from '../../utils/api';
 import {
   Button,
   Modal,
@@ -53,7 +54,7 @@ const WorkSpace = () => {
               imageStyle={{height: 60}}
               description={
                 <span>
-                  You don't have any workspaces yet. Create one to get started.
+                  You don&apos;t have any workspaces yet. Create one to get started.
                 </span>
               }
             >

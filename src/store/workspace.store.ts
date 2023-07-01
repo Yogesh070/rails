@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { RouterOutputs } from '../utils/api';
+import type { RouterOutputs } from '../utils/api';
 
 type Workspace = RouterOutputs['workspace']['getWorkspaceByShortName'];
 

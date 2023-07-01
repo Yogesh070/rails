@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { RouterOutputs } from '../utils/api';
+import type { RouterOutputs } from '../utils/api';
 
 type Project = RouterOutputs['project']['getProjectById'];
 type ProjectWorkflowWithIssues = RouterOutputs['project']['getProjectWorkflows']['workflows'][number];

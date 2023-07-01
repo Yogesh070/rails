@@ -1,7 +1,8 @@
 import { forwardRef } from 'react';
-import Action, { ActionProps } from '../Action/Action';
+import type { ActionProps } from '../Action/Action';
+import Action from '../Action/Action';
 
-const Handle = forwardRef<HTMLButtonElement, ActionProps>((props, ref) => {
+const Handle = forwardRef<HTMLButtonElement, ActionProps>(function Handle(props, ref){
   return (
     <Action ref={ref} cursor="grab" data-cypress="draggable-handle" {...props}>
       <svg viewBox="0 0 20 20" width="14">

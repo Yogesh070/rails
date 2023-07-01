@@ -1,4 +1,5 @@
-import Action, { ActionProps } from "../Action/Action";
+import type { ActionProps } from "../Action/Action";
+import Action from "../Action/Action";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Remove(props: ActionProps) {

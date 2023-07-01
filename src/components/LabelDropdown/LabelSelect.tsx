@@ -51,7 +51,7 @@ const LabelSelect = () => {
       if(labelQuery.isSuccess){
         setItems(labelQuery.data)
       }
-    },[labelQuery.isSuccess])
+    },[labelQuery.data, labelQuery.isSuccess])
 
   return (
     <Select

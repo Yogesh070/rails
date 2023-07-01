@@ -1,7 +1,7 @@
 import React from 'react'
 import WorkSpaceLayout from '../../../layout/WorkspaceLayout';
 import { Avatar, Button, Table, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from 'antd/es/table';
 import Image from 'next/image';
 import CustomDivider from '../../../components/CustomDivider/CustomDivider';
 import { useWorkspaceStore } from '../../../store/workspace.store';

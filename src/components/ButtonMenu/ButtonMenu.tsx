@@ -1,5 +1,5 @@
 import {Button, Card, Dropdown} from 'antd';
-import {ReactNode} from 'react';
+import type {ReactNode} from 'react';
 
 import {CloseOutlined} from '@ant-design/icons';
 

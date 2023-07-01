@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router';
 import { api } from '../../../../utils/api';
-import { Button, Col, Form, Input, Radio, Row, Typography, message } from 'antd';
+import { Button, Col, Form, Input, Radio, Typography, message } from 'antd';
 import { ProjectType } from '@prisma/client';
 
 import type { Project } from '@prisma/client';
 import type { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import WorkSpaceLayout from '../../../../layout/WorkspaceLayout';
 
-import { LeftOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+import BackButton from '../../../../components/BackButton';
 
 interface ProjectTemplate {
     name: string,
@@ -60,7 +60,7 @@ const CreateProject = () => {
 
     return (
         <>
-            <Text >Explore what's possible when you collaborate with your team. Edit project details anytime in project settings.</Text>
+            <Text >Explore what&apos;s possible when you collaborate with your team. Edit project details anytime in project settings.</Text>
             <div className="mt-1">
                 <Form
                     name="basic"
@@ -109,12 +109,8 @@ const CreateProject = () => {
 };
 
 CreateProject.getLayout = (page: React.ReactElement) => {
-    const router = useRouter();
     return <WorkSpaceLayout>
-        <div className='flex items-center gap-1'>
-            <Button type="dashed" icon={<LeftOutlined />} onClick={() => router.back()}></Button>
-            <Title level={5} className='m-0'>Create Project</Title >
-        </div>
+        <BackButton title='Create Project'/>
         {page}
     </WorkSpaceLayout>;
 };

@@ -1,9 +1,11 @@
 import {useRouter} from 'next/router';
 import React from 'react';
-import {RouterOutputs, api} from '../../../../utils/api';
+import { api} from '../../../../utils/api';
 import {Typography, Avatar, Table, Button, Skeleton} from 'antd';
 import CustomDivider from '../../../../components/CustomDivider/CustomDivider';
-import {ColumnsType} from 'antd/es/table';
+
+import type {RouterOutputs} from '../../../../utils/api';
+import type {ColumnsType} from 'antd/es/table';
 
 import Image from 'next/image';
 import WorkSpaceLayout from '../../../../layout/WorkspaceLayout';

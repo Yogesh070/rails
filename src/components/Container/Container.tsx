@@ -29,7 +29,7 @@ export interface ContainerProps {
 }
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  (
+  function Container(
     {
       children,
       columns = 1,
@@ -48,7 +48,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
       ...props
     }: ContainerProps,
     ref
-  ) => {
+  ){
     const inputRef = useRef<InputRef>(null);
     const addIssueToWorkflow = useProjectStore((state) => state.addIssueToWorkflow);
     const {mutate: createIssue} = api.issue.createIssue.useMutation({

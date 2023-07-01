@@ -1,3 +1,4 @@
+import type {InputRef} from 'antd';
 import {
   Button,
   Layout,
@@ -6,8 +7,7 @@ import {
   Select,
   Typography,
   Input,
-  DatePicker,
-  InputRef,
+  DatePicker
 } from 'antd';
 import {PaperClipIcon} from '@heroicons/react/24/outline';
 
