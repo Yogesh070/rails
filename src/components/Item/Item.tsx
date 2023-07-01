@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import classNames from 'classnames';
 
 import { Button } from 'antd';
@@ -17,7 +17,11 @@ import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
 
 import styles from './Item.module.scss';
-import ItemDetailsModal from './ItemDetailsModal';
+import dynamic from 'next/dynamic';
+
+const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
+  ssr: true,
+});
 
 export interface Props {
   dragOverlay?: boolean;
@@ -156,12 +160,14 @@ const Item = React.memo(
               <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
             </div>
           </div>
-          <ItemDetailsModal
-            open={isModalOpen}
-            title={item.title}
-            item={item}
-            onCancel={handleCancel}
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+              <ItemDetailsModal
+              open={isModalOpen}
+              title={item.title}
+              item={item}
+              onCancel={handleCancel}
+            />
+          </Suspense>
         </li>
       );
     }

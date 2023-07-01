@@ -43,6 +43,7 @@ export const projectRouter = createTRPCRouter({
                 members: true,
                 projectLead : true,
                 defaultAssignee: true,
+                labels: true,
             }
         });
     }
@@ -74,8 +75,14 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType), })).mutation(async ({ ctx, input }) => {
+    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceShortName:z.string() })).mutation(async ({ ctx, input }) => {
         const defaultWorkflows = projectTypesList[input.projectType].defaultWorkflows;
+        const workspace = await ctx.prisma.workspace.findFirst({
+            where:{
+                shortName:input.workspaceShortName
+            }
+        });
+                
         return ctx.prisma.project.create({
             data: {
                 name: input.name,
@@ -91,7 +98,7 @@ export const projectRouter = createTRPCRouter({
                         skipDuplicates: true,
                     },
                 },
-
+                workspaceId:workspace?.id,
             },
         });
     }),
@@ -165,7 +172,7 @@ export const projectRouter = createTRPCRouter({
     }),
 
     getProjectWorkflows: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
-        return ctx.prisma.project.findUnique({
+        return ctx.prisma.project.findUniqueOrThrow({
             where: {
                 id: input.projectId,
             },
@@ -180,7 +187,22 @@ export const projectRouter = createTRPCRouter({
                 },
             },
         });
-    }
-    ),
+    }),
+    createProjectLabels : protectedProcedure.input(z.object({projectId:z.string(),title:z.string(),color:z.string().min(7).max(7)})).mutation(({ctx,input})=>{
+        return ctx.prisma.label.create({
+            data:{
+                title : input.title,
+                color : input.color,
+                projectId : input.projectId,
+            },
+        })
+    }),
+    getProjectLabels: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.label.findMany({
+            where: {
+                projectId: input.projectId,
+            },
+        });
+    }),
 }
 );

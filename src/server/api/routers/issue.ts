@@ -36,6 +36,26 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
+    updateIssueTitle: protectedProcedure.input(z.object({title:z.string(),issueId:z.string()})).mutation(({ctx,input})=>{
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                title: input.title,
+            },
+        })
+    }),
+    updateIssueDescription: protectedProcedure.input(z.object({description:z.string().nullable(),issueId:z.string()})).mutation(({ctx,input})=>{
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                description: input.description,
+            },
+        })
+    }),
     deleteIssueById: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.delete({
             where: {

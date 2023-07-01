@@ -1,11 +1,11 @@
 import React from 'react';
-import Board from '../../../../layout/Board';
+import Board from '../../../../../../layout/Board';
 import { Button, Input, Form, Select, Badge, Breadcrumb, message } from 'antd';
-import { api } from '../../../../utils/api';
+import { api } from '../../../../../../utils/api';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import AddUserPopUp from '../../../../components/AddUserPopUp.tsx/AddUserPopUp';
-import CustomDivider from '../../../../components/CustomDivider/CustomDivider';
+import AddUserPopUp from '../../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import CustomDivider from '../../../../../../components/CustomDivider/CustomDivider';
 import Link from 'next/link';
 import { ProjectStatus } from '@prisma/client'
 import { HomeOutlined } from '@ant-design/icons';
@@ -15,14 +15,14 @@ import type { User } from '@prisma/client';
 
 type FormInitialValues = {
   name: string | undefined;
-  projectLead: string | undefined | null;
+  projectLead: string | undefined;
   defaultAssignee: string | undefined | null;
 };
 
 const Settings = () => {
 
   const router = useRouter();
-  const { projectId } = router.query;
+  const { projectId, workspaceId } = router.query;
 
   const projectDetails = api.project.getProjectById.useQuery({
     id: projectId as string,
@@ -49,12 +49,11 @@ const Settings = () => {
       form.setFieldsValue({
         name: projectDetails.data?.name,
         projectLead: projectDetails.data?.projectLeadId,
-        defaultAssignee: projectDetails.data?.defaultAssigneeId,
+        defaultAssignee: projectDetails.data?.defaultAssigneeId ?? 'unassigned',
       })
     }
   }, [projectDetails]);
 
-  //TODO: Handle null values as initial values on input fields
   const { mutate: updateProject, isLoading: isUpdating } = api.project.updateProject.useMutation({
     onSuccess: () => {
       message.success('Project updated successfully');
@@ -75,7 +74,7 @@ const Settings = () => {
   });
 
   const handleSubmit = (values: FormInitialValues) => {
-    updateProject({ name: values.name!, id: projectId as string, projectLeadId: values.projectLead!, defaultAssigneeId: values.defaultAssignee! });
+    updateProject({ name: values.name!, id: projectId as string, projectLeadId: values.projectLead!, defaultAssigneeId: values.defaultAssignee==='unassigned'?null:values.defaultAssignee! });
   };
 
   const handleProjectDelete = () => {
@@ -89,11 +88,11 @@ const Settings = () => {
       <Breadcrumb
         items={[
           {
-            title: <Link href='/projects'><HomeOutlined rev={undefined} /></Link>,
+            title: <Link href='/w/home'><HomeOutlined rev={undefined} /></Link>,
           },
           {
             title: (
-              <Link href={`/projects/${projectId}`}>
+              <Link href={`/w/${workspaceId}/projects/${projectId}`}>
                 <span>{projectDetails.data?.name}</span>
               </Link>
             ),
@@ -140,7 +139,7 @@ const Settings = () => {
               (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
             }
             options={[{
-              value: null,
+              value: 'unassigned',
               label: 'Unassigned',
             }, ...userOptions]}
           />
@@ -150,7 +149,7 @@ const Settings = () => {
             {
               name: projectDetails.data?.name,
               projectLead: projectDetails.data?.projectLeadId,
-              defaultAssignee: projectDetails.data?.defaultAssigneeId,
+              defaultAssignee: projectDetails.data?.defaultAssigneeId ?? 'unassigned',
             }
           }
             isLoading={isUpdating}
@@ -158,7 +157,7 @@ const Settings = () => {
         </Form.Item>
       </Form>
       <CustomDivider className='my-4' />
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between flex-wrap gap-1-2">
         <div>
           <h1>Danger Zone</h1>
           <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.

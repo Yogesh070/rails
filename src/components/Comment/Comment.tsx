@@ -1,6 +1,7 @@
 import React from 'react';
 import {  Avatar, Button, List, message } from 'antd';
-import { RouterOutputs, api } from '../../utils/api';
+import type { RouterOutputs} from '../../utils/api';
+import { api } from '../../utils/api';
 
 import type { User } from '@prisma/client';
 import CommentEditor from './CommentEditor';
@@ -33,7 +34,7 @@ const CommentSection = (props: CommmentSectionProps) => {
     if (commentsQuery.isSuccess){
       setComments(commentsQuery.data ?? []);
     }
-  }, [commentsQuery.isSuccess]);
+  }, [commentsQuery.data, commentsQuery.isSuccess]);
 
   const memberOptions = props.members?.map((member) => ({
     value: member.name,
@@ -122,6 +123,7 @@ const Comment = ({
         //   Edit
         // </Button>,
         <Button
+          key={comment.id}
           type="link"
           size="small"
           danger

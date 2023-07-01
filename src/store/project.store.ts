@@ -1,26 +1,36 @@
-import type { User } from '@prisma/client'
 import { create } from 'zustand'
-import { RouterOutputs } from '../utils/api';
+import type { RouterOutputs } from '../utils/api';
 
-type ProjectWithLead = RouterOutputs['project']['getUserProjects'][number];
+type Project = RouterOutputs['project']['getProjectById'];
+type ProjectWorkflowWithIssues = RouterOutputs['project']['getProjectWorkflows']['workflows'][number];
 
 type State = {
-    defaultAssignee: User | null,
-    project: ProjectWithLead | null,
-    members: User[],
+    project: Project | null,
+    workflows : ProjectWorkflowWithIssues[],
 }
 
 type Action = {
-    setDefaultAssignee: (member: User) => void,
-    setProject: (project: ProjectWithLead) => void,
-    setProjectMembers: (members: User[]) => void,
+    setProject: (project: Project) => void,
+    setProjectWorkflows: (workflows: ProjectWorkflowWithIssues[]) => void,
+    addIssueToWorkflow: (workflowId: string, issue: ProjectWorkflowWithIssues['issue'][number]) => void,
 }
 
 export const useProjectStore = create<State & Action>()((set) => ({
     project: null,
-    members: [],
-    defaultAssignee: null,
-    setDefaultAssignee: (member) => set({ defaultAssignee: member }),
+    workflows: [],
     setProject: (project) => set({ project }),
-    setProjectMembers: (members) => set({ members }),
-}))
+    setProjectWorkflows: (workflows) => set({ workflows }),
+    addIssueToWorkflow(workflowId, issue) {
+        set((state) => ({
+            workflows: state.workflows.map((workflow) => {
+                if (workflow.id === workflowId) {
+                    return {
+                        ...workflow,
+                        issue: [...workflow.issue, issue],
+                    };
+                }
+                return workflow;
+            }),
+        }));
+    }
+}));

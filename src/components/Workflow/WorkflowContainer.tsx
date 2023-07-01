@@ -1,12 +1,14 @@
 import { CSS } from '@dnd-kit/utilities';
-import { UniqueIdentifier } from '@dnd-kit/core';
+import type { UniqueIdentifier } from '@dnd-kit/core';
 
+import type {
+    AnimateLayoutChanges} from '@dnd-kit/sortable';
 import {
-    AnimateLayoutChanges,
     useSortable,
     defaultAnimateLayoutChanges,
 } from '@dnd-kit/sortable';
-import Container, { ContainerProps } from '../Container/Container';
+import type { ContainerProps } from '../Container/Container';
+import Container from '../Container/Container';
 import type { Issue } from '@prisma/client';
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>

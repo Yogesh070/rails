@@ -170,6 +170,16 @@ a {
   padding-right: 16px;
 }
 
+.px-5 {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.px-6 {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
 .py-0 {
   padding-top: 0;
   padding-bottom: 0;
@@ -196,7 +206,7 @@ a {
 }
 
 .m-0 {
-  margin: 0;
+  margin: 0 !important;
 }
 
 .m-1 {
@@ -329,4 +339,33 @@ a {
 }
 .h-97 {
   height: 97%;
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.shadow-sm{
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.shadow-md{
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e2e8f0;
+}
+.max-w-sm{
+  max-width: 400px;
+}
+.text-small{
+  font-size: 12px;
+}
+.line-h-normal{
+  line-height: normal;
+}
+.img-cover{
+  object-fit: cover;
 }

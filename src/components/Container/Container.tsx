@@ -9,6 +9,7 @@ import type {InputRef} from 'antd/lib/input/Input';
 import {PlusIcon} from '@heroicons/react/24/outline';
 import {api} from '../../utils/api';
 import {useSession} from 'next-auth/react';
+import { useProjectStore } from '../../store/project.store';
 
 export interface ContainerProps {
   children: React.ReactNode;
@@ -28,7 +29,7 @@ export interface ContainerProps {
 }
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  (
+  function Container(
     {
       children,
       columns = 1,
@@ -47,11 +48,12 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
       ...props
     }: ContainerProps,
     ref
-  ) => {
+  ){
     const inputRef = useRef<InputRef>(null);
+    const addIssueToWorkflow = useProjectStore((state) => state.addIssueToWorkflow);
     const {mutate: createIssue} = api.issue.createIssue.useMutation({
       onSuccess: (data) => {
-        console.log(data);
+        addIssueToWorkflow(data.workFlowId, data);
       },
       onError: () => {
         console.log('error');
@@ -60,9 +62,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
     const handleAdd = () => {
       setModal1Open(true);
       // TODO: When modal is open,set focus on input
-      // inputRef.current!.focus({
-      //   cursor: 'end',
-      // });
+      // inputRef.current!.focus();
     };
 
     const session = useSession();

@@ -1,5 +1,5 @@
 import React from 'react'
-import Board from '../../../../layout/Board'
+import Board from '../../../../../../layout/Board'
 
 const Backlog = () => {
   return (
