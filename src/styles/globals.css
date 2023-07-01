@@ -357,3 +357,15 @@ a {
 .border-bottom {
   border-bottom: 1px solid #e2e8f0;
 }
+.max-w-sm{
+  max-width: 400px;
+}
+.text-small{
+  font-size: 12px;
+}
+.line-h-normal{
+  line-height: normal;
+}
+.img-cover{
+  object-fit: cover;
+}
