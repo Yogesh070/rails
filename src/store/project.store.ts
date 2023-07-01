@@ -12,6 +12,7 @@ type State = {
 type Action = {
     setProject: (project: Project) => void,
     setProjectWorkflows: (workflows: ProjectWorkflowWithIssues[]) => void,
+    addIssueToWorkflow: (workflowId: string, issue: ProjectWorkflowWithIssues['issue'][number]) => void,
 }
 
 export const useProjectStore = create<State & Action>()((set) => ({
@@ -19,4 +20,17 @@ export const useProjectStore = create<State & Action>()((set) => ({
     workflows: [],
     setProject: (project) => set({ project }),
     setProjectWorkflows: (workflows) => set({ workflows }),
+    addIssueToWorkflow(workflowId, issue) {
+        set((state) => ({
+            workflows: state.workflows.map((workflow) => {
+                if (workflow.id === workflowId) {
+                    return {
+                        ...workflow,
+                        issue: [...workflow.issue, issue],
+                    };
+                }
+                return workflow;
+            }),
+        }));
+    }
 }));
