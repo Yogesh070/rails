@@ -29,7 +29,7 @@ const WorkSpace = () => {
     if (workspaceQuery.isSuccess) {
       setWorkspace(workspaceQuery.data);
     }
-  }, [workspaceQuery.isSuccess]);
+  }, [setWorkspace, workspaceQuery.data, workspaceQuery.isSuccess]);
 
   const workspace = useWorkspaceStore((state) => state.workspace);
 
@@ -75,12 +75,10 @@ const WorkSpace = () => {
       <Skeleton loading={workspaceQuery.isLoading} active>
         <div className="flex gap-1 items-center">
           <Avatar
-            size="small"
+            size="large"
             shape="square"
             style={{
               backgroundColor: workspace?.color,
-              minWidth: '40px',
-              minHeight: '40px',
             }}
           >
             {workspace?.name[0]}
