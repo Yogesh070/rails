@@ -7,7 +7,9 @@ import {
   Select,
   Typography,
   Input,
-  DatePicker
+  DatePicker,
+  Checkbox,
+  Tag,
 } from 'antd';
 import {PaperClipIcon} from '@heroicons/react/24/outline';
 
@@ -23,7 +25,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import ButtonMenu from '../ButtonMenu/ButtonMenu';
 
-import {CheckSquareOutlined} from '@ant-design/icons';
+import {CheckSquareOutlined, CheckCircleOutlined} from '@ant-design/icons';
 interface DetailsModalProps {
   open: boolean;
   title: string;
@@ -79,6 +81,20 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   const [checkListTitle, setCheckListTitle] = useState('');
 
   const [checkListOpen, setChecklistOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const {mutate: setDueDate, isLoading: isSettingDueDate} =
+    api.issue.setDueDate.useMutation({
+      onSuccess: () => {
+        setIsDatePickerOpen(false);
+      },
+    });
+
+  const {mutate: removeDueDate} = api.issue.removeDueDate.useMutation({
+    onSuccess: () => {
+      setSelectedDueDate(null);
+      setIsDatePickerOpen(false);
+    },
+  });
 
   const handleCheckListAdd = () => {
     if (checkListTitle.length > 0) {
@@ -93,6 +109,10 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
     }
   };
 
+  //TODO: HANDLE DUE DATE CHECKBOX INTEGRATION  
+  const [isDueDateChecked, setIsDueDateChecked] = useState(false);
+  
+  //TODO:&& HANDLE OVERDUE STATE ON UI
   return (
     <>
       <Drawer
@@ -122,10 +142,40 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
         >
           <Content style={{backgroundColor: colorBgElevated}}>
             <div className="flex flex-col gap-1-2">
+              <div>
+                <Text>Labels</Text>
+                <LabelSelect />
+              </div>
+              {props.item.dueDate ? (
                 <div>
-                  <Text>Labels</Text>
-                  <LabelSelect />
+                  <Text strong>Due Date</Text>
+                  <div className="flex gap-1-2">
+                    <Checkbox
+                      value={isDueDateChecked}
+                      onChange={(e) => {
+                        setIsDueDateChecked(e.target.checked);
+                      }}
+                    />
+                    <Button onClick={() => setIsDatePickerOpen(true)}>
+                      {dayjs(props.item.dueDate).format('MMM DD')} at{' '}
+                      {dayjs(props.item.dueDate).format('hh:mm A')}
+                      {isDueDateChecked ? (
+                        <Tag
+                          icon={<CheckCircleOutlined />}
+                          color={ "success"}
+                          className="ml-2"
+                        >
+                          Complete
+                        </Tag>
+                      ) : (
+                        <></>
+                      )}
+                    </Button>
+                  </div>
                 </div>
+              ) : (
+                <></>
+              )}
               <div className="flex gap-1-2-3">
                 <Button
                   type="default"
@@ -200,14 +250,41 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
               </div>
               <Text strong>Actions</Text>
               <DatePicker
+                open={isDatePickerOpen}
                 placeholder="Dates"
                 value={selectedDueDate}
                 onChange={(date) => {
                   setSelectedDueDate(date);
                 }}
+                onOpenChange={(open) => {
+                  setIsDatePickerOpen(open);
+                }}
                 showTime={{
                   hideDisabledOptions: true,
                   defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
+                }}
+                onOk={(date) => {
+                  setDueDate({
+                    issueId: props.item.id,
+                    dueDate: date.toDate(),
+                  });
+                }}
+                renderExtraFooter={() => {
+                  if (props.item.dueDate)
+                    return (
+                      <div className="flex flex-end p-2 w-full">
+                        <Button
+                          type="default"
+                          onClick={() => {
+                            removeDueDate({
+                              issueId: props.item.id,
+                            });
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    );
                 }}
               />
               <ButtonMenu
@@ -239,7 +316,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 />
                 <Button
                   type="primary"
-                  onClick={()=>handleCheckListAdd()}
+                  onClick={() => handleCheckListAdd()}
                   loading={isCreatingChecklist}
                 >
                   Add
