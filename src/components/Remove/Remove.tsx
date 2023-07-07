@@ -11,7 +11,7 @@ export default function Remove(props: ActionProps) {
         background: 'rgba(255, 70, 70, 0.1)',
       }}
     >
-      <XMarkIcon />
+      <XMarkIcon height={16} />
     </Action>
   );
 }
