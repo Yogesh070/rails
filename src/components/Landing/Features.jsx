@@ -15,11 +15,11 @@ const Features = () => {
         </span>
         <img src="scrum.png" alt="" className="hero-img" data-aos="fade-left"/>
         </div>
-        <div className="flex features-body"  >
+        <div className="flex features-body2"  >
+        <img src="scrum.png" alt="" className="hero-img" data-aos="fade-right"/>
         <span><h3>List View</h3>
         <p>With lists, teams see immediately what they need to do, which tasks are a priority, and when work is due.</p>
         </span>
-        <img src="scrum.png" alt="" className="hero-img" data-aos="fade-left"/>
         </div>
         <div className="flex features-body" >
         <span>

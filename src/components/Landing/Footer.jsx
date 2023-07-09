@@ -1,23 +1,19 @@
 import { ArrowRightIcon } from "@heroicons/react/24/outline"
-import Image from "next/image"
 
 const Footer = () => {
   return (
     <div id="Footer" >
-      <div className="flex footer">
+      <div className="footer">
         <div>
-        <h3 className="center">Contact Us</h3>
+        <h2>Contact Us</h2>
         <p className="center">Send us a message</p>
         <div className="flex contact">
         <input type="text" placeholder="Name" className="input" />
         <input type="email" placeholder="Email" className="input" />
+        <input type="text" placeholder="Subject" className="input" />
         <textarea rows={"5"} cols={"23"} placeholder="Message" className="input"></textarea>
-        <button className="btn-start btn-send flex gap-1 center">Send <ArrowRightIcon /></button>
+        <button className="btn-start btn-send flex gap-1 center">Send <ArrowRightIcon height={20} /></button>
       </div>
-      </div>
-      <div>
-      <Image src="logo.svg" alt="logo"  className="logo" height={24} width={24}/>
-      <p>2023 &copy; All rights reserved.</p>
       </div>
       </div>
       </div>

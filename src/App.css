@@ -67,9 +67,6 @@ a {
 #Footer {
   margin-top: 5em;
   padding-block: 2em;
-  background-color: #fe436599;
-  background-repeat: no-repeat;
-  color: black;
 }
 
 .btn-signin {
@@ -128,19 +125,26 @@ a {
   font-size: 20px;
 }
 
+.features-body2 {
+  max-width: 80%;
+  padding-block: 2em;
+  margin: 0 auto;
+  font-size: 20px;
+  gap: 1em;
+}
+
 .contact {
   align-items: start;
   flex-direction: column;
-  gap: 0.7em;
+  gap: 1em;
 }
 
 .input {
   padding: 1em;
-  background-color: #ffffff40;
   color: black;
   width: 100%;
-  border: 1px solid transparent;
-  border-radius: 5px;
+  border: 0.5px solid black;
+  border-radius: 3.5px;
 }
 
 .center {
@@ -150,7 +154,7 @@ a {
 
 
 .input::placeholder {
-  color: white;
+  color: black;
 }
 
 h2 {
@@ -166,12 +170,18 @@ h2 {
 }
 
 .footer {
-  max-width: 70%;
+  max-width: 55%;
   margin: 0 auto;
 }
 
 .footer:first-of-type p {
   margin-bottom: 1em;
+}
+
+.footer-nav {
+  background-color: #fe436590;
+  padding: 3em;
+  margin-top: 3em;
 }
 
 .story {
@@ -193,5 +203,5 @@ h2 {
   -webkit-backdrop-filter: blur(5px);
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  padding: 1em;
+  padding: 0.6em;
 }

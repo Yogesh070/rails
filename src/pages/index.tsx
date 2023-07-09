@@ -3,6 +3,7 @@ import HeroSection from "../components/Landing/HeroSection"
 import Features from "../components/Landing/Features"
 import AboutUs from "../components/Landing/AboutUs"
 import Footer from "../components/Landing/Footer"
+import FooterNav from "../components/Landing/FooterNav"
 import { type NextPage } from "next";
 import Head from "next/head";
 
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
           <Features />
           <AboutUs />
           <Footer />
+          <FooterNav />
         </div>
       </main>
     </>
