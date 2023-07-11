@@ -74,7 +74,7 @@ model Workspace {
   projects    Project[]
   createdBy   User      @relation("createdBy", fields: [createdById], references: [id])
   createdById String
-  color      String
+  color       String
 }
 
 model Project {
@@ -94,6 +94,7 @@ model Project {
   labels            Label[]
   Workspace         Workspace?    @relation(fields: [workspaceId], references: [id])
   workspaceId       String?
+  sprints            Sprint[]
 }
 
 model WorkFlow {
@@ -139,6 +140,8 @@ model Issue {
   workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id], onDelete: Cascade)
   labels       Label[]
   assignees    User[]
+  sprint       Sprint?     @relation(fields: [sprintId], references: [id])
+  sprintId     String?
 }
 
 model Comment {
@@ -241,4 +244,19 @@ enum Action {
   REMOVED_DEADLINE_FROM_CHECKLISTITEM
   ADDED_A_CHECKLIST_TO_ISSUE
   REMOVED_A_CHECKLIST_FROM_ISSUE
+}
+
+model Sprint {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  startDate DateTime?
+  endDate   DateTime?
+  projectId String
+  goal      String?
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  issues    Issue[]
+  isCompleted Boolean @default(false)
+  hasStarted  Boolean @default(false)
 }
