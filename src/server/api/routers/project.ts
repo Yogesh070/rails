@@ -204,5 +204,24 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
+    deleteProjectLabel: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.label.delete({
+            where: {
+                id: input.id,
+            },
+        });
+    }
+    ),
+    updateProjectLabel: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), color: z.string().min(7).max(7) })).mutation(({ ctx, input }) => {
+        return ctx.prisma.label.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                title: input.title,
+                color: input.color,
+            },
+        });
+    }),
 }
 );
