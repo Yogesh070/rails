@@ -7,7 +7,7 @@ const issueProp = z.object({
     workflowId: z.string(),
     index: z.number(),
     description: z.string().optional(),
-    createdById: z.string(),
+    createdById: z.string().optional(),
 });
 
 export const issueRouter = createTRPCRouter({
@@ -18,7 +18,7 @@ export const issueRouter = createTRPCRouter({
                 index: input.index,
                 workFlowId: input.workflowId,
                 description: input.description,
-                createdById: input.createdById,
+                createdById: ctx.session.user.id,
             },
         });
     }),
