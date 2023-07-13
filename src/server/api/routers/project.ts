@@ -204,5 +204,99 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
+    deleteProjectLabel: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.label.delete({
+            where: {
+                id: input.id,
+            },
+        });
+    }
+    ),
+    updateProjectLabel: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), color: z.string().min(7).max(7) })).mutation(({ ctx, input }) => {
+        return ctx.prisma.label.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                title: input.title,
+                color: input.color,
+            },
+        });
+    }),
+
+    createAutoSprint: protectedProcedure.input(z.object({ projectId: z.string() })).mutation(async ({ ctx, input }) => {
+
+        const generateSprintTitle = (sprintNumber: number) => {
+            return `Sprint ${sprintNumber}`;
+        };
+        const totalSprints = await ctx.prisma.sprint.count({
+            where: {
+                projectId: input.projectId,
+            },
+        });
+        return ctx.prisma.sprint.create({
+            data: {
+                title: generateSprintTitle(totalSprints + 1),
+                projectId: input.projectId,
+            },
+        });
+    },),
+    getSprints: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.sprint.findMany({
+            where: {
+                projectId: input.projectId,
+            },
+            include: {
+                issues: true,
+            },
+        });
+    }),
+
+    deleteSprint: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.sprint.delete({
+            where: {
+                id: input.id,
+            },
+        });
+    }),
+
+    updateSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), startDate: z.string(), endDate: z.string(), goal : z.string().nullable() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.sprint.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                title: input.title,
+                startDate: new Date(input.startDate),
+                endDate: new Date(input.endDate),
+                goal : input.goal,
+            },
+        });
+    }),
+    compeleteSprint: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.sprint.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                isCompleted: true,
+            },
+        });
+    }),
+    startSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(),startDate: z.string(), endDate: z.string(), goal : z.string().nullable(),  })).mutation(({ ctx, input }) => {
+        return ctx.prisma.sprint.update({
+            where: {
+                id: input.id,
+            },
+            data: {
+                title: input.title,
+                hasStarted: true,
+                startDate: new Date(input.startDate),
+                endDate: new Date(input.endDate),
+                goal : input.goal,
+            },
+        });
+    }),
+
 }
 );

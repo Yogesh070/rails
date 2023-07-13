@@ -5,6 +5,7 @@ import { SessionProvider, getSession } from "next-auth/react";
 import { api } from "../utils/api";
 
 import "../styles/globals.css";
+import '../App.css'
 
 import type { NextPage } from 'next'
 import Head from "next/head";
@@ -26,8 +27,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   pageProps: PagePropsWithSession
 }) => {
   // const { defaultAlgorithm, darkAlgorithm } = theme;
-  
-  const getLayout = Component.getLayout ?? ((page) =>page)
+
+  const getLayout = Component.getLayout ?? ((page) => page)
   return (
     <>
       <Head>
@@ -45,7 +46,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
             // algorithm: darkAlgorithm,
           }}
-        >   
+        >
           {
             getLayout(<Component {...pageProps} />)
           }

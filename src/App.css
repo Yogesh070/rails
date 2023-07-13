@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: .3em;
+  background-color: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(24, 17, 17);
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 0.3em;
+}
+
+.logo {
+  width: 2.5em;
+  height: 2.5em;
+}
+
+.header {
+  justify-content: space-between;
+  font-weight: 600;
+  color: white;
+  font-size: 17px;
+  max-width: 70%;
+  margin: 0 auto;
+  padding: 0.5em 0;
+}
+
+.container {
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+ul {
+  list-style: none;
+}
+
+.listed-items {
+  display: flex;
+  gap: 3.5em;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.top-section {
+  background-image: url("/wb.svg");
+  background-repeat: no-repeat;
+  background-size: 119%;
+}
+
+#Footer {
+  margin-top: 5em;
+  padding-block: 2em;
+}
+
+.btn-signin {
+  border-radius: 100px;
+  padding: 0.6em 1.7em;
+  background-color: #ffffff32;
+  border: 1px solid transparent;
+  color: white;
+  font-weight: 550;
+  font-size: 16px;
+}
+
+.btn-start {
+  border-radius: 100px;
+  padding: 0.6em 1.7em;
+  background-color: #fe4365;
+  border: 1px solid transparent;
+  color: white;
+  font-weight: 550;
+  font-size: 16px;
+  margin-top: 2.5em;
+}
+
+.btn-send {
+  margin-top: 0;
+}
+
+* {
+  scroll-behavior: smooth;
+  margin: 0;
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.btn-signin:hover {
+  background-color: #ffffff80;
+}
+
+.btn-start:hover {
+  background-color: #fe436599;
+}
+
+.hero-img {
+  width: 450px;
+  height: 400px;
+  object-fit: cover;
+}
+
+.features-body {
+  max-width: 80%;
+  padding-block: 1em;
+  margin: 0 auto;
+  font-size: 20px;
+}
+
+.features-body2 {
+  max-width: 80%;
+  padding-block: 2em;
+  margin: 0 auto;
+  font-size: 20px;
+  gap: 1em;
+}
+
+.contact {
+  align-items: start;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.input {
+  padding: 1em;
+  color: black;
+  width: 100%;
+  border: 0.5px solid black;
+  border-radius: 3.5px;
+}
+
+.center {
+  text-align: center;
+  margin: 0 auto;
+}
+
+
+.input::placeholder {
+  color: black;
+}
+
+h2 {
+  font-size: 40px;
+  text-align: center;
+}
+
+.about-card {
+  min-height: 260px;
+  border: 2px solid black;
+  text-align: center;
+  padding: 1.5em;
+}
+
+.footer {
+  max-width: 55%;
+  margin: 0 auto;
+}
+
+.footer:first-of-type p {
+  margin-bottom: 1em;
+}
+
+.footer-nav {
+  background-color: #fe436590;
+  padding: 3em;
+  margin-top: 3em;
+}
+
+.story {
+  max-width: 35%;
+  margin-top: 2em;
+}
+
+.hero {
+  max-width: 85%;
+  padding-block: 4em;
+  margin: 0 auto;
+  font-size: 25px;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.6em;
+}

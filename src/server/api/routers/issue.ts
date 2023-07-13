@@ -7,7 +7,7 @@ const issueProp = z.object({
     workflowId: z.string(),
     index: z.number(),
     description: z.string().optional(),
-    createdById: z.string(),
+    createdById: z.string().optional(),
 });
 
 export const issueRouter = createTRPCRouter({
@@ -18,7 +18,7 @@ export const issueRouter = createTRPCRouter({
                 index: input.index,
                 workFlowId: input.workflowId,
                 description: input.description,
-                createdById: input.createdById,
+                createdById: ctx.session.user.id,
             },
         });
     }),
@@ -36,7 +36,18 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
-    updateIssueTitle: protectedProcedure.input(z.object({title:z.string(),issueId:z.string()})).mutation(({ctx,input})=>{
+    getUserAssignedIssues: protectedProcedure.input(z.object({ userId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.issue.findMany({
+            where: {
+                assignees: {
+                    some: {
+                        id: input.userId,
+                    },
+                },
+            },
+        });
+    }),
+    updateIssueTitle: protectedProcedure.input(z.object({ title: z.string(), issueId: z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,
@@ -46,7 +57,7 @@ export const issueRouter = createTRPCRouter({
             },
         })
     }),
-    updateIssueDescription: protectedProcedure.input(z.object({description:z.string().nullable(),issueId:z.string()})).mutation(({ctx,input})=>{
+    updateIssueDescription: protectedProcedure.input(z.object({ description: z.string().nullable(), issueId: z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,
@@ -160,7 +171,7 @@ export const issueRouter = createTRPCRouter({
     }),
 
     createChecklist: protectedProcedure.input(z.object({
-        issueId: z.string(),title: z.string(),
+        issueId: z.string(), title: z.string(),
     })).mutation(({ ctx, input }) => {
         return ctx.prisma.checkList.create({
             data: {
@@ -204,7 +215,7 @@ export const issueRouter = createTRPCRouter({
     }),
 
     createChecklistItem: protectedProcedure.input(z.object({
-        checklistId: z.string(),title: z.string(),
+        checklistId: z.string(), title: z.string(),
     })).mutation(({ ctx, input }) => {
         return ctx.prisma.checkListItem.create({
             data: {
@@ -249,6 +260,28 @@ export const issueRouter = createTRPCRouter({
             },
             data: {
                 checked: input.checked,
+            },
+        });
+    }),
+
+    setDueDate: protectedProcedure.input(z.object({issueId: z.string(), dueDate: z.date(),})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                dueDate: input.dueDate,
+            },
+        });
+    }),
+
+    removeDueDate: protectedProcedure.input(z.object({issueId: z.string(),})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                dueDate: null,
             },
         });
     }),

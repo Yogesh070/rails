@@ -288,6 +288,12 @@ a {
 .mr-1 {
   margin-right: 4px;
 }
+.ml-1{
+  margin-left: 4px;
+}
+.ml-2{
+  margin-left: 8px;
+}
 
 .mx-auto {
   margin-left: auto;
