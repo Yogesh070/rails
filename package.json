@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "postinstall": "prisma generate",
+    "build:1-generate": "prisma generate",
+    "build:2-next": "cross-env NODE_ENV=production next build",
+    "build:3-server": "tsc --project tsconfig.server.json",
+    "build:4-migrate": "prisma migrate deploy",
+    "build": "run-s build:*",
     "lint": "next lint",
     "start": "next start",
     "dev:wss": "cross-env PORT=3001 tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json ",
