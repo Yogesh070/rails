@@ -1,6 +1,6 @@
 import React from 'react';
 import {CheckCircleIcon, TrashIcon} from '@heroicons/react/24/outline';
-import {Button, Progress, Popconfirm, Checkbox, Skeleton} from 'antd';
+import {Button, Progress, Popconfirm, Checkbox, Skeleton, Typography} from 'antd';
 
 import {QuestionCircleOutlined} from '@ant-design/icons';
 import CheckListEditor from './CheckListEditor';
@@ -8,6 +8,8 @@ import {api} from '../../utils/api';
 
 import type {CheckList, CheckListItem} from '@prisma/client';
 import type {CheckboxChangeEvent} from 'antd/es/checkbox';
+
+const {Text} =Typography;
 
 const Checklist = (props: CheckList) => {
   const checkListItemsQuery = api.issue.getChecklistItemsInChecklist.useQuery({
@@ -69,7 +71,7 @@ const Checklist = (props: CheckList) => {
       <div className="flex justify-between items-center">
         <div className="flex gap-1-2 items-center">
           <CheckCircleIcon height={24} />
-          <p>{props.title}</p>
+          <Text>{props.title}</Text>
         </div>
         <div className="flex gap-1-2">
           {/* //TODO : HANDLE HIDE TOGGLE CHECKED ITEM */}
