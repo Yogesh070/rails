@@ -11,7 +11,7 @@ interface ProjectInfo {
 const projectTypesList: Record<ProjectType, ProjectInfo> =
 {
     KANBAN: {
-        defaultWorkflows: ["Backlog", "In Progress", "Done"],
+        defaultWorkflows: ["Backlog","To Do", "In Progress", "Done"],
         projectName: "Kanban",
     },
     SCRUM: {
@@ -223,80 +223,5 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-
-    createAutoSprint: protectedProcedure.input(z.object({ projectId: z.string() })).mutation(async ({ ctx, input }) => {
-
-        const generateSprintTitle = (sprintNumber: number) => {
-            return `Sprint ${sprintNumber}`;
-        };
-        const totalSprints = await ctx.prisma.sprint.count({
-            where: {
-                projectId: input.projectId,
-            },
-        });
-        return ctx.prisma.sprint.create({
-            data: {
-                title: generateSprintTitle(totalSprints + 1),
-                projectId: input.projectId,
-            },
-        });
-    },),
-    getSprints: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
-        return ctx.prisma.sprint.findMany({
-            where: {
-                projectId: input.projectId,
-            },
-            include: {
-                issues: true,
-            },
-        });
-    }),
-
-    deleteSprint: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.sprint.delete({
-            where: {
-                id: input.id,
-            },
-        });
-    }),
-
-    updateSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), startDate: z.string(), endDate: z.string(), goal : z.string().nullable() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.sprint.update({
-            where: {
-                id: input.id,
-            },
-            data: {
-                title: input.title,
-                startDate: new Date(input.startDate),
-                endDate: new Date(input.endDate),
-                goal : input.goal,
-            },
-        });
-    }),
-    compeleteSprint: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.sprint.update({
-            where: {
-                id: input.id,
-            },
-            data: {
-                isCompleted: true,
-            },
-        });
-    }),
-    startSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(),startDate: z.string(), endDate: z.string(), goal : z.string().nullable(),  })).mutation(({ ctx, input }) => {
-        return ctx.prisma.sprint.update({
-            where: {
-                id: input.id,
-            },
-            data: {
-                title: input.title,
-                hasStarted: true,
-                startDate: new Date(input.startDate),
-                endDate: new Date(input.endDate),
-                goal : input.goal,
-            },
-        });
-    }),
-
 }
 );

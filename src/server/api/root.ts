@@ -5,6 +5,7 @@ import { workflowRouter } from "./routers/workflow";
 import { observable } from "@trpc/server/observable";
 import { issueRouter } from "./routers/issue";
 import { workspaceRouter } from "./routers/workspace";
+import { sprintRouter } from "./routers/sprint";
 
 /**
  * This is the primary router for your server.
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   workflow: workflowRouter,
   issue: issueRouter,
   workspace: workspaceRouter,
+  sprint: sprintRouter,
   randomNumber: publicProcedure.subscription(() => {
     return observable<number>((emit) => {
       const int = setInterval(() => {
