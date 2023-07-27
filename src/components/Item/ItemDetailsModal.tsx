@@ -11,7 +11,6 @@ import {
   Checkbox,
   Tag,
 } from 'antd';
-import {PaperClipIcon} from '@heroicons/react/24/outline';
 
 import type {Issue, User} from '@prisma/client';
 import CommentSection from '../Comment/Comment';
@@ -25,7 +24,13 @@ import dayjs from 'dayjs';
 import React from 'react';
 import ButtonMenu from '../ButtonMenu/ButtonMenu';
 
-import {CheckSquareOutlined, CheckCircleOutlined} from '@ant-design/icons';
+import {
+  CheckSquareOutlined,
+  CheckCircleOutlined,
+  LinkOutlined,
+  ApartmentOutlined,
+  FlagOutlined,
+} from '@ant-design/icons';
 interface DetailsModalProps {
   open: boolean;
   title: string;
@@ -45,7 +50,11 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   } = theme.useToken();
 
   const {mutate: createCheckList, isLoading: isCreatingChecklist} =
-    api.issue.createChecklist.useMutation();
+    api.issue.createChecklist.useMutation({
+      onSuccess: () => {
+        checkListQuery.refetch();
+      },
+    });
 
   const checkListQuery = api.issue.getChecklistsInIssue.useQuery({
     issueId: props.item.id,
@@ -109,10 +118,19 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
     }
   };
 
-  //TODO: HANDLE DUE DATE CHECKBOX INTEGRATION  
+  //TODO: HANDLE DUE DATE CHECKBOX INTEGRATION
   const [isDueDateChecked, setIsDueDateChecked] = useState(false);
-  
+
   //TODO:&& HANDLE OVERDUE STATE ON UI
+
+  //handling adding and removing flag
+
+  const {mutate: addFlag, isLoading: addingFlag} =
+    api.issue.addFlag.useMutation();
+
+  const {mutate: removeFlag, isLoading: removingFlag} =
+    api.issue.addFlag.useMutation();
+
   return (
     <>
       <Drawer
@@ -134,6 +152,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
         width={800}
         open={props.open}
         onClose={props.onCancel}
+        bodyStyle={{paddingTop: 8}}
       >
         <Layout
           className="gap-1"
@@ -141,6 +160,13 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
           style={{backgroundColor: colorBgElevated}}
         >
           <Content style={{backgroundColor: colorBgElevated}}>
+             {props.item.flagged ? (
+             <Tag icon={<FlagOutlined />} color="warning">
+                  Flagged
+                </Tag>
+               ) : (
+                <></>
+              )} 
             <div className="flex flex-col gap-1-2">
               <div>
                 <Text>Labels</Text>
@@ -162,7 +188,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                       {isDueDateChecked ? (
                         <Tag
                           icon={<CheckCircleOutlined />}
-                          color={ "success"}
+                          color={'success'}
                           className="ml-2"
                         >
                           Complete
@@ -176,26 +202,6 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
               ) : (
                 <></>
               )}
-              <div className="flex gap-1-2-3">
-                <Button
-                  type="default"
-                  icon={<PaperClipIcon height={14} />}
-                  onClick={() => {}}
-                  className="flex items-center gap-1-2-3"
-                  size="small"
-                >
-                  Attach
-                </Button>
-                <Button
-                  type="default"
-                  icon={<PaperClipIcon height={14} />}
-                  onClick={() => {}}
-                  className="flex items-center gap-1-2-3"
-                  size="small"
-                >
-                  Link Child Issue
-                </Button>
-              </div>
               <Text strong>Description</Text>
               <TextArea
                 rows={4}
@@ -322,6 +328,34 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   Add
                 </Button>
               </ButtonMenu>
+              <Button type="default" icon={<LinkOutlined />} onClick={() => {}}>
+                Attach
+              </Button>
+              <Button
+                type="default"
+                icon={<ApartmentOutlined />}
+                onClick={() => {}}
+              >
+                Link Child Issue
+              </Button>
+              <Button
+                type="default"
+                icon={<FlagOutlined />}
+                onClick={() => {
+                  if (props.item.flagged) {
+                    removeFlag({
+                      issueId: props.item.id,
+                    });
+                  } else {
+                    addFlag({
+                      issueId: props.item.id,
+                    });
+                  }
+                }}
+                loading={addingFlag || removingFlag}
+              >
+                {props.item.flagged ? 'Remove Flag' : 'Add Flag'}
+              </Button>
             </div>
           </Sider>
         </Layout>

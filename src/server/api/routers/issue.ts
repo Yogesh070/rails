@@ -285,4 +285,26 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
+
+    addFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                flagged: true,
+            },
+        });
+    }),
+
+    removeFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                flagged: false,
+            },
+        });
+    }),
 });
