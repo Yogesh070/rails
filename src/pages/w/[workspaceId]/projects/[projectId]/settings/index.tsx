@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from '../../../../../../layout/Board';
-import { Button, Input, Form, Select, Badge, Breadcrumb, message } from 'antd';
+import { Button, Input, Form, Select, Badge, Breadcrumb, message, Skeleton } from 'antd';
 import { api } from '../../../../../../utils/api';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -74,7 +74,7 @@ const Settings = () => {
   });
 
   const handleSubmit = (values: FormInitialValues) => {
-    updateProject({ name: values.name!, id: projectId as string, projectLeadId: values.projectLead!, defaultAssigneeId: values.defaultAssignee==='unassigned'?null:values.defaultAssignee! });
+    updateProject({ name: values.name!, id: projectId as string, projectLeadId: values.projectLead!, defaultAssigneeId: values.defaultAssignee === 'unassigned' ? null : values.defaultAssignee! });
   };
 
   const handleProjectDelete = () => {
@@ -85,88 +85,90 @@ const Settings = () => {
 
   return (
     <>
-      <Breadcrumb
-        items={[
-          {
-            title: <Link href='/w/home'><HomeOutlined rev={undefined} /></Link>,
-          },
-          {
-            title: (
-              <Link href={`/w/${workspaceId}/projects/${projectId}`}>
-                <span>{projectDetails.data?.name}</span>
-              </Link>
-            ),
-          },
-          {
-            title: 'Settings',
-          },
-        ]}
-      />
-      <div className="flex justify-between my-3">
-        <div className="flex gap-1 ">
-          <Image src="/logo.svg" width={64} height={64} alt={'dp'} priority />
-          <div className='flex flex-col gap-1-2 justify-between'>
-            <h1>{projectDetails.data?.name} {projectDetails.data?.status == ProjectStatus.ACTIVE ? <Badge status="success" /> :
-              <Badge status="error" />}
-            </h1>
-            <Button type="default" size='middle'>Change Icon</Button>
-          </div>
-        </div>
-        <AddUserPopUp />
-      </div>
-      <CustomDivider />
-      <Form form={form} name="validateOnly" layout="vertical" autoComplete="off" onFinish={handleSubmit} >
-        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="projectLead" label="Project Lead" rules={[{ required: true }]}>
-          <Select
-            showSearch
-            placeholder="Select a user"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
-            options={userOptions}
-          />
-        </Form.Item>
-        <Form.Item name="defaultAssignee" label="Default Assignee">
-          <Select
-            showSearch
-            placeholder="Select a default assignee"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
-            options={[{
-              value: 'unassigned',
-              label: 'Unassigned',
-            }, ...userOptions]}
-          />
-        </Form.Item>
-        <Form.Item>
-          <SubmitButton form={form} initialValues={
+      <Skeleton active loading={projectDetails.isLoading} avatar>
+        <Breadcrumb
+          items={[
             {
-              name: projectDetails.data?.name,
-              projectLead: projectDetails.data?.projectLeadId,
-              defaultAssignee: projectDetails.data?.defaultAssigneeId ?? 'unassigned',
-            }
-          }
-            isLoading={isUpdating}
-          />
-        </Form.Item>
-      </Form>
-      <CustomDivider className='my-4' />
-      <div className="flex items-center justify-between flex-wrap gap-1-2">
-        <div>
-          <h1>Danger Zone</h1>
-          <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
-          </p>
+              title: <Link href='/w/home'><HomeOutlined rev={undefined} /></Link>,
+            },
+            {
+              title: (
+                <Link href={`/w/${workspaceId}/projects/${projectId}`}>
+                  <span>{projectDetails.data?.name}</span>
+                </Link>
+              ),
+            },
+            {
+              title: 'Settings',
+            },
+          ]}
+        />
+        <div className="flex justify-between my-3">
+          <div className="flex gap-1 ">
+            <Image src="/logo.svg" width={64} height={64} alt={'dp'} priority />
+            <div className='flex flex-col gap-1-2 justify-between'>
+              <h1>{projectDetails.data?.name} {projectDetails.data?.status == ProjectStatus.ACTIVE ? <Badge status="success" /> :
+                <Badge status="error" />}
+              </h1>
+              <Button type="default" size='middle'>Change Icon</Button>
+            </div>
+          </div>
+          <AddUserPopUp />
         </div>
-        <Button type="primary" danger onClick={handleProjectDelete} loading={isDeleting}>
-          Delete Project
-        </Button>
-      </div>
+        <CustomDivider />
+        <Form form={form} name="validateOnly" layout="vertical" autoComplete="off" onFinish={handleSubmit} >
+          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="projectLead" label="Project Lead" rules={[{ required: true }]}>
+            <Select
+              showSearch
+              placeholder="Select a user"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={userOptions}
+            />
+          </Form.Item>
+          <Form.Item name="defaultAssignee" label="Default Assignee">
+            <Select
+              showSearch
+              placeholder="Select a default assignee"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              options={[{
+                value: 'unassigned',
+                label: 'Unassigned',
+              }, ...userOptions]}
+            />
+          </Form.Item>
+          <Form.Item>
+            <SubmitButton form={form} initialValues={
+              {
+                name: projectDetails.data?.name,
+                projectLead: projectDetails.data?.projectLeadId,
+                defaultAssignee: projectDetails.data?.defaultAssigneeId ?? 'unassigned',
+              }
+            }
+              isLoading={isUpdating}
+            />
+          </Form.Item>
+        </Form>
+        <CustomDivider className='my-4' />
+        <div className="flex items-center justify-between flex-wrap gap-1-2">
+          <div>
+            <h1>Danger Zone</h1>
+            <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
+            </p>
+          </div>
+          <Button type="primary" danger onClick={handleProjectDelete} loading={isDeleting}>
+            Delete Project
+          </Button>
+        </div>
+      </Skeleton>
     </>
   );
 };
@@ -199,7 +201,7 @@ const SubmitButton = ({ form, initialValues, isLoading }: { form: FormInstance, 
         setSubmittable(false);
       },
     );
-  }, [values]);
+  }, [form, initialValues, values]);
 
   return (
     <Button type="primary" htmlType="submit" disabled={!submittable} loading={isLoading}>
