@@ -23,15 +23,15 @@ const WorkSpace = () => {
     shortname: workspaceId as string,
   });
 
-  const setWorkspace = useWorkspaceStore((state) => state.setWorkspace);
+  const setCurrentWorkspace = useWorkspaceStore((state) => state.setCurrentWorkspace);
 
   React.useEffect(() => {
     if (workspaceQuery.isSuccess) {
-      setWorkspace(workspaceQuery.data);
+      setCurrentWorkspace(workspaceQuery.data);
     }
-  }, [setWorkspace, workspaceQuery.data, workspaceQuery.isSuccess]);
+  }, [setCurrentWorkspace, workspaceQuery.data, workspaceQuery.isSuccess]);
 
-  const workspace = useWorkspaceStore((state) => state.workspace);
+  const workspace = useWorkspaceStore((state) => state.currentWorkspace);
 
   const columns: ColumnsType<ProjectWithLead> = [
     {

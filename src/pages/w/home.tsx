@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { RouterOutputs } from '../../utils/api';
 import { api } from '../../utils/api';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useWorkspaceStore } from '../../store/workspace.store';
 
 const { Meta } = Card;
 const { Content } = Layout;
@@ -30,10 +31,19 @@ interface WorkSpaceFormProps {
 
 const WorkSpace = () => {
   const workspaceQuery = api.workspace.getWorkspaces.useQuery();
+
+  useEffect(() => {
+    if (workspaceQuery.isSuccess) {
+      setWorkspaces(workspaceQuery.data);
+    }
+  }, [workspaceQuery.isSuccess]);
+
+  const {setWorkspaces ,workspaces ,addWorkspace} = useWorkspaceStore();
+
   const { mutate: createWorkspace, isLoading: isCreatingWorkspace } =
     api.workspace.createWorkspace.useMutation({
-      onSuccess: () => {
-        workspaceQuery.refetch();
+      onSuccess: (workspace) => {
+        addWorkspace(workspace);
         setOpen(false);
         form.resetFields();
       },
@@ -45,7 +55,7 @@ const WorkSpace = () => {
     <Layout>
       <Content className="h-full min-h-screen flex flex-col m-4">
         <Skeleton active loading={workspaceQuery.isLoading}>
-          {workspaceQuery.data?.length === 0 ? (
+          {workspaces.length === 0 ? (
             <Content className="min-h-screen flex items-center justify-center">
               <Empty
                 image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
@@ -80,7 +90,7 @@ const WorkSpace = () => {
                 </Button>
               </div>
               <div className="grid col-auto gap-1-2 justify-center">
-                {workspaceQuery.data?.map((workspace) => {
+                {workspaces.map((workspace) => {
                   return <WorkSpaceCard key={workspace.id} {...workspace} />;
                 })}
               </div>
