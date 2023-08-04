@@ -36,14 +36,21 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
-    getUserAssignedIssues: protectedProcedure.input(z.object({ userId: z.string() })).query(({ ctx, input }) => {
+    getUserAssignedIssues: protectedProcedure.input(z.object({ userId: z.string().optional() })).query(({ ctx, input }) => {
         return ctx.prisma.issue.findMany({
             where: {
                 assignees: {
                     some: {
-                        id: input.userId,
+                        id: input.userId || ctx.session.user.id,
                     },
                 },
+            },
+            include: {
+                workFlow:{
+                    include:{
+                        project: true,
+                    }
+                }
             },
         });
     }),
