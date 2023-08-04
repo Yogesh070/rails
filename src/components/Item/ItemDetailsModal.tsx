@@ -256,6 +256,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
               </div>
               <Text strong>Actions</Text>
               <DatePicker
+                format={'MMM DD, YYYY hh:mm A'}
                 open={isDatePickerOpen}
                 placeholder="Dates"
                 value={selectedDueDate}
@@ -267,7 +268,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 }}
                 showTime={{
                   hideDisabledOptions: true,
-                  defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
+                  defaultValue: dayjs('00:00:00', 'HH:mm'),
                 }}
                 onOk={(date) => {
                   setDueDate({

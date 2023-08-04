@@ -86,7 +86,15 @@ export const sprintRouter = createTRPCRouter({
             },
         });
     }),
-    startSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), startDate: z.string(), endDate: z.string(), goal: z.string().nullable(), })).mutation(({ ctx, input }) => {
+    startSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), startDate: z.date(), endDate: z.date(), goal: z.string().nullable(), })).mutation(async ({ ctx, input }) => {
+        const sprint =await ctx.prisma.sprint.findUnique({
+            where: {
+                id: input.id,
+            },
+        });
+        if (sprint?.hasStarted) {
+            throw new Error("Sprint has already started");
+        }
         return ctx.prisma.sprint.update({
             where: {
                 id: input.id,
