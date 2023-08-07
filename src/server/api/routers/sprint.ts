@@ -6,34 +6,16 @@ export const sprintRouter = createTRPCRouter({
     createSprintIssue: protectedProcedure.input(z.object({
         title: z.string(),
         index: z.number(),
-        sprintId: z.string()
+        sprintId: z.string(),
+        workflowId: z.string(),
     })).mutation(async ({ ctx, input }) => {
-        //REPLACED 
-
-        // return ctx.prisma.sprint.update({
-        //     where: {
-        //         id: input.sprintId,
-        //     },
-        //     data: {
-        //         issues: {
-        //             create: {
-        //                 title: input.title,
-        //                 index: input.index,
-        //                 createdById: ctx.session.user.id,
-        //             },
-        //         },
-        //     },
-        //     select: {
-        //         issues: true,
-        //     },
-        // });
-
         return ctx.prisma.issue.create({
             data: {
                 title: input.title,
                 index: input.index,
                 sprintId: input.sprintId,
                 createdById: ctx.session.user.id,
+                workFlowId : input.workflowId,
             },
         });
     },),
