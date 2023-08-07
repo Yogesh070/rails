@@ -6,23 +6,34 @@ export const sprintRouter = createTRPCRouter({
     createSprintIssue: protectedProcedure.input(z.object({
         title: z.string(),
         index: z.number(),
-        description: z.string().optional(),
-        createdById: z.string().optional(),
         sprintId: z.string()
     })).mutation(async ({ ctx, input }) => {
-        return ctx.prisma.sprint.update({
-            where: {
-                id: input.sprintId,
-            },
+        //REPLACED 
+
+        // return ctx.prisma.sprint.update({
+        //     where: {
+        //         id: input.sprintId,
+        //     },
+        //     data: {
+        //         issues: {
+        //             create: {
+        //                 title: input.title,
+        //                 index: input.index,
+        //                 createdById: ctx.session.user.id,
+        //             },
+        //         },
+        //     },
+        //     select: {
+        //         issues: true,
+        //     },
+        // });
+
+        return ctx.prisma.issue.create({
             data: {
-                issues: {
-                    create: {
-                        title: input.title,
-                        index: input.index,
-                        description: input.description,
-                        createdById: ctx.session.user.id,
-                    },
-                },
+                title: input.title,
+                index: input.index,
+                sprintId: input.sprintId,
+                createdById: ctx.session.user.id,
             },
         });
     },),
@@ -108,4 +119,32 @@ export const sprintRouter = createTRPCRouter({
             },
         });
     }),
+
+    moveMultipleIssueToSprint: protectedProcedure.input(z.object({ issueIds: z.array(z.string()), sprintId: z.string() })).mutation(async ({ ctx, input }) => {
+        const issues = await ctx.prisma.issue.findMany({
+            where: {
+                id: {
+                    in: input.issueIds,
+                },
+            },
+        });
+        if (issues.length !== input.issueIds.length) {
+            throw new Error("Some issues not found");
+        }
+        const issuesInSprint = issues.filter((issue) => issue.sprintId);
+        if (issuesInSprint.length > 0) {
+            throw new Error("Some issues already in sprint");
+        }
+        return ctx.prisma.issue.updateMany({
+            where: {
+                id: {
+                    in: input.issueIds,
+                },
+            },
+            data: {
+                sprintId: input.sprintId,
+            },
+        });
+    }),
+    
 });
