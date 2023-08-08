@@ -4,6 +4,7 @@ import {
   Button,
   Collapse,
   List,
+  Modal,
   Skeleton,
   Typography,
   message,
@@ -23,6 +24,9 @@ import {useSprintStore} from '../../../../../../store/sprint.store';
 import type {CSSProperties} from 'react';
 import type {CollapseProps} from 'antd';
 import type {MenuProps} from 'antd';
+import type {RouterOutputs} from '../../../../../../utils/api';
+
+type Sprint = RouterOutputs['sprint']['getSprints'][0];
 
 const {Title, Text} = Typography;
 
@@ -128,30 +132,48 @@ const Backlog = () => {
       key: 'delete',
     },
   ];
-  const handleMenuClick = (event: any, id: string) => {
-    if (event.key === 'delete') {
-      deleteSprint({id});
-    } else if (event.key === 'edit') {
-      //TODO: OPEN MODAL TO EDIT SPRINT
+
+  const handleMenuClick = (event: any, sprint: Sprint) => {
+    switch (event.key) {
+      case 'delete':
+        Modal.error({
+          title: 'Delete Sprint?',
+          content: `Are you sure you want to delete ${sprint.title}?`,
+          okText: 'Delete',
+          cancelText: 'Cancel',
+          maskClosable: true,
+          okType: 'danger',
+          onOk() {
+            deleteSprint({id: sprint.id});
+          },
+          onCancel() {},
+          closable: true,
+        });
+        break;
+      case 'edit':
+        //TODO: OPEN MODAL TO EDIT SPRINT
+        break;
+      default:
+        break;
     }
   };
 
   const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = (
     panelStyle
   ) =>
-    sprints?.map((sprint) => {
+    sprints.map((sprint) => {
       const {id, title, startDate, endDate, issues, hasStarted} = sprint;
       return {
         key: id,
         label: (
           <div className="flex gap-1-2">
             <Text strong>{title}</Text>
-            {startDate != null ?? (
+            {startDate != null ? (
               <Text>
-                ${dayjs(startDate).format('D MMM')} -{' '}
+                {dayjs(startDate).format('D MMM')} -{' '}
                 {dayjs(endDate).format('D MMM')}
               </Text>
-            )}
+             ):<></>} 
             <p>({issues.length} issues)</p>
           </div>
         ),
@@ -201,7 +223,7 @@ const Backlog = () => {
                 items: sprintMenuOptions,
                 onClick: (e) => {
                   e.domEvent.stopPropagation();
-                  handleMenuClick(e, id);
+                  handleMenuClick(e, sprint);
                 },
               }}
               trigger={['click']}

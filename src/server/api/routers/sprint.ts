@@ -80,6 +80,10 @@ export const sprintRouter = createTRPCRouter({
         });
     }),
     startSprint: protectedProcedure.input(z.object({ id: z.string(), title: z.string(), startDate: z.date(), endDate: z.date(), goal: z.string().nullable(), })).mutation(async ({ ctx, input }) => {
+
+        if(input.startDate > input.endDate){
+            throw Error('Start date cannot be after end date');
+        }
         const sprint =await ctx.prisma.sprint.findUnique({
             where: {
                 id: input.id,
