@@ -231,8 +231,8 @@ const CompleteSprintModal = (props: CompletedSprintModalProps) => {
 
   //TODO: CONNECT TO NEW SPRINT VIA API
 
-  const {mutate: moveIssueToAnotherSprint, isLoading: isMoving} =
-    api.sprint.moveMultipleIssueToAnotherSprint.useMutation();
+  // const {mutate: moveIssueToAnotherSprint, isLoading: isMoving} =
+  //   api.sprint.moveMultipleIssueToSprint.useMutation();
 
   const [form] = Form.useForm<FormValues>();
 
