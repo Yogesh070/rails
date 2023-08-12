@@ -21,6 +21,7 @@ type Action = {
     setBacklogIssues: (issues: Issue[]) => void;
     addBacklogIssue: (issue: Issue) => void;
     deleteBacklogIssue: (issue: Issue) => void;
+    updateIssue: (issue: Issue, sprintId?: String) => void;
 };
 
 export const useSprintStore = create<State & Action>()(
@@ -69,6 +70,51 @@ export const useSprintStore = create<State & Action>()(
             set((state) => ({
                 backlogIssues: state.backlogIssues.filter((i) => i.id !== issue.id),
             })),
+        updateIssue: (issue, sprintId) => {
+            if (sprintId) {
+                set((state) => ({
+                    sprints: state.sprints.map((s) => {
+                        if (s.id === sprintId) {
+                            return {
+                                ...s,
+                                issues: s.issues.map((i) => {
+                                    if (i.id === issue.id) {
+                                        return issue;
+                                    }
+                                    return i;
+                                })
+                            }
+                        }
+                        return s;
+                    }
+                    ),
+                }))
+            } else {
+                set((state) => ({
+                    backlogIssues: state.backlogIssues.map((i) => {
+                        if (i.id === issue.id) {
+                            return issue;
+                        }
+                        return i;
+                    }
+                    ),
+                    sprints: state.sprints.map((s) => {
+                        if (s.issues.find((i) => i.id === issue.id)) {
+                            return {
+                                ...s,
+                                issues: s.issues.map((i) => {
+                                    if (i.id === issue.id) {
+                                        return issue;
+                                    }
+                                    return i;
+                                })
+                            }
+                        }
+                        return s;
+                    }),
+                }))
+            }
+        },
     }))
 
 );
