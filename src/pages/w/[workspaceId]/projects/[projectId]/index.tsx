@@ -1,8 +1,8 @@
 import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
-import type { UniqueIdentifier} from '@dnd-kit/core';
+import type {UniqueIdentifier} from '@dnd-kit/core';
 import {DndContext} from '@dnd-kit/core';
-import {Button, Avatar, Skeleton, Segmented} from 'antd';
+import {Button, Avatar, Skeleton, Segmented, Typography} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
 import NoSSR from '../../../../../components/NoSSR';
@@ -21,6 +21,8 @@ const WorkflowContainers = dynamic(
     ),
   {ssr: false}
 );
+
+const {Text} = Typography;
 
 const SingleProject = () => {
   const router = useRouter();
@@ -61,17 +63,25 @@ const SingleProject = () => {
         records[workflow.id] = workflow.issue;
       });
       return records;
-    }
-  ,[]);
+    },
+    []
+  );
+
+  const [boardLayout, setBoardLayout] = React.useState(true);
 
   return (
     <NoSSR>
       <div className="flex items-center justify-between">
-        <Skeleton loading={projectQuery.isLoading} active paragraph={{rows:0,width:8}}>
-          <h1>{projectQuery.data?.name}</h1>
+        <Skeleton
+          loading={projectQuery.isLoading}
+          active
+          paragraph={{rows: 0, width: 8}}
+        >
+          <Text strong>{projectQuery.data?.name}</Text>
         </Skeleton>
         <div className="flex items-center gap-1-2 justify-between">
           <Segmented
+            value={boardLayout ? 'Kanban' : 'List'}
             options={[
               {
                 value: 'List',
@@ -82,7 +92,13 @@ const SingleProject = () => {
                 icon: <AppstoreOutlined rev={undefined} />,
               },
             ]}
-            onChange={(value) => console.log(value)}
+            onChange={(value) => {
+              if (value === 'Kanban') {
+                setBoardLayout(true);
+              } else {
+                setBoardLayout(false);
+              }
+            }}
           />
           <Skeleton loading={projectQuery.isLoading} active paragraph>
             <div className="flex items-center gap-1-2">
@@ -111,7 +127,8 @@ const SingleProject = () => {
           <Skeleton loading={workflowQuery.isLoading} active paragraph>
             <WorkflowContainers
               items={convertWorkFlowsToRecord(workflow)}
-              scrollable
+              scrollable={false}
+              vertical={!boardLayout}
             />
           </Skeleton>
         </Suspense>

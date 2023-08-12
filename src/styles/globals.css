@@ -375,3 +375,6 @@ a {
 .img-cover{
   object-fit: cover;
 }
+.font-small{
+  font-size: 12px;
+}
