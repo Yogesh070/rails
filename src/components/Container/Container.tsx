@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import styles from './Container.module.scss';
 import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
-import { Button } from 'antd';
+import { Button, theme, Typography } from 'antd';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { api } from '../../utils/api';
 import { useProjectStore } from '../../store/project.store';
@@ -26,6 +26,9 @@ export interface ContainerProps {
   onRemove?(): void;
   hasAdd?: boolean;
 }
+
+const { useToken } = theme;
+const { Text } = Typography;
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
   function Container(
@@ -66,6 +69,8 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
       });
     };
 
+    const { token } = useToken();
+
     return (
       <div
         {...props}
@@ -75,6 +80,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
             ...style,
             '--columns': columns,
             height: '100%',
+            backgroundColor: token.colorBorderSecondary,
           } as React.CSSProperties
         }
         className={classNames(
@@ -90,8 +96,8 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
         tabIndex={onClick ? 0 : undefined}
       >
         {label ? (
-          <div className={styles.Header}>
-            <p>{label}</p>
+          <div className={styles.Header} style={{ backgroundColor: token.colorBgElevated }}>
+            <Text>{label}</Text>
             <div className={styles.Actions}>
               {onRemove ? <Remove onClick={onRemove} /> : undefined}
               <Handle {...handleProps} />
