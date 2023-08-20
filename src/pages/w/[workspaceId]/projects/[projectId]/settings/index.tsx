@@ -52,7 +52,7 @@ const Settings = () => {
         defaultAssignee: projectDetails.data?.defaultAssigneeId ?? 'unassigned',
       })
     }
-  }, [projectDetails]);
+  }, [form, projectDetails]);
 
   const { mutate: updateProject, isLoading: isUpdating } = api.project.updateProject.useMutation({
     onSuccess: () => {

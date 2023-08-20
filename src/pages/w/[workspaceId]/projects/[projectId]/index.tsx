@@ -35,19 +35,6 @@ const SingleProject = () => {
   const projectQuery = api.project.getProjectById.useQuery({
     id: projectId as string,
   });
-
-  React.useEffect(() => {
-    if (projectQuery.isSuccess) {
-      setProject(projectQuery.data!);
-    }
-  }, [projectQuery.isSuccess]);
-
-  React.useEffect(() => {
-    if (workflowQuery.isSuccess) {
-      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
-    }
-  }, [workflowQuery.isSuccess]);
-
   const setProject = useProjectStore((state) => state.setProject);
   const setProjectWorkflows = useProjectStore(
     (state) => state.setProjectWorkflows
@@ -56,11 +43,23 @@ const SingleProject = () => {
   const project = useProjectStore((state) => state.project);
   const workflow = useProjectStore((state) => state.workflows);
 
+  React.useEffect(() => {
+    if (projectQuery.isSuccess) {
+      setProject(projectQuery.data!);
+    }
+  }, [setProject,projectQuery.data, projectQuery.isSuccess, ]);
+
+  React.useEffect(() => {
+    if (workflowQuery.isSuccess) {
+      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
+    }
+  }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
+
   const convertWorkFlowsToRecord = useCallback(
     (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
       const records: Record<UniqueIdentifier, Issue[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.id] = workflow.issue;
+        records[workflow.title] = workflow.issue;
       });
       return records;
     },

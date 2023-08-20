@@ -30,15 +30,15 @@ interface WorkSpaceFormProps {
 }
 
 const WorkSpace = () => {
+  
   const workspaceQuery = api.workspace.getWorkspaces.useQuery();
+  const {setWorkspaces ,workspaces ,addWorkspace} = useWorkspaceStore();
 
   useEffect(() => {
     if (workspaceQuery.isSuccess) {
       setWorkspaces(workspaceQuery.data);
     }
-  }, [workspaceQuery.isSuccess]);
-
-  const {setWorkspaces ,workspaces ,addWorkspace} = useWorkspaceStore();
+  }, [setWorkspaces, workspaceQuery.data, workspaceQuery.isSuccess]);
 
   const { mutate: createWorkspace, isLoading: isCreatingWorkspace } =
     api.workspace.createWorkspace.useMutation({
