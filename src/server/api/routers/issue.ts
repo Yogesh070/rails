@@ -36,14 +36,21 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
-    getUserAssignedIssues: protectedProcedure.input(z.object({ userId: z.string() })).query(({ ctx, input }) => {
+    getUserAssignedIssues: protectedProcedure.input(z.object({ userId: z.string().optional() })).query(({ ctx, input }) => {
         return ctx.prisma.issue.findMany({
             where: {
                 assignees: {
                     some: {
-                        id: input.userId,
+                        id: input.userId || ctx.session.user.id,
                     },
                 },
+            },
+            include: {
+                workFlow:{
+                    include:{
+                        project: true,
+                    }
+                }
             },
         });
     }),
@@ -282,6 +289,28 @@ export const issueRouter = createTRPCRouter({
             },
             data: {
                 dueDate: null,
+            },
+        });
+    }),
+
+    addFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                flagged: true,
+            },
+        });
+    }),
+
+    removeFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                flagged: false,
             },
         });
     }),

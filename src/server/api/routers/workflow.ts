@@ -12,4 +12,14 @@ export const workflowRouter = createTRPCRouter({
             },
         });
     }),
+    getAllProjectWorkflows: protectedProcedure.input(z.object({ projectId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.workFlow.findMany({
+            where: {
+                projectId: input.projectId,
+            },
+            include: {
+                issue: true,
+            },
+        });
+    }),
 });

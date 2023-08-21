@@ -78,12 +78,20 @@ a {
   align-items: center;
 }
 
+.items-end{
+  align-items: flex-end;
+}
+
 .justify-center {
   justify-content: center;
 }
 
 .justify-between {
   justify-content: space-between;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .gap-1 {
@@ -224,7 +232,9 @@ a {
 .m-4 {
   margin: 16px;
 }
-
+.mb-0{
+  margin-bottom: 0 !important;
+}
 .mb-1-2 {
   margin-bottom: 0.5rem;
 }
@@ -374,4 +384,7 @@ a {
 }
 .img-cover{
   object-fit: cover;
+}
+.font-small{
+  font-size: 12px;
 }

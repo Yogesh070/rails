@@ -16,7 +16,7 @@ type Member = {
 
 const { Title, Paragraph, Text } = Typography;
 const Members = () => {
-  const workspace = useWorkspaceStore((state) => state.workspace);
+  const currentWorkspace = useWorkspaceStore((state) => state.currentWorkspace);
   const columns: ColumnsType<Member> = [
     {
       title: 'User',
@@ -30,13 +30,13 @@ const Members = () => {
     {
       title: 'Actions',
       render: (_, record) => {
-        return <Button icon={<CloseOutlined />}>{workspace?.createdById === record.id ? 'Leave' : 'Remove'}</Button>
+        return <Button icon={<CloseOutlined />}>{currentWorkspace?.createdById === record.id ? 'Leave' : 'Remove'}</Button>
       }
     },
   ];
   return (
     <div>
-      <Title level={5} className="m-0">  Workspace members ({workspace?.members.length})</Title>
+      <Title level={5} className="m-0">  Workspace members ({currentWorkspace?.members.length})</Title>
       <Paragraph className="m-0">Workspace members can view and join all Workspace visible projects and create new projects in the Workspace.</Paragraph>
       <CustomDivider className='my-4' />
       <div className="flex gap-1 items-center justify-between">
@@ -46,7 +46,7 @@ const Members = () => {
         </div>
         <Button >Invite With Link</Button>
       </div>
-      <Table columns={columns} dataSource={workspace?.members} size="small"
+      <Table columns={columns} dataSource={currentWorkspace?.members} size="small"
         className='mt-4'
         rowKey="id"
       />

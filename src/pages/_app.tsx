@@ -5,7 +5,7 @@ import { SessionProvider, getSession } from "next-auth/react";
 import { api } from "../utils/api";
 
 import "../styles/globals.css";
-import '../App.css'
+// import '../App.css'y
 
 import type { NextPage } from 'next'
 import Head from "next/head";

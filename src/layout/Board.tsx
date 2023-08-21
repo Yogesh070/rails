@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { LaptopOutlined, SettingOutlined, TableOutlined, LineChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
 import React from 'react';
 import Image from 'next/image';
+import { ProfileAvatar } from '../components/ProfileAvatar';
+import { useSession } from 'next-auth/react';
 
 type SidebarOption = {
   icon: React.ElementType,
@@ -18,6 +18,8 @@ const Board = ({ children }: { children: ReactNode }) => {
   const { Header, Sider } = Layout;
   const router = useRouter();
   const [collapsed, setCollapsed] = React.useState(true);
+
+  const session = useSession();
 
   const sidebarOptions: SidebarOption[] = [
     {
@@ -63,7 +65,9 @@ const Board = ({ children }: { children: ReactNode }) => {
     <Layout >
       <Header className="flex justify-between items-center px-6 py-0 border-bottom" style={{ backgroundColor: colorBgContainer }}>
         <Image src="/logo.svg" width={32} height={32} alt={'logo'} />
-        <Button type="dashed" onClick={() => { void signOut() }}>Logout</Button>
+        {
+          session.data?.user && <ProfileAvatar user={session.data?.user} />
+        }
       </Header>
       <Layout hasSider style={{ backgroundColor: colorBgContainer }}>
         <Sider color={colorBgContainer} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} defaultCollapsed={true} className='h-100 mt-4' theme='light' style={{ backgroundColor: colorBgContainer }}>

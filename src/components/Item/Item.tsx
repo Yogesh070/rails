@@ -1,9 +1,8 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import classNames from 'classnames';
 
-import { Button } from 'antd';
+import {Button, theme} from 'antd';
 import CustomDivider from '../CustomDivider/CustomDivider';
-import LabelIndicator from '../LabelIndicator/LabelIndicator';
 
 import {
   EllipsisHorizontalIcon,
@@ -12,16 +11,21 @@ import {
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
 
-import type { Issue } from '@prisma/client';
-import type { DraggableSyntheticListeners } from '@dnd-kit/core';
-import type { Transform } from '@dnd-kit/utilities';
+import type {Issue} from '@prisma/client';
+import type {DraggableSyntheticListeners} from '@dnd-kit/core';
+import type {Transform} from '@dnd-kit/utilities';
 
 import styles from './Item.module.scss';
 import dynamic from 'next/dynamic';
+import Handle from '../Handle/Handle';
+import Remove from '../Remove/Remove';
+import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
 });
+
+const {useToken} = theme;
 
 export interface Props {
   dragOverlay?: boolean;
@@ -90,6 +94,8 @@ const Item = React.memo(
         };
       }, [dragOverlay]);
 
+      const {token} = useToken();
+
       return (
         <li
           className={classNames(
@@ -117,6 +123,7 @@ const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               '--index': index,
+              backgroundColor: token.colorBgElevated,
             } as React.CSSProperties
           }
           ref={ref}
@@ -139,29 +146,36 @@ const Item = React.memo(
               showModal();
             }}
           >
-            <div className="flex justify-between">
-              <div className="flex items-center gap-1-2-3">
-                <LabelIndicator color="red" />
-                <LabelIndicator color="green" />
-                <LabelIndicator color="purple" />
+            <>
+              <div className="flex justify-between">
+                <div className="flex items-center gap-1-2-3">
+                  <LabelIndicator color="red" />
+                  <LabelIndicator color="green" />
+                  <LabelIndicator color="purple" />
+                </div>
+                <span className={styles.Actions}>
+                  {onRemove ? (
+                    <Remove className={styles.Remove} onClick={onRemove} />
+                  ) : null}
+                  {handle ? <Handle {...handleProps} {...listeners} /> : null}
+                </span>
+                <Button
+                  icon={<EllipsisHorizontalIcon height={20} color="#8C8C8C" />}
+                  size="small"
+                  type="text"
+                />
               </div>
-
-              <Button
-                icon={<EllipsisHorizontalIcon height={20} color="#8C8C8C" />}
-                size="small"
-                type="text"
-              />
-            </div>
-            <p className="m-0"> {item.title}</p>
-            <CustomDivider className="mb-1" />
-            <div className="flex flex-end gap-1-2-3 py-1">
-              <PaperClipIcon height={14} color="#8C8C8C" />
-              <FlagIcon height={14} color="#8C8C8C" />
-              <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
-            </div>
+              <p className="m-0"> {item.title}</p>
+              <CustomDivider className="mb-1" />
+              <div className="flex flex-end gap-1-2-3 py-1">
+                <PaperClipIcon height={14} color="#8C8C8C" />
+                <FlagIcon height={14} color="#8C8C8C" />
+                <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+              </div>
+            </>
           </div>
           <Suspense fallback={<div>Loading...</div>}>
-              <ItemDetailsModal
+            <ItemDetailsModal
               open={isModalOpen}
               title={item.title}
               item={item}

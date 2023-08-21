@@ -3,8 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_PRISMA_URL") // uses connection pooling
+  directUrl         = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("DATABASE_URL_NON_POOLING")
 }
 
 model Account {
@@ -39,19 +41,19 @@ model User {
   email                   String?         @unique
   emailVerified           Boolean?        @default(false)
   image                   String?
+  workspaceId             String?
   accounts                Account[]
   checkListItems          CheckListItem[]
   comments                Comment[]
   createdIssues           Issue[]         @relation("createdBy")
+  defaultAssigneeProjects Project[]       @relation("defaultAssignee")
   leadProjects            Project[]
   sessions                Session[]
-  issue                   Issue[]
-  userActions             UserActions[]
-  projects                Project[]       @relation("projectMembers")
-  defaultAssigneeProjects Project[]       @relation("defaultAssignee")
-  workspace               Workspace[]     @relation("createdBy")
   Workspace               Workspace?      @relation(fields: [workspaceId], references: [id])
-  workspaceId             String?
+  userActions             UserActions[]
+  workspace               Workspace[]     @relation("createdBy")
+  issue                   Issue[]         @relation("IssueToUser")
+  projects                Project[]       @relation("projectMembers")
 }
 
 model VerificationToken {
@@ -70,11 +72,11 @@ model Workspace {
   website     String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  members     User[]
-  projects    Project[]
-  createdBy   User      @relation("createdBy", fields: [createdById], references: [id])
   createdById String
   color       String
+  projects    Project[]
+  members     User[]
+  createdBy   User      @relation("createdBy", fields: [createdById], references: [id])
 }
 
 model Project {
@@ -85,16 +87,16 @@ model Project {
   viewType          ViewType      @default(KANBAN_BOARD)
   status            ProjectStatus @default(ACTIVE)
   projectLeadId     String
+  defaultAssigneeId String?
+  workspaceId       String?
+  labels            Label[]
+  defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
   projectLead       User          @relation(fields: [projectLeadId], references: [id])
+  Workspace         Workspace?    @relation(fields: [workspaceId], references: [id])
+  sprints           Sprint[]
   userActions       UserActions[]
   workflows         WorkFlow[]
   members           User[]        @relation("projectMembers")
-  defaultAssigneeId String?
-  defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
-  labels            Label[]
-  Workspace         Workspace?    @relation(fields: [workspaceId], references: [id])
-  workspaceId       String?
-  sprints            Sprint[]
 }
 
 model WorkFlow {
@@ -109,15 +111,15 @@ model WorkFlow {
 }
 
 model Label {
-  id        String   @id @default(cuid())
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  color     String
-  issueId   String?
-  issue     Issue?   @relation(fields: [issueId], references: [id])
-  Project   Project? @relation(fields: [projectId], references: [id])
-  projectId String?
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  color       String
+  projectId   String?
+  issues      Issue[]
+  Project     Project? @relation(fields: [projectId], references: [id])
 }
 
 model Issue {
@@ -132,16 +134,16 @@ model Issue {
   flagged      Boolean     @default(false)
   dueDate      DateTime?
   issueId      String?
+  sprintId     String?
   checkLists   CheckList[]
   comments     Comment[]
   createdBy    User        @relation("createdBy", fields: [createdById], references: [id])
   issue        Issue?      @relation("linkedIssues", fields: [issueId], references: [id])
   linkedIssues Issue[]     @relation("linkedIssues")
+  sprint       Sprint?     @relation(fields: [sprintId], references: [id])
   workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id], onDelete: Cascade)
   labels       Label[]
-  assignees    User[]
-  sprint       Sprint?     @relation(fields: [sprintId], references: [id])
-  sprintId     String?
+  assignees    User[]      @relation("IssueToUser")
 }
 
 model Comment {
@@ -187,6 +189,21 @@ model UserActions {
   projectId String?
   project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Sprint {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  title       String
+  startDate   DateTime?
+  endDate     DateTime?
+  projectId   String
+  goal        String?
+  isCompleted Boolean   @default(false)
+  hasStarted  Boolean   @default(false)
+  issues      Issue[]
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 enum ProjectType {
@@ -244,19 +261,4 @@ enum Action {
   REMOVED_DEADLINE_FROM_CHECKLISTITEM
   ADDED_A_CHECKLIST_TO_ISSUE
   REMOVED_A_CHECKLIST_FROM_ISSUE
-}
-
-model Sprint {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  startDate DateTime?
-  endDate   DateTime?
-  projectId String
-  goal      String?
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  issues    Issue[]
-  isCompleted Boolean @default(false)
-  hasStarted  Boolean @default(false)
 }

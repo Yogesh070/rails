@@ -1,8 +1,8 @@
 import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
-import type { UniqueIdentifier} from '@dnd-kit/core';
+import type {UniqueIdentifier} from '@dnd-kit/core';
 import {DndContext} from '@dnd-kit/core';
-import {Button, Avatar, Skeleton, Segmented} from 'antd';
+import {Button, Avatar, Skeleton, Segmented, Typography} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
 import NoSSR from '../../../../../components/NoSSR';
@@ -22,6 +22,8 @@ const WorkflowContainers = dynamic(
   {ssr: false}
 );
 
+const {Text} = Typography;
+
 const SingleProject = () => {
   const router = useRouter();
   const {projectId} = router.query;
@@ -33,19 +35,6 @@ const SingleProject = () => {
   const projectQuery = api.project.getProjectById.useQuery({
     id: projectId as string,
   });
-
-  React.useEffect(() => {
-    if (projectQuery.isSuccess) {
-      setProject(projectQuery.data!);
-    }
-  }, [projectQuery.isSuccess]);
-
-  React.useEffect(() => {
-    if (workflowQuery.isSuccess) {
-      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
-    }
-  }, [workflowQuery.isSuccess]);
-
   const setProject = useProjectStore((state) => state.setProject);
   const setProjectWorkflows = useProjectStore(
     (state) => state.setProjectWorkflows
@@ -54,24 +43,44 @@ const SingleProject = () => {
   const project = useProjectStore((state) => state.project);
   const workflow = useProjectStore((state) => state.workflows);
 
+  React.useEffect(() => {
+    if (projectQuery.isSuccess) {
+      setProject(projectQuery.data!);
+    }
+  }, [setProject,projectQuery.data, projectQuery.isSuccess, ]);
+
+  React.useEffect(() => {
+    if (workflowQuery.isSuccess) {
+      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
+    }
+  }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
+
   const convertWorkFlowsToRecord = useCallback(
     (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
       const records: Record<UniqueIdentifier, Issue[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.id] = workflow.issue;
+        records[workflow.title] = workflow.issue;
       });
       return records;
-    }
-  ,[]);
+    },
+    []
+  );
+
+  const [boardLayout, setBoardLayout] = React.useState(true);
 
   return (
     <NoSSR>
       <div className="flex items-center justify-between">
-        <Skeleton loading={projectQuery.isLoading} active paragraph={{rows:0,width:8}}>
-          <h1>{projectQuery.data?.name}</h1>
+        <Skeleton
+          loading={projectQuery.isLoading}
+          active
+          paragraph={{rows: 0, width: 8}}
+        >
+          <Text strong>{projectQuery.data?.name}</Text>
         </Skeleton>
         <div className="flex items-center gap-1-2 justify-between">
           <Segmented
+            value={boardLayout ? 'Kanban' : 'List'}
             options={[
               {
                 value: 'List',
@@ -82,7 +91,13 @@ const SingleProject = () => {
                 icon: <AppstoreOutlined rev={undefined} />,
               },
             ]}
-            onChange={(value) => console.log(value)}
+            onChange={(value) => {
+              if (value === 'Kanban') {
+                setBoardLayout(true);
+              } else {
+                setBoardLayout(false);
+              }
+            }}
           />
           <Skeleton loading={projectQuery.isLoading} active paragraph>
             <div className="flex items-center gap-1-2">
@@ -111,7 +126,8 @@ const SingleProject = () => {
           <Skeleton loading={workflowQuery.isLoading} active paragraph>
             <WorkflowContainers
               items={convertWorkFlowsToRecord(workflow)}
-              scrollable
+              scrollable={false}
+              vertical={!boardLayout}
             />
           </Skeleton>
         </Suspense>

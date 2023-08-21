@@ -37,7 +37,7 @@ const Settings = () => {
         color: workspaceDetails.data?.color,
       });
     }
-  }, [workspaceDetails.isSuccess]);
+  }, [form, workspaceDetails.data?.color, workspaceDetails.data?.description, workspaceDetails.data?.name, workspaceDetails.data?.website, workspaceDetails.isSuccess]);
 
   //TODO: Handle null values as initial values on input fields
   const {mutate: updateWorkspace, isLoading: isUpdating} =
@@ -198,7 +198,7 @@ const SubmitButton = ({
         setSubmittable(false);
       }
     );
-  }, [values]);
+  }, [form, initialValues, values]);
 
   return (
     <Button

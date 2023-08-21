@@ -1,17 +1,30 @@
-import { create } from 'zustand'
-import type { RouterOutputs } from '../utils/api';
+import {create} from 'zustand';
+import type {RouterOutputs} from '../utils/api';
+import {devtools} from 'zustand/middleware';
 
-type Workspace = RouterOutputs['workspace']['getWorkspaceByShortName'];
+type Workspace = RouterOutputs['workspace']['getWorkspaces'][0];
+
+type WorkspaceWithProject =
+  RouterOutputs['workspace']['getWorkspaceByShortName'];
 
 type State = {
-    workspace: Workspace | null,
-}
+  workspaces: Workspace[];
+  currentWorkspace: WorkspaceWithProject | null;
+};
 
 type Action = {
-    setWorkspace: (workspace: Workspace) => void,
-}
+  setWorkspaces: (workspaces: Workspace[]) => void;
+  addWorkspace: (workspace: Workspace) => void;
+  setCurrentWorkspace: (workspace: WorkspaceWithProject) => void;
+};
 
-export const useWorkspaceStore = create<State & Action>()((set) => ({
-    workspace: null,
-    setWorkspace: (workspace) => set({ workspace }),
-}));
+export const useWorkspaceStore = create<State & Action>()(
+  devtools((set) => ({
+    workspaces: [],
+    currentWorkspace: null,
+    setWorkspaces: (workspaces) => set({workspaces}),
+    addWorkspace: (workspace) =>
+      set((state) => ({workspaces: [...state.workspaces, workspace]})),
+    setCurrentWorkspace: (workspace) => set({currentWorkspace: workspace}),
+  }))
+);
