@@ -143,7 +143,6 @@ const BacklogItem = (props: Props) => {
           key="btn"
         >
           <Button
-            type="ghost"
             icon={<MoreOutlined />}
             onClick={(event) => {
               event.stopPropagation();

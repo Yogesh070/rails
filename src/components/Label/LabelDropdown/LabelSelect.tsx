@@ -5,10 +5,12 @@ import {PlusOutlined} from '@ant-design/icons';
 import { Input, Select, Space, Button} from 'antd';
 
 import type {InputRef} from 'antd';
-import {api} from '../../utils/api';
-import {useProjectStore} from '../../store/project.store';
+import {api} from '../../../utils/api';
+import {useProjectStore} from '../../../store/project.store';
 import type {Label} from '@prisma/client';
-import CustomDivider from '../CustomDivider/CustomDivider';
+import CustomDivider from '../../CustomDivider/CustomDivider';
+
+const {Option} = Select;
 
 const LabelSelect = () => {
   const [items, setItems] = useState<Label[]>([]);
@@ -24,7 +26,7 @@ const LabelSelect = () => {
   ) => {
     e.preventDefault();
     createLable({
-      title: name,
+      title: ' new name',
       color: '#a123ff',
       projectId: project?.id as string,
     });
@@ -62,15 +64,23 @@ const LabelSelect = () => {
       placeholder="None"
       dropdownRender={(menu) => (
         <>
+            <Option value="china" label="China">
+      <Space>
+        <span role="img" aria-label="China">
+          🇨🇳
+        </span>
+        China (中国)
           {menu}
+      </Space>
+    </Option>
           <CustomDivider className='mb-2'/>
-          <Space style={{padding: '0 8px 4px'}}>
-            <Input
+          {/* <Space style={{padding: '0 8px 4px'}}> */}
+            {/* <Input
               placeholder="Label"
               ref={inputRef}
               value={name}
               onChange={onNameChange}
-            />
+            /> */}
             <Button
               type="dashed"
               icon={<PlusOutlined rev={undefined} />}
@@ -79,7 +89,7 @@ const LabelSelect = () => {
             >
               Add
             </Button>
-          </Space>
+          {/* </Space> */}
         </>
       )}
       options={items.map((item) => ({label: item.title, value: item.title}))}

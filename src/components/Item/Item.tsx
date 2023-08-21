@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import {Button, theme} from 'antd';
 import CustomDivider from '../CustomDivider/CustomDivider';
-import LabelIndicator from '../LabelIndicator/LabelIndicator';
 
 import {
   EllipsisHorizontalIcon,
@@ -20,6 +19,7 @@ import styles from './Item.module.scss';
 import dynamic from 'next/dynamic';
 import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
+import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
