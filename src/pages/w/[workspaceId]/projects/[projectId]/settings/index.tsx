@@ -1,23 +1,23 @@
 import React from 'react';
-import Board from '../../../../../../layout/Board';
-import { Button, Input, Form, Select, Badge, Breadcrumb, message, Skeleton } from 'antd';
+import { Button, Input, Form, Select, Badge, message, Skeleton, Typography } from 'antd';
 import { api } from '../../../../../../utils/api';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import AddUserPopUp from '../../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
 import CustomDivider from '../../../../../../components/CustomDivider/CustomDivider';
-import Link from 'next/link';
 import { ProjectStatus } from '@prisma/client'
-import { HomeOutlined } from '@ant-design/icons';
 
 import type { FormInstance } from 'antd/lib/form/Form';
 import type { User } from '@prisma/client';
+import SettingsLayout from '../../../../../../layout/SettingsLayout';
 
 type FormInitialValues = {
   name: string | undefined;
   projectLead: string | undefined;
   defaultAssignee: string | undefined | null;
 };
+
+const { Text, Title } = Typography;
 
 const Settings = () => {
 
@@ -86,30 +86,13 @@ const Settings = () => {
   return (
     <>
       <Skeleton active loading={projectDetails.isLoading} avatar>
-        <Breadcrumb
-          items={[
-            {
-              title: <Link href='/w/home'><HomeOutlined rev={undefined} /></Link>,
-            },
-            {
-              title: (
-                <Link href={`/w/${workspaceId}/projects/${projectId}`}>
-                  <span>{projectDetails.data?.name}</span>
-                </Link>
-              ),
-            },
-            {
-              title: 'Settings',
-            },
-          ]}
-        />
-        <div className="flex justify-between my-3">
+        <div className="flex justify-between">
           <div className="flex gap-1 ">
             <Image src="/logo.svg" width={64} height={64} alt={'dp'} priority />
             <div className='flex flex-col gap-1-2 justify-between'>
-              <h1>{projectDetails.data?.name} {projectDetails.data?.status == ProjectStatus.ACTIVE ? <Badge status="success" /> :
+              <Title level={5} >{projectDetails.data?.name} {projectDetails.data?.status == ProjectStatus.ACTIVE ? <Badge status="success" /> :
                 <Badge status="error" />}
-              </h1>
+              </Title>
               <Button type="default" size='middle'>Change Icon</Button>
             </div>
           </div>
@@ -157,12 +140,12 @@ const Settings = () => {
             />
           </Form.Item>
         </Form>
-        <CustomDivider className='my-4' />
+        <CustomDivider />
         <div className="flex items-center justify-between flex-wrap gap-1-2">
           <div>
-            <h1>Danger Zone</h1>
-            <p>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
-            </p>
+            <Title level={5}>Danger Zone</Title>
+            <Text>When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.
+            </Text>
           </div>
           <Button type="primary" danger onClick={handleProjectDelete} loading={isDeleting}>
             Delete Project
@@ -173,10 +156,9 @@ const Settings = () => {
   );
 };
 
-
 Settings.getLayout = function getLayout(page: React.ReactElement) {
   return (
-    <Board>{page}</Board>
+    <SettingsLayout>{page}</SettingsLayout>
   )
 }
 export default Settings

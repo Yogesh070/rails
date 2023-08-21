@@ -18,7 +18,7 @@ import {api} from '../../utils/api';
 import Checklist from '../Checklist/Checklist';
 import {useProjectStore} from '../../store/project.store';
 import {useState} from 'react';
-import LabelSelect from '../LabelDropdown/LabelSelect';
+import LabelSelect from '../Label/LabelDropdown/LabelSelect';
 import dayjs from 'dayjs';
 
 import React from 'react';
@@ -247,7 +247,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   }
                   options={[
                     {
-                      value: null,
+                      value: undefined,
                       label: 'Unassigned',
                     },
                     ...userOptions,
