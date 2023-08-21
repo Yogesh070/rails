@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_PRISMA_URL") // uses connection pooling
-  directUrl = env("DATABASE_URL_NON_POOLING") // uses a direct connection
+  provider          = "postgresql"
+  url               = env("DATABASE_PRISMA_URL") // uses connection pooling
+  directUrl         = env("DATABASE_URL_NON_POOLING") // uses a direct connection
   shadowDatabaseUrl = env("DATABASE_URL_NON_POOLING")
 }
 
@@ -111,15 +111,15 @@ model WorkFlow {
 }
 
 model Label {
-  id        String   @id @default(cuid())
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  color     String
-  issueId   String?
-  projectId String?
-  issue     Issue?   @relation(fields: [issueId], references: [id])
-  Project   Project? @relation(fields: [projectId], references: [id])
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  color       String
+  projectId   String?
+  issues      Issue[]
+  Project     Project? @relation(fields: [projectId], references: [id])
 }
 
 model Issue {
