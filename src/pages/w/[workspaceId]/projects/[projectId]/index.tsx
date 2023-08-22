@@ -6,7 +6,7 @@ import {Button, Avatar, Skeleton, Segmented, Typography} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
 import NoSSR from '../../../../../components/NoSSR';
-import Board from '../../../../../layout/Board';
+import ProjectLayout from '../../../../../layout/ProjectLayout';
 import {api} from '../../../../../utils/api';
 import {useRouter} from 'next/router';
 import AddUserPopUp from '../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
@@ -137,7 +137,7 @@ const SingleProject = () => {
 };
 
 SingleProject.getLayout = (page: React.ReactElement) => {
-  return <Board>{page}</Board>;
+  return <ProjectLayout>{page}</ProjectLayout>;
 };
 
 export default SingleProject;

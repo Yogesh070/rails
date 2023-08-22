@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import Board from '../../../../../../layout/Board';
+import ProjectLayout from '../../../../../../layout/ProjectLayout';
 import {
   Button,
   Collapse,
@@ -324,7 +324,7 @@ const Backlog = () => {
 };
 
 Backlog.getLayout = function getLayout(page: React.ReactElement) {
-  return <Board>{page}</Board>;
+  return <ProjectLayout>{page}</ProjectLayout>;
 };
 
 export default Backlog;
