@@ -170,7 +170,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
             <div className="flex flex-col gap-1-2">
               <div>
                 <Text>Labels</Text>
-                <LabelSelect />
+                <LabelSelect/>
               </div>
               {props.item.dueDate ? (
                 <div>

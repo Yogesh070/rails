@@ -9,8 +9,7 @@ type Label = RouterOutputs['project']['getProjectLabels'][number];
 
 type State = {
     project: Project | null,
-    workflows : ProjectWorkflowWithIssues[],
-    labels : Label[],
+    workflows: ProjectWorkflowWithIssues[],
 }
 
 type Action = {
@@ -21,15 +20,14 @@ type Action = {
     addLabel: (label: Label) => void,
     deleteLabel: (labelId: String) => void,
     editLabel: (label: Label) => void,
-    setChecklist: (workflowId:string ,issueId: string, checklist: CheckList[]) => void,
-    setComment: (workflowId:string ,issueId: string, comment: Comment[]) => void,
-    deleteComment : (workflowId:string ,issueId: string, commentId: string) => void,
+    setChecklist: (workflowId: string, issueId: string, checklist: CheckList[]) => void,
+    setComment: (workflowId: string, issueId: string, comment: Comment[]) => void,
+    deleteComment: (workflowId: string, issueId: string, commentId: string) => void,
 }
 
 export const useProjectStore = create<State & Action>()((set) => ({
     project: null,
     workflows: [],
-    labels: [],
     setProject: (project) => set({ project }),
     setProjectWorkflows: (workflows) => set({ workflows }),
     addIssueToWorkflow(workflowId, issue) {
@@ -46,22 +44,42 @@ export const useProjectStore = create<State & Action>()((set) => ({
         }));
     },
     setLabels(labels) {
-        set({ labels });
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels,
+            }
+        }));
     },
     addLabel(label) {
-        set((state) => ({ labels: [...state.labels, label] }));
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels: [...state.project!.labels, label]
+            }
+        }));
     },
     deleteLabel(labelId) {
-        set((state) => ({ labels: state.labels.filter((l) => l.id !== labelId) }));
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels: state.project!.labels.filter((l) => l.id !== labelId)
+            }
+
+        }));
     },
     editLabel(label) {
         set((state) => ({
-            labels: state.labels.map((l) => {
-                if (l.id === label.id) {
-                    return label;
+            project: {
+                ...state.project!,
+                labels: state.project!.labels.map((l) => {
+                    if (l.id === label.id) {
+                        return label;
+                    }
+                    return l;
                 }
-                return l;
-            }),
+                ),
+            }
         }));
     },
     setChecklist(workFlowId, issueId, checklist) {

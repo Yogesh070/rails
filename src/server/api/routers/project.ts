@@ -43,7 +43,15 @@ export const projectRouter = createTRPCRouter({
                 members: true,
                 projectLead : true,
                 defaultAssignee: true,
-                labels: true,
+                labels: {
+                    include:{
+                        issues:{
+                            select:{
+                                _count:true,
+                            }
+                        }
+                    }
+                },
             }
         });
     }

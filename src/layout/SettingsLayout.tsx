@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from './Board';
+import ProjectLayout from './ProjectLayout';
 
 import type {ReactNode} from 'react';
 import {Button, Divider, Typography} from 'antd';
@@ -27,7 +27,7 @@ const SettingsLayout = ({children}: {children: ReactNode}) => {
   const router = useRouter();
   return (
     <>
-      <Board>
+      <ProjectLayout>
         <Title level={4} className='mb-0'>Settings</Title>
         <div className="flex gap-1-2">
           {settingsOptions.map((option, index) => {
@@ -56,7 +56,7 @@ const SettingsLayout = ({children}: {children: ReactNode}) => {
         </div>
         <Divider dashed className="my-1" />
         {children}
-      </Board>
+      </ProjectLayout>
     </>
   );
 };

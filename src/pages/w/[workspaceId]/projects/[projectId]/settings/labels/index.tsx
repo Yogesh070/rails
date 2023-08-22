@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import {Button, Form, Modal, Table, Tag, Typography} from 'antd';
 import type {ColumnsType} from 'antd/es/table';
 
 import type {RouterOutputs} from '../../../../../../../utils/api';
 import {api} from '../../../../../../../utils/api';
-import {useRouter} from 'next/router';
 import SettingsLayout from '../../../../../../../layout/SettingsLayout';
 
 import {useProjectStore} from '../../../../../../../store/project.store';
@@ -17,12 +16,6 @@ const {Title, Text} = Typography;
 type Label = RouterOutputs['project']['getProjectLabels'][number];
 
 const Labels = () => {
-  const router = useRouter();
-  const {projectId} = router.query;
-  const labelQuery = api.project.getProjectLabels.useQuery({
-    projectId: projectId as string,
-  });
-
   const [form] = Form.useForm();
 
   const [isFormVisible, setIsFormVisible] = React.useState(false);
@@ -43,13 +36,7 @@ const Labels = () => {
     setIsModalOpen(false);
   };
 
-  const {deleteLabel ,setLabels,labels} = useProjectStore();
-
-  useEffect(() => {
-    if (labelQuery.isSuccess) {
-      setLabels(labelQuery.data);
-    }
-  }, [labelQuery.data, labelQuery.isSuccess, setLabels]);
+  const {deleteLabel, project} = useProjectStore();
 
   const {mutate: deleteLabelAPI, isLoading: isDeleting} =
     api.project.deleteProjectLabel.useMutation({
@@ -138,10 +125,9 @@ const Labels = () => {
       )}
       <Table
         columns={columns}
-        dataSource={labels}
+        dataSource={project!.labels}
         size="small"
         rowKey="id"
-        loading={labelQuery.isLoading}
       />
       <Modal
         title="Edit Label"
