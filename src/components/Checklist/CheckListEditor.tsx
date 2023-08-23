@@ -79,7 +79,6 @@ const CheckListEditor = (props: {
                     Add
                   </Button> */}
                 <Button
-                  type="ghost"
                   onClick={() => {
                     setIsOnFocus(false);
                   }}
@@ -89,14 +88,12 @@ const CheckListEditor = (props: {
               </div>
               <div className="flex gap-1-2">
                 <Button
-                  type="ghost"
                   className="flex items-center p-0"
                   icon={<UserPlusIcon width={16} />}
                 >
                   Assign
                 </Button>
                 <Button
-                  type="ghost"
                   className="flex items-center p-0"
                   icon={<ClockIcon width={16} />}
                 >

@@ -60,11 +60,11 @@ const Checklist = (props: CheckList) => {
     if (checkListItemsQuery.isSuccess) {
       setChecklistItems(checkListItemsQuery.data);
     }
-  }, [checkListItemsQuery.isSuccess]);
+  }, [checkListItemsQuery.data, checkListItemsQuery.isSuccess]);
 
   React.useEffect(() => {
     setPercent(calculateChecklistProgress());
-  }, [checklistItems]);
+  }, [calculateChecklistProgress, checklistItems]);
 
   return (
     <div>
@@ -105,7 +105,6 @@ const Checklist = (props: CheckList) => {
                 <p className={item.checked ? 'line-through': '' } >{item.title}</p>
               </Checkbox>
               <Button
-                type="ghost"
                 className="p-0 flex items-center justify-center"
                 icon={<TrashIcon height={16} />}
                 loading={isDeleting}

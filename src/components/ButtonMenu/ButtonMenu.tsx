@@ -25,7 +25,6 @@ const ButtonMenu = (props: Props) => {
           title={props.title}
           extra={
             <Button
-              type="ghost"
               size="small"
               icon={<CloseOutlined />}
               onClick={() => {
