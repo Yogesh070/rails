@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Checkbox, Form, Input, Typography} from 'antd';
+import {Button, Checkbox, Form, Input, Layout, Typography} from 'antd';
 import {z} from 'zod';
 import type {ValidateErrorEntity} from 'rc-field-form/lib/interface';
 import {signIn} from 'next-auth/react';
@@ -25,7 +25,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center flex-col">
+    <Layout className="flex min-h-screen items-center justify-center flex-col">
       <Title level={1} className="text-2xl font-bold mb-4">
         Sign In
       </Title>
@@ -77,7 +77,7 @@ const SignIn = () => {
           </Button>
         </div>
       </Form>
-    </div>
+    </Layout>
   );
 };
 

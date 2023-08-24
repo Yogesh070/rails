@@ -4,7 +4,7 @@ import {Button, Input, Form, Typography, message, ColorPicker} from 'antd';
 import {useRouter} from 'next/router';
 
 import type {FormInstance} from 'antd/lib/form/Form';
-import AddUserPopUp from '../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import AddUserPopUp from '../../../components/AddUserPopUp/AddUserPopUp';
 import CustomDivider from '../../../components/CustomDivider/CustomDivider';
 import {api} from '../../../utils/api';
 

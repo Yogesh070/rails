@@ -9,7 +9,7 @@ import NoSSR from '../../../../../components/NoSSR';
 import ProjectLayout from '../../../../../layout/ProjectLayout';
 import {api} from '../../../../../utils/api';
 import {useRouter} from 'next/router';
-import AddUserPopUp from '../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import AddUserPopUp from '../../../../../components/AddUserPopUp/AddUserPopUp';
 
 import type {Issue, WorkFlow} from '@prisma/client';
 import {useProjectStore} from '../../../../../store/project.store';
@@ -59,7 +59,7 @@ const SingleProject = () => {
     (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
       const records: Record<UniqueIdentifier, Issue[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.title] = workflow.issue;
+        records[workflow.id] = workflow.issue;
       });
       return records;
     },

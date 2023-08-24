@@ -16,7 +16,7 @@ interface ProjectTemplate {
     description: string
 }
 
-const { Title, Text, Paragraph } = Typography;
+const { Text, Paragraph } = Typography;
 
 const CreateProject = () => {
     const router = useRouter();
@@ -121,7 +121,7 @@ export default CreateProject;
 const TemplateCard = (props: ProjectTemplate) => {
     return (
         <div className='flex gap-1-2 flex-1 w-100 h-100  max-w-sm shadow-md'>
-            <Col span={6}> <Image src={`/project_type/${props.name}.webp`} alt='type' className='p-3' fill style={{ objectFit: "contain" }} /></Col>
+            <Col span={6}> <Image src={`/project_type/${props.name}.webp`} alt='type' className='p-3'  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" fill style={{ objectFit: "contain" }} /></Col>
             <Col span={18} className='px-2 py-2'>
                 <Text strong>{props.name}</Text>
                 <div>

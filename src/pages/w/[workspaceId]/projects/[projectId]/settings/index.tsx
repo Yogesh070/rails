@@ -3,7 +3,7 @@ import { Button, Input, Form, Select, Badge, message, Skeleton, Typography } fro
 import { api } from '../../../../../../utils/api';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import AddUserPopUp from '../../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import AddUserPopUp from '../../../../../../components/AddUserPopUp/AddUserPopUp';
 import CustomDivider from '../../../../../../components/CustomDivider/CustomDivider';
 import { ProjectStatus } from '@prisma/client'
 
