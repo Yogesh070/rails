@@ -7,6 +7,7 @@ import CustomDivider from '../../../components/CustomDivider/CustomDivider';
 import { useWorkspaceStore } from '../../../store/workspace.store';
 
 import { CloseOutlined } from '@ant-design/icons';
+import AddUserPopUp from '../../../components/AddUserPopUp/AddUserPopUp';
 
 type Member = {
   image: string | null;
@@ -44,7 +45,7 @@ const Members = () => {
           <Title level={5} className="m-0">Invite members to join you</Title>
           <Paragraph className="m-0">Anyone with an invite link can join this Free Workspace. You can also disable and create a new invite link for this Workspace at any time.</Paragraph>
         </div>
-        <Button >Invite With Link</Button>
+        <AddUserPopUp/>
       </div>
       <Table columns={columns} dataSource={currentWorkspace?.members} size="small"
         className='mt-4'

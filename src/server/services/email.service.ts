@@ -22,7 +22,7 @@ const sendEmail = async (to: string, subject: string, text: string): Promise<any
 const sendInviteEmail = async (to: string, token: string): Promise<any> => {
   const subject = 'Invitation to join a workspace';
   // replace this url with the link to the invitation page of your front-end app
-  const invitationUrl = `http://link-to-app/invite?token=${token}`;
+  const invitationUrl = `http://localhost:3000/invite?token=${token}`;
   const text = `Dear user,
   You have been invited to join a workspace. To accept the invitation, click on this link: ${invitationUrl}
   If you did not request any invitations, then ignore this email.`;
