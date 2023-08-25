@@ -22,7 +22,7 @@ const CreateProject = () => {
     const router = useRouter();
     const { workspaceId } = router.query;
 
-    const { mutate: createProject } = api.project.createProject.useMutation({
+    const { mutate: createProject,isLoading } = api.project.createProject.useMutation({
         onSuccess: (data) => {
             void router.push(`/w/${workspaceId}/projects/${data.id}`);
         },
@@ -60,7 +60,7 @@ const CreateProject = () => {
 
     return (
         <>
-            <Text >Explore what&apos;s possible when you collaborate with your team. Edit project details anytime in project settings.</Text>
+            <Text>Explore what&apos;s possible when you collaborate with your team. Edit project details anytime in project settings.</Text>
             <div className="mt-1">
                 <Form
                     name="basic"
@@ -98,7 +98,7 @@ const CreateProject = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" size="middle">
+                        <Button type="primary" htmlType="submit" size="middle" loading={isLoading}>
                             Create Project
                         </Button>
                     </Form.Item>

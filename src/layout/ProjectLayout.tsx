@@ -46,11 +46,9 @@ const ProjectLayout = ({ children }: { children: ReactNode }) => {
   ];
 
 
-  const sidebarMenu: MenuProps['items'] = sidebarOptions.map(
-    (option, index) => {
-      const key = String(index + 1);
+  const sidebarMenu: MenuProps['items'] = sidebarOptions.map((option) => {
       return {
-        key: `sub${key}`,
+        key: option.route,
         icon: React.createElement(option.icon),
         label: option.label,
         onClick: async () => {
@@ -76,8 +74,7 @@ const ProjectLayout = ({ children }: { children: ReactNode }) => {
             <Sider color={colorBgContainer} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} defaultCollapsed={true} className='h-100 mt-4' theme='light' style={{ backgroundColor: colorBgContainer }}>
               <Menu
                 mode="inline"
-                defaultSelectedKeys={['sub1']}
-                defaultOpenKeys={['sub1']}
+                defaultSelectedKeys={[router.pathname.split('/')[5] ?? '']}
                 items={sidebarMenu}
                 className='p-2'
               />

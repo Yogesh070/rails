@@ -33,7 +33,6 @@ const WorkSpace = () => {
       render: (text, record) => {
         return (
           <Avatar size="small">
-            {' '}
             {record.projectLead?.image ? (
               <Image
                 src={text || '/logo.svg'}
