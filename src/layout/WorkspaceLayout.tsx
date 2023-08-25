@@ -12,6 +12,7 @@ import {useRouter} from 'next/router';
 import React from 'react';
 import Image from 'next/image';
 import CustomDivider from '../components/CustomDivider/CustomDivider';
+import WorkspaceWrapper from './WorkspaceWrapper';
 
 type SidebarOption = {
   icon: React.ElementType;
@@ -53,10 +54,9 @@ const WorkSpaceLayout = ({children}: {children: ReactNode}) => {
   ];
 
   const sidebarMenu: MenuProps['items'] = sidebarOptions.map(
-    (option, index) => {
-      const key = String(index + 1);
+    (option) => {
       return {
-        key: `sub${key}`,
+        key: option.route,
         icon: React.createElement(option.icon),
         label: option.label,
         onClick: async () => {
@@ -93,8 +93,7 @@ const WorkSpaceLayout = ({children}: {children: ReactNode}) => {
         >
           <Menu
             mode="inline"
-            defaultSelectedKeys={['sub1']}
-            defaultOpenKeys={['sub1']}
+            defaultSelectedKeys={[router.pathname.split('/')[3]!]}
             items={sidebarMenu}
             className="p-2"
           />
@@ -106,7 +105,9 @@ const WorkSpaceLayout = ({children}: {children: ReactNode}) => {
             backgroundColor: colorBgContainer,
           }}
         >
-          {children}
+          <WorkspaceWrapper>
+            {children}
+          </WorkspaceWrapper>
         </Layout>
       </Layout>
     </Layout>

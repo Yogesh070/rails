@@ -37,7 +37,14 @@ const Settings = () => {
         color: workspaceDetails.data?.color,
       });
     }
-  }, [form, workspaceDetails.data?.color, workspaceDetails.data?.description, workspaceDetails.data?.name, workspaceDetails.data?.website, workspaceDetails.isSuccess]);
+  }, [
+    form,
+    workspaceDetails.data?.color,
+    workspaceDetails.data?.description,
+    workspaceDetails.data?.name,
+    workspaceDetails.data?.website,
+    workspaceDetails.isSuccess,
+  ]);
 
   //TODO: Handle null values as initial values on input fields
   const {mutate: updateWorkspace, isLoading: isUpdating} =
@@ -78,13 +85,17 @@ const Settings = () => {
   };
   return (
     <>
-      <Title level={5} className="m-0">
-        Workspace Settings
-      </Title>
-      <Paragraph className="m-0">
-        This information will be displayed to every member of the workspace.
-      </Paragraph>
-      <AddUserPopUp />
+      <div className="flex justify-between items-center">
+        <div>
+          <Title level={5} className="m-0">
+            Workspace Settings
+          </Title>
+          <Paragraph className="m-0">
+            This information will be displayed to every member of the workspace.
+          </Paragraph>
+        </div>
+        <AddUserPopUp />
+      </div>
       <CustomDivider />
       <Form
         form={form}
@@ -104,7 +115,11 @@ const Settings = () => {
         </Form.Item>
         <Form.Item name="color" label="Color">
           <ColorPicker
-            format="hex"
+           showText
+           disabledAlpha
+           onChange={(_, hex) => {
+            form.setFieldsValue({color: hex});
+          }}
             presets={[
               {
                 label: 'Recommended',
@@ -137,15 +152,15 @@ const Settings = () => {
           />
         </Form.Item>
       </Form>
-      <CustomDivider className="my-4" />
+      <CustomDivider />
       <div className="flex items-center justify-between flex-wrap gap-1-2">
         <div>
-          <h1>Danger Zone</h1>
-          <p>
-            Once you delete a workspace, there is no going back. Please be
+          <Title level={5}>Danger Zone</Title>
+          <Paragraph>
+            Once you delete a worksTextace, there is no going back. Please be
             certain. Deleting workspace would lead to deleting all workspaces
             within it.
-          </p>
+          </Paragraph>
         </div>
         <Button
           type="primary"
