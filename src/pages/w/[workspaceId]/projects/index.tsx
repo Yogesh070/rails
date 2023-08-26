@@ -32,19 +32,17 @@ const WorkSpace = () => {
       dataIndex: ['projectLead', 'image'],
       render: (text, record) => {
         return (
-          <Avatar size="small">
-            {record.projectLead?.image ? (
-              <Image
-                src={text || '/logo.svg'}
-                width={24}
-                height={24}
-                alt={text}
-                style={{objectFit: 'contain'}}
-              />
-            ) : (
-              text
-            )}
-          </Avatar>
+          <Avatar size="small" src= {record.projectLead?.image ? (
+            <Image
+              src={text || '/logo.svg'}
+              width={24}
+              height={24}
+              alt={text}
+              style={{objectFit: 'contain'}}
+            />
+          ) : (
+            text
+          )}/>
         );
       },
     },

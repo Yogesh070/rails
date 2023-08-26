@@ -23,7 +23,7 @@ const Members = () => {
       title: 'User',
       render: (_, record) => {
         return <div className="flex gap-1-2">
-          <Avatar size="small"> {record.image ? <Image src={record.image || '/logo.svg'} width={24} height={24} alt={record.id} style={{ objectFit: "contain" }} /> : record.name}</Avatar>
+          <Avatar size="small" src={record.image ? <Image src={record.image || '/logo.svg'} width={24} height={24} alt={record.id} style={{ objectFit: "contain" }} /> : record.name}/>
           <Text>{record.name}</Text>
         </div>
       }
