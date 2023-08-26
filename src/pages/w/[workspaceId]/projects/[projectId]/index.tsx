@@ -32,22 +32,12 @@ const SingleProject = () => {
     projectId: projectId as string,
   });
 
-  const projectQuery = api.project.getProjectById.useQuery({
-    id: projectId as string,
-  });
-  const setProject = useProjectStore((state) => state.setProject);
   const setProjectWorkflows = useProjectStore(
     (state) => state.setProjectWorkflows
   );
 
   const project = useProjectStore((state) => state.project);
   const workflow = useProjectStore((state) => state.workflows);
-
-  React.useEffect(() => {
-    if (projectQuery.isSuccess) {
-      setProject(projectQuery.data!);
-    }
-  }, [setProject,projectQuery.data, projectQuery.isSuccess, ]);
 
   React.useEffect(() => {
     if (workflowQuery.isSuccess) {
@@ -71,13 +61,7 @@ const SingleProject = () => {
   return (
     <NoSSR>
       <div className="flex items-center justify-between">
-        <Skeleton
-          loading={projectQuery.isLoading}
-          active
-          paragraph={{rows: 0, width: 8}}
-        >
-          <Text strong>{projectQuery.data?.name}</Text>
-        </Skeleton>
+        <Text strong>{project!.name}</Text>
         <div className="flex items-center gap-1-2 justify-between">
           <Segmented
             value={boardLayout ? 'Kanban' : 'List'}
@@ -99,26 +83,24 @@ const SingleProject = () => {
               }
             }}
           />
-          <Skeleton loading={projectQuery.isLoading} active paragraph>
-            <div className="flex items-center gap-1-2">
-              <Avatar.Group size={'small'}>
-                {project?.members.map((member, idx) => {
-                  return (
-                    <Avatar key={idx} src={member.image}>
-                      {member.name}
-                    </Avatar>
-                  );
-                })}
-              </Avatar.Group>
-              <AddUserPopUp
-                render={
-                  <Button type="dashed" size="small">
-                    +
-                  </Button>
-                }
-              />
-            </div>
-          </Skeleton>
+          <div className="flex items-center gap-1-2">
+            <Avatar.Group size={'small'}>
+              {project?.members.map((member, idx) => {
+                return (
+                  <Avatar key={idx} src={member.image}>
+                    {member.name}
+                  </Avatar>
+                );
+              })}
+            </Avatar.Group>
+            <AddUserPopUp
+              render={
+                <Button type="dashed" size="small">
+                  +
+                </Button>
+              }
+            />
+          </div>
         </div>
       </div>
       <DndContext>
