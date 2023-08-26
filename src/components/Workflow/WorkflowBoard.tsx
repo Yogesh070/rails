@@ -73,7 +73,6 @@ interface Props {
   itemCount?: number;
   items?: Items;
   handle?: boolean;
-  renderItem?: any;
   strategy?: SortingStrategy;
   modifiers?: Modifiers;
   minimal?: boolean;
@@ -397,7 +396,7 @@ export function WorkflowContainers({
         style={{
           gridAutoFlow: vertical ? 'row' : 'column',
         }}
-        className='gap-1-2 inline-grid flex-1 h-97'
+        className='gap-1-2 inline-grid flex-1 '
       >
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
@@ -497,6 +496,7 @@ export function WorkflowContainers({
         columns={columns}
         shadow
         unstyled={false}
+        scrollable={scrollable}
       >
         {items[containerId]!.map((item, index) => (
           <Item
