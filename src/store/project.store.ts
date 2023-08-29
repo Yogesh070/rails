@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { RouterOutputs } from '../utils/api';
+import type { Issue } from '@prisma/client';
 
 type Project = RouterOutputs['project']['getProjectById'];
 type ProjectWorkflowWithIssues = RouterOutputs['project']['getProjectWorkflows']['workflows'][number];
@@ -15,7 +16,7 @@ type State = {
 type Action = {
     setProject: (project: Project) => void,
     setProjectWorkflows: (workflows: ProjectWorkflowWithIssues[]) => void,
-    addIssueToWorkflow: (workflowId: string, issue: ProjectWorkflowWithIssues['issue'][number]) => void,
+    addIssueToWorkflow: (workflowId: string, issue: Issue) => void,
     setLabels: (labels: Label[]) => void,
     addLabel: (label: Label) => void,
     deleteLabel: (labelId: String) => void,
@@ -36,7 +37,10 @@ export const useProjectStore = create<State & Action>()((set) => ({
                 if (workflow.id === workflowId) {
                     return {
                         ...workflow,
-                        issue: [...workflow.issue, issue],
+                        issue: {
+                            ...workflow.issue,
+                            [issue.id]: issue,
+                        },
                     };
                 }
                 return workflow;

@@ -11,7 +11,6 @@ import {
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
 
-import type {Issue} from '@prisma/client';
 import type {DraggableSyntheticListeners} from '@dnd-kit/core';
 import type {Transform} from '@dnd-kit/utilities';
 
@@ -20,6 +19,7 @@ import dynamic from 'next/dynamic';
 import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
 import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
+import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
@@ -44,7 +44,7 @@ export interface Props {
   wrapperStyle?: React.CSSProperties;
   value: React.ReactNode;
   onRemove?(): void;
-  item: Issue;
+  item: IssueWithCount;
 }
 
 const Item = React.memo(
@@ -168,9 +168,24 @@ const Item = React.memo(
               <p className="m-0"> {item.title}</p>
               <CustomDivider className="mb-1" />
               <div className="flex flex-end gap-1-2-3 py-1">
-                <PaperClipIcon height={14} color="#8C8C8C" />
-                <FlagIcon height={14} color="#8C8C8C" />
-                <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+                {
+                  item._count.comments > 0 ? (
+                    <div className="flex items-center font-small gap-1-2-3">
+                        <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+                        <p>{item._count.comments}</p>
+                    </div>
+                  ) : null
+                }
+                {
+                  item._count.linkedIssues > 0 ? (
+                    <PaperClipIcon height={14} color="#8C8C8C" />
+                  ) : null
+                }
+                {
+                  item.flagged ?(
+                    <FlagIcon height={14} color="#8C8C8C" />
+                  ) : null
+                }
               </div>
             </>
           </div>

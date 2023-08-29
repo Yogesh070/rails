@@ -190,7 +190,18 @@ export const projectRouter = createTRPCRouter({
                         index: "asc",
                     },
                     include: {
-                        issue: true,
+                        issue: {
+                            include: {
+                                _count: {
+                                    select: {
+                                        comments: true,
+                                        assignees: true,
+                                        labels: true,
+                                        linkedIssues: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },

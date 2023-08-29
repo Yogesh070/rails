@@ -40,6 +40,7 @@ import WorkflowContainer from './WorkflowContainer';
 import Item from '../Item/Item';
 import Container from '../Container/Container';
 import type { Issue } from '@prisma/client';
+import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
 
 
 const dropAnimation: DropAnimation = {
@@ -52,7 +53,7 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-type Items = Record<UniqueIdentifier, Issue[]>;
+type Items = Record<UniqueIdentifier, IssueWithCount[]>;
 
 interface Props {
   adjustScale?: boolean;
@@ -312,7 +313,7 @@ export function WorkflowContainers({
                   items[overContainer]!.length
                 ),
               ],
-            };
+            };  
           });
         }
       }}
@@ -583,7 +584,7 @@ interface SortableItemProps {
   style(args: any): React.CSSProperties;
   getIndex(id: UniqueIdentifier): number;
   wrapperStyle({ index }: { index: number }): React.CSSProperties;
-  item: Issue;
+  item: IssueWithCount;
 }
 
 function SortableItem({

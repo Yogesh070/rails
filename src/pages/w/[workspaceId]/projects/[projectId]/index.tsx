@@ -1,17 +1,17 @@
 import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
 import type {UniqueIdentifier} from '@dnd-kit/core';
-import {DndContext} from '@dnd-kit/core';
 import {Button, Avatar, Skeleton, Segmented, Typography} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
 import NoSSR from '../../../../../components/NoSSR';
 import ProjectLayout from '../../../../../layout/ProjectLayout';
-import {api} from '../../../../../utils/api';
+import type {RouterOutputs} from '../../../../../utils/api';
+import { api} from '../../../../../utils/api';
 import {useRouter} from 'next/router';
 import AddUserPopUp from '../../../../../components/AddUserPopUp/AddUserPopUp';
 
-import type {Issue, WorkFlow} from '@prisma/client';
+import type {WorkFlow} from '@prisma/client';
 import {useProjectStore} from '../../../../../store/project.store';
 
 const WorkflowContainers = dynamic(
@@ -23,6 +23,8 @@ const WorkflowContainers = dynamic(
 );
 
 const {Text} = Typography;
+
+export type IssueWithCount = RouterOutputs['project']['getProjectWorkflows']['workflows'][number]['issue'][number];
 
 const SingleProject = () => {
   const router = useRouter();
@@ -46,10 +48,12 @@ const SingleProject = () => {
   }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
 
   const convertWorkFlowsToRecord = useCallback(
-    (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
-      const records: Record<UniqueIdentifier, Issue[]> = {};
+    (workFlows: (WorkFlow & {issue: IssueWithCount[]})[]) => {
+      const records: Record<UniqueIdentifier, IssueWithCount[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.id] = workflow.issue;
+        records[workflow.id] = workflow.issue.sort((a, b) => {
+          return a.index - b.index;
+        });
       });
       return records;
     },
@@ -103,17 +107,16 @@ const SingleProject = () => {
           </div>
         </div>
       </div>
-      <DndContext>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Skeleton loading={workflowQuery.isLoading} active paragraph>
-            <WorkflowContainers
-              items={convertWorkFlowsToRecord(workflow)}
-              scrollable={false}
-              vertical={!boardLayout}
-            />
-          </Skeleton>
-        </Suspense>
-      </DndContext>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Skeleton loading={workflowQuery.isLoading} active paragraph>
+          <WorkflowContainers
+            items={convertWorkFlowsToRecord(workflow)}
+            scrollable={false}
+            vertical={!boardLayout}
+            trashable={false}
+          />
+        </Skeleton>
+      </Suspense>
     </NoSSR>
   );
 };

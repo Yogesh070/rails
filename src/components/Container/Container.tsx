@@ -65,7 +65,6 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
       createIssue({
         title: value,
         workflowId: label!,
-        index: 0,
       });
     };
 
