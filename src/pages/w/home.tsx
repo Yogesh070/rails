@@ -51,6 +51,14 @@ const WorkSpace = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm<WorkSpaceFormProps>();
 
+  if(workspaceQuery.isError){
+   return (
+    <Layout className="flex h-full justify-center items-center flex-col gap-1">
+      <Text>Something went wrong</Text>
+    </Layout>
+   )
+  }
+
   return (
     <Layout>
       <Content className="h-full min-h-screen flex flex-col m-4">
