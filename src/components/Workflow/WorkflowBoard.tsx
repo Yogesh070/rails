@@ -41,6 +41,7 @@ import Item from '../Item/Item';
 import Container from '../Container/Container';
 import type { Issue } from '@prisma/client';
 import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
+import { api } from '../../utils/api';
 
 
 const dropAnimation: DropAnimation = {
@@ -247,6 +248,8 @@ export function WorkflowContainers({
     });
   }, [items]);
 
+  const {mutate:moveIssue } =api.issue.moveIssue.useMutation();
+
   return (
     <DndContext
       sensors={sensors}
@@ -385,8 +388,12 @@ export function WorkflowContainers({
               ),
             }));
           }
+          moveIssue({
+            issueId: active.id.toString(),
+            moveToWorkflowId: overContainer.toString(),
+            newIndex: overIndex,
+          });
         }
-
         setActiveId(null);
       }}
       cancelDrop={cancelDrop}

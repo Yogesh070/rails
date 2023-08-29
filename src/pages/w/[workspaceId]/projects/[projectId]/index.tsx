@@ -51,9 +51,7 @@ const SingleProject = () => {
     (workFlows: (WorkFlow & {issue: IssueWithCount[]})[]) => {
       const records: Record<UniqueIdentifier, IssueWithCount[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.id] = workflow.issue.sort((a, b) => {
-          return a.index - b.index;
-        });
+        records[workflow.id] = workflow.issue;
       });
       return records;
     },

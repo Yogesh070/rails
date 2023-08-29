@@ -201,6 +201,9 @@ export const projectRouter = createTRPCRouter({
                                     },
                                 },
                             },
+                            orderBy: {
+                                index: "asc",
+                            },
                         },
                     },
                 },
