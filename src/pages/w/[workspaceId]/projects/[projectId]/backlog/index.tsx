@@ -292,7 +292,6 @@ const Backlog = () => {
                       workflowId: workflowQuery.data?.find(
                         (workflow) => workflow.title.toLowerCase() === 'backlog'
                       )?.id as string,
-                      index: 0,
                     });
                   }}
                 />
