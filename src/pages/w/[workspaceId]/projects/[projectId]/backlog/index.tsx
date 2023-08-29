@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import Board from '../../../../../../layout/Board';
+import ProjectLayout from '../../../../../../layout/ProjectLayout';
 import {
   Button,
   Collapse,
@@ -292,7 +292,6 @@ const Backlog = () => {
                       workflowId: workflowQuery.data?.find(
                         (workflow) => workflow.title.toLowerCase() === 'backlog'
                       )?.id as string,
-                      index: 0,
                     });
                   }}
                 />
@@ -324,7 +323,7 @@ const Backlog = () => {
 };
 
 Backlog.getLayout = function getLayout(page: React.ReactElement) {
-  return <Board>{page}</Board>;
+  return <ProjectLayout>{page}</ProjectLayout>;
 };
 
 export default Backlog;

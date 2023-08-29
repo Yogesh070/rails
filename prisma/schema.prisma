@@ -65,18 +65,19 @@ model VerificationToken {
 }
 
 model Workspace {
-  id          String    @id @default(cuid())
-  name        String
-  shortName   String
-  description String?
-  website     String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  createdById String
-  color       String
-  projects    Project[]
-  members     User[]
-  createdBy   User      @relation("createdBy", fields: [createdById], references: [id])
+  id              String            @id @default(cuid())
+  name            String
+  shortName       String            @unique
+  description     String?
+  website         String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  createdById     String
+  color           String
+  projects        Project[]
+  members         User[]
+  createdBy       User              @relation("createdBy", fields: [createdById], references: [id])
+  invitationTokens InvitationToken[]
 }
 
 model Project {
@@ -204,6 +205,17 @@ model Sprint {
   hasStarted  Boolean   @default(false)
   issues      Issue[]
   project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model InvitationToken {
+  id          String    @id @default(cuid())
+  expiresAt   DateTime
+  email       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  token       String    @unique @default(cuid())
+  createdAt   DateTime  @default(now())
+  createdByEmail String
 }
 
 enum ProjectType {

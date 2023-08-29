@@ -30,7 +30,6 @@ const IssueModal = (props: IssueModalProps) => {
         </div>
       ) : (
         <Button
-          type="ghost"
           className="w-100"
           icon={<PlusOutlined />}
           onClick={handleClick}

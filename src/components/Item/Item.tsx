@@ -1,17 +1,14 @@
 import React, {Suspense, useEffect, useState} from 'react';
 import classNames from 'classnames';
 
-import {Button, theme} from 'antd';
-import CustomDivider from '../CustomDivider/CustomDivider';
+import {Button, Typography, theme} from 'antd';
 
 import {
   EllipsisHorizontalIcon,
   ChatBubbleBottomCenterIcon,
-  FlagIcon,
   PaperClipIcon,
 } from '@heroicons/react/24/outline';
 
-import type {Issue} from '@prisma/client';
 import type {DraggableSyntheticListeners} from '@dnd-kit/core';
 import type {Transform} from '@dnd-kit/utilities';
 
@@ -20,12 +17,14 @@ import dynamic from 'next/dynamic';
 import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
 import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
+import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
 });
 
 const {useToken} = theme;
+const {Text} = Typography;
 
 export interface Props {
   dragOverlay?: boolean;
@@ -44,7 +43,7 @@ export interface Props {
   wrapperStyle?: React.CSSProperties;
   value: React.ReactNode;
   onRemove?(): void;
-  item: Issue;
+  item: IssueWithCount;
 }
 
 const Item = React.memo(
@@ -123,7 +122,7 @@ const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               '--index': index,
-              backgroundColor: token.colorBgElevated,
+              backgroundColor: item.flagged ? token.colorWarningHover : token.colorBgElevated,
             } as React.CSSProperties
           }
           ref={ref}
@@ -141,10 +140,7 @@ const Item = React.memo(
             {...(!handle ? listeners : undefined)}
             {...props}
             tabIndex={!handle ? 0 : undefined}
-            onClick={() => {
-              //TODO: Open Modal to show details
-              showModal();
-            }}
+            onClick={showModal}
           >
             <>
               <div className="flex justify-between">
@@ -165,16 +161,25 @@ const Item = React.memo(
                   type="text"
                 />
               </div>
-              <p className="m-0"> {item.title}</p>
-              <CustomDivider className="mb-1" />
+              <Text className="m-0"> {item.title}</Text>
               <div className="flex flex-end gap-1-2-3 py-1">
-                <PaperClipIcon height={14} color="#8C8C8C" />
-                <FlagIcon height={14} color="#8C8C8C" />
-                <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+                {
+                  item._count.comments > 0 ? (
+                    <div className="flex items-center font-small gap-1-2-3">
+                        <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+                        <Text className='font-small'>{item._count.comments}</Text>
+                    </div>
+                  ) : null
+                }
+                {
+                  item._count.linkedIssues > 0 ? (
+                    <PaperClipIcon height={14} color="#8C8C8C" />
+                  ) : null
+                }
               </div>
             </>
           </div>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<Text>Loading...</Text>}>
             <ItemDetailsModal
               open={isModalOpen}
               title={item.title}

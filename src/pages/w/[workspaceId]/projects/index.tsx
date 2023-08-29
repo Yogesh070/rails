@@ -1,7 +1,6 @@
 import {useRouter} from 'next/router';
 import React from 'react';
-import { api} from '../../../../utils/api';
-import {Typography, Avatar, Table, Button, Skeleton} from 'antd';
+import {Typography, Avatar, Table, Button} from 'antd';
 import CustomDivider from '../../../../components/CustomDivider/CustomDivider';
 
 import type {RouterOutputs} from '../../../../utils/api';
@@ -16,21 +15,7 @@ type ProjectWithLead = RouterOutputs['project']['getUserProjects'][number];
 const {Title, Paragraph} = Typography;
 
 const WorkSpace = () => {
-  const router = useRouter();
-  const {workspaceId} = router.query;
-
-  const workspaceQuery = api.workspace.getWorkspaceByShortName.useQuery({
-    shortname: workspaceId as string,
-  });
-
-  const setCurrentWorkspace = useWorkspaceStore((state) => state.setCurrentWorkspace);
-
-  React.useEffect(() => {
-    if (workspaceQuery.isSuccess) {
-      setCurrentWorkspace(workspaceQuery.data);
-    }
-  }, [setCurrentWorkspace, workspaceQuery.data, workspaceQuery.isSuccess]);
-
+  const router= useRouter();
   const workspace = useWorkspaceStore((state) => state.currentWorkspace);
 
   const columns: ColumnsType<ProjectWithLead> = [
@@ -47,20 +32,17 @@ const WorkSpace = () => {
       dataIndex: ['projectLead', 'image'],
       render: (text, record) => {
         return (
-          <Avatar size="small">
-            {' '}
-            {record.projectLead?.image ? (
-              <Image
-                src={text || '/logo.svg'}
-                width={24}
-                height={24}
-                alt={text}
-                style={{objectFit: 'contain'}}
-              />
-            ) : (
-              text
-            )}
-          </Avatar>
+          <Avatar size="small" src= {record.projectLead?.image ? (
+            <Image
+              src={text || '/logo.svg'}
+              width={24}
+              height={24}
+              alt={text}
+              style={{objectFit: 'contain'}}
+            />
+          ) : (
+            text
+          )}/>
         );
       },
     },
@@ -71,8 +53,7 @@ const WorkSpace = () => {
   ];
 
   return (
-    <div>
-      <Skeleton loading={workspaceQuery.isLoading} active>
+    <>
         <div className="flex gap-1 items-center">
           <Avatar
             size="large"
@@ -98,7 +79,7 @@ const WorkSpace = () => {
           <Button
             type="primary"
             onClick={() => {
-              void router.push(`/w/${workspaceId}/projects/create`);
+              void router.push(`/w/${workspace!.id}/projects/create`);
             }}
           >
             Create Project
@@ -108,17 +89,15 @@ const WorkSpace = () => {
           columns={columns}
           dataSource={workspace?.projects}
           size="small"
-          loading={workspaceQuery.isLoading}
           className="mt-4"
           onRow={(record) => ({
             onClick: () => {
-              void router.push(`/w/${workspaceId}/projects/${record.id}`);
+              void router.push(`/w/${workspace!.id}/projects/${record.id}`);
             },
           })}
           rowKey="id"
         />
-      </Skeleton>
-    </div>
+    </>
   );
 };
 

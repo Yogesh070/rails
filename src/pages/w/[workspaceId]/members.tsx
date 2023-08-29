@@ -7,6 +7,7 @@ import CustomDivider from '../../../components/CustomDivider/CustomDivider';
 import { useWorkspaceStore } from '../../../store/workspace.store';
 
 import { CloseOutlined } from '@ant-design/icons';
+import AddUserPopUp from '../../../components/AddUserPopUp/AddUserPopUp';
 
 type Member = {
   image: string | null;
@@ -22,7 +23,7 @@ const Members = () => {
       title: 'User',
       render: (_, record) => {
         return <div className="flex gap-1-2">
-          <Avatar size="small"> {record.image ? <Image src={record.image || '/logo.svg'} width={24} height={24} alt={record.id} style={{ objectFit: "contain" }} /> : record.name}</Avatar>
+          <Avatar size="small" src={record.image ? <Image src={record.image || '/logo.svg'} width={24} height={24} alt={record.id} style={{ objectFit: "contain" }} /> : record.name}/>
           <Text>{record.name}</Text>
         </div>
       }
@@ -44,7 +45,7 @@ const Members = () => {
           <Title level={5} className="m-0">Invite members to join you</Title>
           <Paragraph className="m-0">Anyone with an invite link can join this Free Workspace. You can also disable and create a new invite link for this Workspace at any time.</Paragraph>
         </div>
-        <Button >Invite With Link</Button>
+        <AddUserPopUp/>
       </div>
       <Table columns={columns} dataSource={currentWorkspace?.members} size="small"
         className='mt-4'

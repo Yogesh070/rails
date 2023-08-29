@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { emailService } from "../../services/email.service";
 
 const generateUniqueShortName = async (ctx: any, name: string) => {
     const shortName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -184,4 +185,113 @@ export const workspaceRouter = createTRPCRouter({
             });
         }
     }),
+    sendWorkspaceInvite: protectedProcedure.input(z.object({ workspaceId: z.string(), email: z.string().email() })).mutation(async ({ ctx, input }) => {
+        const workspace = await ctx.prisma.workspace.findUnique({
+            where: {
+                id: input.workspaceId,
+            },
+            include: {
+                members: true,
+            },
+        });
+        if (workspace?.members.some((member) => member.email === input.email)) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "User already a member of the workspace",
+            });
+        }
+        const invite = await ctx.prisma.invitationToken.create({
+            data: {
+                email: input.email,
+                workspaceId: input.workspaceId,
+                // Expires in 7 days
+                expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+                createdByEmail: ctx.session.user.email!,
+            },
+        });
+        await emailService.sendInviteEmail(input.email, invite.token);
+        return invite;
+
+    }),
+    getWorkspaceInviteById: publicProcedure.input(z.object({ token: z.string() })).query(async ({ ctx, input }) => {
+        const token = await ctx.prisma.invitationToken.findUnique({
+            where: {
+                token: input.token,
+            },
+            include: {
+                workspace: true,
+            },
+        });
+        if (!token) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid token",
+            });
+        }
+        if (token.expiresAt < new Date()) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Token has already expired. Please request a new invite.",
+            });
+        }
+        return token;
+    }),
+    acceptWorkspaceInvite: protectedProcedure.input(z.object({ token: z.string(),email:z.string().email() })).mutation(async ({ ctx, input }) => {
+        const token = await ctx.prisma.invitationToken.findUnique({
+            where: {
+                token: input.token,
+            },
+            include: {
+                workspace: {
+                    select: {
+                        members: true,
+                        shortName: true,
+                    },
+                },
+            },
+        });
+        if (!token) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid token",
+            });
+        }
+        if (token.expiresAt < new Date()) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Token has already expired. Please request a new invite",
+            });
+        }
+        if (token.workspace.members.some((member) => member.email === token.email)) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "User already a member of the workspace",
+            });
+        }
+        if(token.email !== input.email){
+            throw new TRPCError({
+                code: "CONFLICT",
+                message: "Email does not match the invite",
+            });
+        }
+        await ctx.prisma.workspace.update({
+            where: {
+                id: token.workspaceId,
+            },
+            data: {
+                members: {
+                    connect: {
+                        email: token.email,
+                    },
+                },
+            },
+        });
+        await ctx.prisma.invitationToken.delete({
+            where: {
+                token: input.token,
+            },
+        });
+        return token.workspace;
+    }
+    ),
 });

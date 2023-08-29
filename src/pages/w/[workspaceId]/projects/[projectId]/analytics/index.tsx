@@ -1,5 +1,5 @@
 import React from 'react';
-import Board from '../../../../../../layout/Board';
+import ProjectLayout from '../../../../../../layout/ProjectLayout';
 import {Typography} from 'antd';
 import {
   BarChart,
@@ -57,5 +57,5 @@ const Analytics = () => {
 export default Analytics;
 
 Analytics.getLayout = (page: React.ReactElement) => {
-  return <Board>{page}</Board>;
+  return <ProjectLayout>{page}</ProjectLayout>;
 };

@@ -1,99 +1,86 @@
 import React from 'react';
-
-import {useState, useRef} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
-import { Input, Select, Space, Button} from 'antd';
+import {Select, Space, Button, Tag} from 'antd';
 
-import type {InputRef} from 'antd';
-import {api} from '../../../utils/api';
 import {useProjectStore} from '../../../store/project.store';
-import type {Label} from '@prisma/client';
 import CustomDivider from '../../CustomDivider/CustomDivider';
+import {useRouter} from 'next/router';
+
+import type {CustomTagProps} from 'rc-select/lib/BaseSelect';
+import type { SelectProps} from 'antd';
 
 const {Option} = Select;
 
-const LabelSelect = () => {
-  const [items, setItems] = useState<Label[]>([]);
-  const [name, setName] = useState('');
-  const inputRef = useRef<InputRef>(null);
-
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  const addItem = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    e.preventDefault();
-    createLable({
-      title: ' new name',
-      color: '#a123ff',
-      projectId: project?.id as string,
-    });
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
+const LabelSelect = (props:SelectProps ) => {
+  
+  const router = useRouter();
 
   const project = useProjectStore((state) => state.project);
 
-  const labelQuery = api.project.getProjectLabels.useQuery({
-    projectId: project?.id as string,
-  });
-
-  const {mutate: createLable, isLoading: isCreating} =
-    api.project.createProjectLabels.useMutation({
-      onSuccess: (data) => {
-        setItems([...items, data]);
-        setName('');
-      },
-    });
-
-    React.useEffect(()=>{
-      if(labelQuery.isSuccess){
-        setItems(labelQuery.data)
-      }
-    },[labelQuery.data, labelQuery.isSuccess])
+  const tagRender = (props: CustomTagProps) => {
+    const {label, value, closable, onClose} = props;
+    const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    return (
+      <Tag
+        color={value}
+        onMouseDown={onPreventMouseDown}
+        closable={closable}
+        onClose={onClose}
+        style={{marginRight: 3}}
+      >
+        {label}
+      </Tag>
+    );
+  };
 
   return (
     <Select
+      {...props}
       mode="multiple"
-      bordered={false}
-      style={{width: 300}}
-      defaultActiveFirstOption={true}
-      placeholder="None"
+      tagRender={tagRender}
+      style={{width: '100%'}}
+      optionLabelProp="label"
       dropdownRender={(menu) => (
         <>
-            <Option value="china" label="China">
-      <Space>
-        <span role="img" aria-label="China">
-          🇨🇳
-        </span>
-        China (中国)
           {menu}
-      </Space>
-    </Option>
-          <CustomDivider className='mb-2'/>
-          {/* <Space style={{padding: '0 8px 4px'}}> */}
-            {/* <Input
-              placeholder="Label"
-              ref={inputRef}
-              value={name}
-              onChange={onNameChange}
-            /> */}
+          <CustomDivider className="my-2" />
+          <div className="flex">
             <Button
+              style={{width: '100%'}}
               type="dashed"
-              icon={<PlusOutlined rev={undefined} />}
-              onClick={addItem}
-              loading={isCreating}
+              icon={<PlusOutlined />}
+              onClick={() =>
+                router.push(
+                  `/w/${router.query.workspaceId}/projects/${router.query.projectId}/settings/labels`
+                )
+              }
             >
-              Add
+              Add Label
             </Button>
-          {/* </Space> */}
+          </div>
         </>
       )}
-      options={items.map((item) => ({label: item.title, value: item.title}))}
-    />
+    >
+      {project!.labels.map((item) => (
+        <Option value={item.color} label={item.title} key={item.id}>
+          <Space>
+            <div
+              style={{
+                height: '12px',
+                width: '12px',
+                backgroundColor: item.color,
+                borderRadius: '20px',
+              }}
+            />
+            {item.title}
+          </Space>
+          <p className="font-small">{item.description}</p>
+        </Option>
+      ))}
+    </Select>
   );
 };
 

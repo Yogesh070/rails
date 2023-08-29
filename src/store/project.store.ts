@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { RouterOutputs } from '../utils/api';
+import type { Issue } from '@prisma/client';
 
 type Project = RouterOutputs['project']['getProjectById'];
 type ProjectWorkflowWithIssues = RouterOutputs['project']['getProjectWorkflows']['workflows'][number];
@@ -9,27 +10,25 @@ type Label = RouterOutputs['project']['getProjectLabels'][number];
 
 type State = {
     project: Project | null,
-    workflows : ProjectWorkflowWithIssues[],
-    labels : Label[],
+    workflows: ProjectWorkflowWithIssues[],
 }
 
 type Action = {
     setProject: (project: Project) => void,
     setProjectWorkflows: (workflows: ProjectWorkflowWithIssues[]) => void,
-    addIssueToWorkflow: (workflowId: string, issue: ProjectWorkflowWithIssues['issue'][number]) => void,
+    addIssueToWorkflow: (workflowId: string, issue: Issue) => void,
     setLabels: (labels: Label[]) => void,
     addLabel: (label: Label) => void,
     deleteLabel: (labelId: String) => void,
     editLabel: (label: Label) => void,
-    setChecklist: (workflowId:string ,issueId: string, checklist: CheckList[]) => void,
-    setComment: (workflowId:string ,issueId: string, comment: Comment[]) => void,
-    deleteComment : (workflowId:string ,issueId: string, commentId: string) => void,
+    setChecklist: (workflowId: string, issueId: string, checklist: CheckList[]) => void,
+    setComment: (workflowId: string, issueId: string, comment: Comment[]) => void,
+    deleteComment: (workflowId: string, issueId: string, commentId: string) => void,
 }
 
 export const useProjectStore = create<State & Action>()((set) => ({
     project: null,
     workflows: [],
-    labels: [],
     setProject: (project) => set({ project }),
     setProjectWorkflows: (workflows) => set({ workflows }),
     addIssueToWorkflow(workflowId, issue) {
@@ -38,7 +37,10 @@ export const useProjectStore = create<State & Action>()((set) => ({
                 if (workflow.id === workflowId) {
                     return {
                         ...workflow,
-                        issue: [...workflow.issue, issue],
+                        issue: {
+                            ...workflow.issue,
+                            [issue.id]: issue,
+                        },
                     };
                 }
                 return workflow;
@@ -46,22 +48,42 @@ export const useProjectStore = create<State & Action>()((set) => ({
         }));
     },
     setLabels(labels) {
-        set({ labels });
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels,
+            }
+        }));
     },
     addLabel(label) {
-        set((state) => ({ labels: [...state.labels, label] }));
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels: [...state.project!.labels, label]
+            }
+        }));
     },
     deleteLabel(labelId) {
-        set((state) => ({ labels: state.labels.filter((l) => l.id !== labelId) }));
+        set((state) => ({
+            project: {
+                ...state.project!,
+                labels: state.project!.labels.filter((l) => l.id !== labelId)
+            }
+
+        }));
     },
     editLabel(label) {
         set((state) => ({
-            labels: state.labels.map((l) => {
-                if (l.id === label.id) {
-                    return label;
+            project: {
+                ...state.project!,
+                labels: state.project!.labels.map((l) => {
+                    if (l.id === label.id) {
+                        return label;
+                    }
+                    return l;
                 }
-                return l;
-            }),
+                ),
+            }
         }));
     },
     setChecklist(workFlowId, issueId, checklist) {

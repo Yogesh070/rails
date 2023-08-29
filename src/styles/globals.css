@@ -357,6 +357,10 @@ a {
   height: 97%;
 }
 
+.h-full {
+  height: 100vh;
+}
+
 .line-through {
   text-decoration: line-through;
 }

@@ -40,6 +40,8 @@ import WorkflowContainer from './WorkflowContainer';
 import Item from '../Item/Item';
 import Container from '../Container/Container';
 import type { Issue } from '@prisma/client';
+import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
+import { api } from '../../utils/api';
 
 
 const dropAnimation: DropAnimation = {
@@ -52,7 +54,7 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-type Items = Record<UniqueIdentifier, Issue[]>;
+type Items = Record<UniqueIdentifier, IssueWithCount[]>;
 
 interface Props {
   adjustScale?: boolean;
@@ -73,7 +75,6 @@ interface Props {
   itemCount?: number;
   items?: Items;
   handle?: boolean;
-  renderItem?: any;
   strategy?: SortingStrategy;
   modifiers?: Modifiers;
   minimal?: boolean;
@@ -247,6 +248,8 @@ export function WorkflowContainers({
     });
   }, [items]);
 
+  const {mutate:moveIssue } =api.issue.moveIssue.useMutation();
+
   return (
     <DndContext
       sensors={sensors}
@@ -313,7 +316,7 @@ export function WorkflowContainers({
                   items[overContainer]!.length
                 ),
               ],
-            };
+            };  
           });
         }
       }}
@@ -385,8 +388,12 @@ export function WorkflowContainers({
               ),
             }));
           }
+          moveIssue({
+            issueId: active.id.toString(),
+            moveToWorkflowId: overContainer.toString(),
+            newIndex: overIndex,
+          });
         }
-
         setActiveId(null);
       }}
       cancelDrop={cancelDrop}
@@ -397,7 +404,7 @@ export function WorkflowContainers({
         style={{
           gridAutoFlow: vertical ? 'row' : 'column',
         }}
-        className='gap-1-2 inline-grid flex-1 h-97'
+        className='gap-1-2 inline-grid flex-1 '
       >
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
@@ -497,6 +504,7 @@ export function WorkflowContainers({
         columns={columns}
         shadow
         unstyled={false}
+        scrollable={scrollable}
       >
         {items[containerId]!.map((item, index) => (
           <Item
@@ -583,7 +591,7 @@ interface SortableItemProps {
   style(args: any): React.CSSProperties;
   getIndex(id: UniqueIdentifier): number;
   wrapperStyle({ index }: { index: number }): React.CSSProperties;
-  item: Issue;
+  item: IssueWithCount;
 }
 
 function SortableItem({

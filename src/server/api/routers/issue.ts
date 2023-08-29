@@ -5,23 +5,159 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 const issueProp = z.object({
     title: z.string(),
     workflowId: z.string(),
-    index: z.number(),
     description: z.string().optional(),
     createdById: z.string().optional(),
 });
 
 export const issueRouter = createTRPCRouter({
-    createIssue: protectedProcedure.input(issueProp).mutation(({ ctx, input }) => {
+    createIssue: protectedProcedure.input(issueProp).mutation(async ({ ctx, input }) => {
+        const lastCreatedIssue = await ctx.prisma.issue.findFirst({
+            where: {
+                workFlowId: input.workflowId,
+            },
+            orderBy: {
+                index: 'desc',
+            },
+        });
         return ctx.prisma.issue.create({
             data: {
                 title: input.title,
-                index: input.index,
+                index: lastCreatedIssue ? lastCreatedIssue.index + 1 : 0,
                 workFlowId: input.workflowId,
                 description: input.description,
                 createdById: ctx.session.user.id,
             },
         });
     }),
+    moveIssue: protectedProcedure.input(z.object({ issueId: z.string(), moveToWorkflowId: z.string(), newIndex: z.number() })).mutation(async ({ ctx, input }) => {
+        const issue = await ctx.prisma.issue.findUniqueOrThrow({
+            where: {
+                id: input.issueId,
+            },
+            include: {
+                workFlow: true,
+            },
+        });
+
+        if (issue.workFlowId === input.moveToWorkflowId) {
+            console.log("Moved within the same workflow");
+
+            const issuesInWorkflow = await ctx.prisma.issue.findMany({
+                where: {
+                    workFlowId: issue.workFlowId,
+                },
+                orderBy: {
+                    index: 'asc',
+                },
+            });
+
+            const originalIndex = issuesInWorkflow.findIndex((issue) => issue.id === input.issueId);
+
+            if (originalIndex > input.newIndex) {
+                await ctx.prisma.issue.updateMany({
+                    where: {
+                        workFlowId: issue.workFlowId,
+                        index: {
+                            gte: input.newIndex,
+                            lt: originalIndex,
+                        },
+                    },
+                    data: {
+                        index: {
+                            increment: 1,
+                        },
+                    },
+                });
+            }
+            else {
+                await ctx.prisma.issue.updateMany({
+                    where: {
+                        workFlowId: issue.workFlowId,
+                        index: {
+                            gt: originalIndex,
+                            lte: input.newIndex,
+                        },
+                    },
+                    data: {
+                        index: {
+                            decrement: 1,
+                        },
+                    },
+                });
+            }
+
+            await ctx.prisma.issue.update({
+                where: {
+                    id: input.issueId,
+                },
+                data: {
+                    index: input.newIndex,
+                },
+            });
+
+        }
+        else {
+            console.log("Moved to a different workflow");
+
+            const issuesInWorkflow = await ctx.prisma.issue.findMany({
+                where: {
+                    workFlowId: issue.workFlowId,
+                },
+                orderBy: {
+                    index: 'asc',
+                },
+            });
+
+            const originalIndex = issuesInWorkflow.findIndex((issue) => issue.id === input.issueId);
+
+            await ctx.prisma.issue.updateMany({
+                where: {
+                    workFlowId: input.moveToWorkflowId,
+                    index: {
+                        gte: input.newIndex,
+                    },
+                },
+                data: {
+                    index: {
+                        increment: 1,
+                    },
+                },
+            });
+
+            await ctx.prisma.issue.updateMany({
+                where: {
+                    workFlowId: issue.workFlowId,
+                    index: {
+                        gte: originalIndex,
+                    },
+                },
+                data: {
+                    index: {
+                        decrement: 1,
+                    },
+                },
+            });
+
+            await ctx.prisma.issue.update({
+                where: {
+                    id: input.issueId,
+                },
+                data: {
+                    index: input.newIndex,
+                    workFlowId: input.moveToWorkflowId,
+                },
+            });
+
+        }
+
+        return ctx.prisma.issue.findUnique({
+            where: {
+                id: input.issueId,
+            },
+        });
+
+    }),
+
     getIssueById: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
         return ctx.prisma.issue.findUnique({
             where: {
@@ -46,8 +182,8 @@ export const issueRouter = createTRPCRouter({
                 },
             },
             include: {
-                workFlow:{
-                    include:{
+                workFlow: {
+                    include: {
                         project: true,
                     }
                 }
@@ -271,7 +407,7 @@ export const issueRouter = createTRPCRouter({
         });
     }),
 
-    setDueDate: protectedProcedure.input(z.object({issueId: z.string(), dueDate: z.date(),})).mutation(({ ctx, input }) => {
+    setDueDate: protectedProcedure.input(z.object({ issueId: z.string(), dueDate: z.date(), })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,
@@ -282,7 +418,7 @@ export const issueRouter = createTRPCRouter({
         });
     }),
 
-    removeDueDate: protectedProcedure.input(z.object({issueId: z.string(),})).mutation(({ ctx, input }) => {
+    removeDueDate: protectedProcedure.input(z.object({ issueId: z.string(), })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,
@@ -293,7 +429,7 @@ export const issueRouter = createTRPCRouter({
         });
     }),
 
-    addFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+    addFlag: protectedProcedure.input(z.object({ issueId: z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,
@@ -304,7 +440,7 @@ export const issueRouter = createTRPCRouter({
         });
     }),
 
-    removeFlag: protectedProcedure.input(z.object({issueId: z.string()})).mutation(({ ctx, input }) => {
+    removeFlag: protectedProcedure.input(z.object({ issueId: z.string() })).mutation(({ ctx, input }) => {
         return ctx.prisma.issue.update({
             where: {
                 id: input.issueId,

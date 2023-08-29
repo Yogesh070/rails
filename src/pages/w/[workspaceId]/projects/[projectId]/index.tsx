@@ -1,17 +1,17 @@
 import React, {Suspense, useCallback} from 'react';
 import dynamic from 'next/dynamic';
 import type {UniqueIdentifier} from '@dnd-kit/core';
-import {DndContext} from '@dnd-kit/core';
 import {Button, Avatar, Skeleton, Segmented, Typography} from 'antd';
 import {AppstoreOutlined, BarsOutlined} from '@ant-design/icons';
 
 import NoSSR from '../../../../../components/NoSSR';
-import Board from '../../../../../layout/Board';
-import {api} from '../../../../../utils/api';
+import ProjectLayout from '../../../../../layout/ProjectLayout';
+import type {RouterOutputs} from '../../../../../utils/api';
+import { api} from '../../../../../utils/api';
 import {useRouter} from 'next/router';
-import AddUserPopUp from '../../../../../components/AddUserPopUp.tsx/AddUserPopUp';
+import AddUserPopUp from '../../../../../components/AddUserPopUp/AddUserPopUp';
 
-import type {Issue, WorkFlow} from '@prisma/client';
+import type {WorkFlow} from '@prisma/client';
 import {useProjectStore} from '../../../../../store/project.store';
 
 const WorkflowContainers = dynamic(
@@ -24,6 +24,8 @@ const WorkflowContainers = dynamic(
 
 const {Text} = Typography;
 
+export type IssueWithCount = RouterOutputs['project']['getProjectWorkflows']['workflows'][number]['issue'][number];
+
 const SingleProject = () => {
   const router = useRouter();
   const {projectId} = router.query;
@@ -32,10 +34,6 @@ const SingleProject = () => {
     projectId: projectId as string,
   });
 
-  const projectQuery = api.project.getProjectById.useQuery({
-    id: projectId as string,
-  });
-  const setProject = useProjectStore((state) => state.setProject);
   const setProjectWorkflows = useProjectStore(
     (state) => state.setProjectWorkflows
   );
@@ -44,22 +42,16 @@ const SingleProject = () => {
   const workflow = useProjectStore((state) => state.workflows);
 
   React.useEffect(() => {
-    if (projectQuery.isSuccess) {
-      setProject(projectQuery.data!);
-    }
-  }, [setProject,projectQuery.data, projectQuery.isSuccess, ]);
-
-  React.useEffect(() => {
     if (workflowQuery.isSuccess) {
       setProjectWorkflows(workflowQuery.data?.workflows ?? []);
     }
   }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
 
   const convertWorkFlowsToRecord = useCallback(
-    (workFlows: (WorkFlow & {issue: Issue[]})[]) => {
-      const records: Record<UniqueIdentifier, Issue[]> = {};
+    (workFlows: (WorkFlow & {issue: IssueWithCount[]})[]) => {
+      const records: Record<UniqueIdentifier, IssueWithCount[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.title] = workflow.issue;
+        records[workflow.id] = workflow.issue;
       });
       return records;
     },
@@ -71,13 +63,7 @@ const SingleProject = () => {
   return (
     <NoSSR>
       <div className="flex items-center justify-between">
-        <Skeleton
-          loading={projectQuery.isLoading}
-          active
-          paragraph={{rows: 0, width: 8}}
-        >
-          <Text strong>{projectQuery.data?.name}</Text>
-        </Skeleton>
+        <Text strong>{project!.name}</Text>
         <div className="flex items-center gap-1-2 justify-between">
           <Segmented
             value={boardLayout ? 'Kanban' : 'List'}
@@ -99,45 +85,42 @@ const SingleProject = () => {
               }
             }}
           />
-          <Skeleton loading={projectQuery.isLoading} active paragraph>
-            <div className="flex items-center gap-1-2">
-              <Avatar.Group size={'small'}>
-                {project?.members.map((member, idx) => {
-                  return (
-                    <Avatar key={idx} src={member.image}>
-                      {member.name}
-                    </Avatar>
-                  );
-                })}
-              </Avatar.Group>
-              <AddUserPopUp
-                render={
-                  <Button type="dashed" size="small">
-                    +
-                  </Button>
-                }
-              />
-            </div>
-          </Skeleton>
+          <div className="flex items-center gap-1-2">
+            <Avatar.Group size={'small'}>
+              {project?.members.map((member, idx) => {
+                return (
+                  <Avatar key={idx} src={member.image}>
+                    {member.name}
+                  </Avatar>
+                );
+              })}
+            </Avatar.Group>
+            <AddUserPopUp
+              render={
+                <Button type="dashed" size="small">
+                  +
+                </Button>
+              }
+            />
+          </div>
         </div>
       </div>
-      <DndContext>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Skeleton loading={workflowQuery.isLoading} active paragraph>
-            <WorkflowContainers
-              items={convertWorkFlowsToRecord(workflow)}
-              scrollable={false}
-              vertical={!boardLayout}
-            />
-          </Skeleton>
-        </Suspense>
-      </DndContext>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Skeleton loading={workflowQuery.isLoading} active paragraph>
+          <WorkflowContainers
+            items={convertWorkFlowsToRecord(workflow)}
+            scrollable={false}
+            vertical={!boardLayout}
+            trashable={false}
+          />
+        </Skeleton>
+      </Suspense>
     </NoSSR>
   );
 };
 
 SingleProject.getLayout = (page: React.ReactElement) => {
-  return <Board>{page}</Board>;
+  return <ProjectLayout>{page}</ProjectLayout>;
 };
 
 export default SingleProject;
