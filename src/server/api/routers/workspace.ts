@@ -186,7 +186,7 @@ export const workspaceRouter = createTRPCRouter({
         }
     }),
     sendWorkspaceInvite: protectedProcedure.input(z.object({ workspaceId: z.string(), email: z.string().email() })).mutation(async ({ ctx, input }) => {
-        const workspace = await ctx.prisma.workspace.findUnique({
+        const workspace = await ctx.prisma.workspace.findUniqueOrThrow({
             where: {
                 id: input.workspaceId,
             },
@@ -209,7 +209,7 @@ export const workspaceRouter = createTRPCRouter({
                 createdByEmail: ctx.session.user.email!,
             },
         });
-        await emailService.sendInviteEmail(input.email, invite.token);
+        await emailService.sendInviteEmail(input.email, invite.token,workspace.name);
         return invite;
 
     }),
