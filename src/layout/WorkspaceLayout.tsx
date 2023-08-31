@@ -13,6 +13,8 @@ import React from 'react';
 import Image from 'next/image';
 import CustomDivider from '../components/CustomDivider/CustomDivider';
 import WorkspaceWrapper from './WorkspaceWrapper';
+import { ProfileAvatar } from '../components/ProfileAvatar';
+import { useSession } from 'next-auth/react';
 
 type SidebarOption = {
   icon: React.ElementType;
@@ -70,6 +72,8 @@ const WorkSpaceLayout = ({children}: {children: ReactNode}) => {
     token: {colorBgContainer},
   } = theme.useToken();
 
+  const session = useSession();
+
   return (
     <Layout>
       <Header
@@ -77,7 +81,9 @@ const WorkSpaceLayout = ({children}: {children: ReactNode}) => {
         style={{backgroundColor: colorBgContainer}}
       >
         <Image src="/logo.svg" width={32} height={32} alt={'logo'} />
-        {/* //TODO: ADD USER AVATAR TO NAVIGATE TO PROFILE AND SIGN OUT*/}
+        {
+          session.data?.user && <ProfileAvatar user={session.data?.user} />
+        }
       </Header>
       <CustomDivider />
       <Layout hasSider style={{backgroundColor: colorBgContainer}}>
