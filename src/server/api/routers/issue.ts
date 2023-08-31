@@ -159,9 +159,12 @@ export const issueRouter = createTRPCRouter({
     }),
 
     getIssueById: protectedProcedure.input(z.object({ id: z.string() })).query(({ ctx, input }) => {
-        return ctx.prisma.issue.findUnique({
+        return ctx.prisma.issue.findUniqueOrThrow({
             where: {
                 id: input.id,
+            },
+            include: {
+                linkedIssues: true,
             },
         });
     }),
@@ -450,4 +453,93 @@ export const issueRouter = createTRPCRouter({
             },
         });
     }),
+
+    addLabelToIssue: protectedProcedure.input(z.object({ issueId: z.string(), labelId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                labels: {
+                    connect: {
+                        id: input.labelId,
+                    },
+                },
+            },
+            select: {
+                labels: true,
+            },
+        });
+    }),
+
+    removeLabelFromIssue: protectedProcedure.input(z.object({ issueId: z.string(), labelId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                labels: {
+                    disconnect: {
+                        id: input.labelId,
+                    },
+                },
+            },
+            select: {
+                labels: true,
+            },
+        });
+    }),
+
+    getUnlinkedIssues: protectedProcedure.input(z.object({ issueId: z.string() })).query(({ ctx, input }) => {
+        return ctx.prisma.issue.findMany({
+            where: {
+                id: {
+                    not: input.issueId,
+                },
+                linkedIssues: {
+                    none: {
+                        id: input.issueId,
+                    },
+                },
+            },
+            include:{
+                linkedIssues: true,
+            }
+        });
+    }),
+
+    linkAnotherIssueToIssue: protectedProcedure.input(z.object({ issueId: z.string(), linkedIssueId: z.string() })).mutation(({ ctx, input }) => {
+
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                linkedIssues: {
+                    connect: {
+                        id: input.linkedIssueId,
+                    },
+                },
+            },
+            include:{
+                linkedIssues: true,
+            }
+        });
+    }),
+
+    unlinkAnotherIssueFromIssue: protectedProcedure.input(z.object({ issueId: z.string(), linkedIssueId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.issue.update({
+            where: {
+                id: input.issueId,
+            },
+            data: {
+                linkedIssues: {
+                    disconnect: {
+                        id: input.linkedIssueId,
+                    },
+                },
+            },
+        });
+    }),
+
 });
