@@ -97,6 +97,12 @@ export const projectRouter = createTRPCRouter({
                 projectType: input.projectType,
                 //DEFAULT set the project lead to the user who created the project
                 projectLeadId: ctx.session.user.id,
+                //SET the creator as a member of the project as well
+                members: {
+                    connect: {
+                        id: ctx.session.user.id,
+                    },
+                },
                 workflows: {
                     createMany: {
                         data: defaultWorkflows.map((workflow, index) => ({
@@ -153,13 +159,14 @@ export const projectRouter = createTRPCRouter({
         }
     }),
 
-    assignUserToProject: protectedProcedure.input(z.object({ projectId: z.string(), userId: z.string() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.project.update({
+    assignUserToProject: protectedProcedure.input(z.object({ workspaceId:z.string(), projectId: z.string(), userId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.user.update({
             where: {
                 id: input.projectId,
+                workspaceId : input.workspaceId,
             },
             data: {
-                members: {
+                projects: {
                     connect: {
                         id: input.userId,
                     },
@@ -192,6 +199,7 @@ export const projectRouter = createTRPCRouter({
                     include: {
                         issue: {
                             include: {
+                                labels: true,
                                 _count: {
                                     select: {
                                         comments: true,
