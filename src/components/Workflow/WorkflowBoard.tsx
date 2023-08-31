@@ -35,7 +35,6 @@ import {
 } from '@dnd-kit/sortable';
 import { coordinateGetter as multipleContainersCoordinateGetter } from '../../utils/multipleContainersKeyboardCoordinates';
 
-import { createRange } from '../../utils/createRange';
 import WorkflowContainer from './WorkflowContainer';
 import Item from '../Item/Item';
 import Container from '../Container/Container';
@@ -107,15 +106,7 @@ export function WorkflowContainers({
   vertical = false,
   scrollable,
 }: Props) {
-  const [items, setItems] = useState<Items>(
-    () =>
-      initialItems ?? {
-        A: createRange(itemCount, (index) => `A${index + 1}`),
-        B: createRange(itemCount, (index) => `B${index + 1}`),
-        C: createRange(itemCount, (index) => `C${index + 1}`),
-        D: createRange(itemCount, (index) => `D${index + 1}`),
-      }
-  );
+  const [items, setItems] = useState<Items>(initialItems || {});
   const [containers, setContainers] = useState(
     Object.keys(items) as UniqueIdentifier[]
   );

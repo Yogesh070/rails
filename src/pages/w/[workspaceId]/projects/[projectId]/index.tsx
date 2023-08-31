@@ -43,7 +43,7 @@ const SingleProject = () => {
 
   React.useEffect(() => {
     if (workflowQuery.isSuccess) {
-      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
+      setProjectWorkflows(workflowQuery.data.workflows);
     }
   }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
 

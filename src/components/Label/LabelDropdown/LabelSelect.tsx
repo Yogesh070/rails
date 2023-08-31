@@ -23,9 +23,10 @@ const LabelSelect = (props:SelectProps ) => {
       event.preventDefault();
       event.stopPropagation();
     };
+    const color = project?.labels.find((item) => item.id === value)?.color;
     return (
       <Tag
-        color={value}
+        color={color}
         onMouseDown={onPreventMouseDown}
         closable={closable}
         onClose={onClose}
@@ -65,7 +66,7 @@ const LabelSelect = (props:SelectProps ) => {
       )}
     >
       {project!.labels.map((item) => (
-        <Option value={item.color} label={item.title} key={item.id}>
+        <Option value={item.id} label={item.title} key={item.id}>
           <Space>
             <div
               style={{
