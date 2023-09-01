@@ -38,7 +38,7 @@ const CreateProject = () => {
             values.projectType
         );
 
-        createProject({ name: values.name, projectType: values.projectType, workspaceShortName: workspaceId as string });
+        createProject({ name: values.name, projectType: values.projectType, workspaceId: workspaceId as string });
     };
 
     const onFinishFailed = (errorInfo: ValidateErrorEntity<Project>) => {

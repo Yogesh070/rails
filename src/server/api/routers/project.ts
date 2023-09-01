@@ -83,14 +83,8 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceShortName:z.string() })).mutation(async ({ ctx, input }) => {
+    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceId:z.string() })).mutation(async ({ ctx, input }) => {
         const defaultWorkflows = projectTypesList[input.projectType].defaultWorkflows;
-        const workspace = await ctx.prisma.workspace.findFirst({
-            where:{
-                shortName:input.workspaceShortName
-            }
-        });
-                
         return ctx.prisma.project.create({
             data: {
                 name: input.name,
@@ -112,7 +106,7 @@ export const projectRouter = createTRPCRouter({
                         skipDuplicates: true,
                     },
                 },
-                workspaceId:workspace?.id,
+                workspaceId:input.workspaceId
             },
         });
     }),
@@ -197,9 +191,10 @@ export const projectRouter = createTRPCRouter({
                         index: "asc",
                     },
                     include: {
-                        issue: {
+                        issues: {
                             include: {
                                 labels: true,
+                                attachments: true,
                                 _count: {
                                     select: {
                                         comments: true,
