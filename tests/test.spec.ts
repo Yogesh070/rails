@@ -7,6 +7,11 @@ test('login', async ({ page }: { page: Page }) => {
   await page.goto('http://localhost:3000/');
   await page.click('button.btn-signin')
   await page.click('button.ant-btn-default')
+  await page.click('button.ant-btn-primary')
+});
+test('create workspace', async ({ page }: { page: Page }) => {
+  await page.goto('http://localhost:3000/w/home');
+  await page.click('button.ant-btn-primary')
 });
 
 // test('get started link', async ({ page }: { page: Page }) => {
