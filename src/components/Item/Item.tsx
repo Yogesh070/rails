@@ -1,4 +1,4 @@
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useState} from 'react';
 import classNames from 'classnames';
 
 import {Button, Typography, theme} from 'antd';
@@ -18,6 +18,7 @@ import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
 import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
 import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
+import { useProjectStore } from '../../store/project.store';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
@@ -95,6 +96,23 @@ const Item = React.memo(
 
       const {token} = useToken();
 
+      const workflows= useProjectStore((state) => state.workflows);
+
+      const getIssueById=useCallback((issueId: string):IssueWithCount=> {
+        let issue:IssueWithCount = item;
+        workflows.forEach((workflow) => {
+          workflow.issues.forEach((issueItem) => {
+            if(issueItem.id === issueId) {
+              issue = issueItem;
+            }
+          })
+        })
+        return issue;
+      }
+      ,[item, workflows]);
+    
+      const issue = getIssueById(item.id);
+
       return (
         <li
           className={classNames(
@@ -145,9 +163,9 @@ const Item = React.memo(
             <>
               <div className="flex justify-between">
                 <div className="flex items-center gap-1-2-3">
-                  <LabelIndicator color="red" />
-                  <LabelIndicator color="green" />
-                  <LabelIndicator color="purple" />
+                  {issue.labels.map((label) => (
+                    <LabelIndicator key={label.id} color={label.color} />
+                  ))}
                 </div>
                 <span className={styles.Actions}>
                   {onRemove ? (
@@ -161,7 +179,7 @@ const Item = React.memo(
                   type="text"
                 />
               </div>
-              <Text className="m-0"> {item.title}</Text>
+              <Text className="m-0"> {issue.title}</Text>
               <div className="flex flex-end gap-1-2-3 py-1">
                 {
                   item._count.comments > 0 ? (
@@ -182,7 +200,6 @@ const Item = React.memo(
           <Suspense fallback={<Text>Loading...</Text>}>
             <ItemDetailsModal
               open={isModalOpen}
-              title={item.title}
               item={item}
               onCancel={handleCancel}
             />

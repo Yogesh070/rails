@@ -24,7 +24,7 @@ const WorkflowContainers = dynamic(
 
 const {Text} = Typography;
 
-export type IssueWithCount = RouterOutputs['project']['getProjectWorkflows']['workflows'][number]['issue'][number];
+export type IssueWithCount = RouterOutputs['project']['getProjectWorkflows']['workflows'][number]['issues'][number];
 
 const SingleProject = () => {
   const router = useRouter();
@@ -43,15 +43,15 @@ const SingleProject = () => {
 
   React.useEffect(() => {
     if (workflowQuery.isSuccess) {
-      setProjectWorkflows(workflowQuery.data?.workflows ?? []);
+      setProjectWorkflows(workflowQuery.data.workflows);
     }
   }, [setProjectWorkflows, workflowQuery.data?.workflows, workflowQuery.isSuccess]);
 
   const convertWorkFlowsToRecord = useCallback(
-    (workFlows: (WorkFlow & {issue: IssueWithCount[]})[]) => {
+    (workFlows: (WorkFlow & {issues: IssueWithCount[]})[]) => {
       const records: Record<UniqueIdentifier, IssueWithCount[]> = {};
       workFlows.forEach((workflow) => {
-        records[workflow.id] = workflow.issue;
+        records[workflow.id] = workflow.issues;
       });
       return records;
     },

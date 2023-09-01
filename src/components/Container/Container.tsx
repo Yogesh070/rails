@@ -69,6 +69,13 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
     };
 
     const { token } = useToken();
+    const workflows = useProjectStore((state) => state.workflows);
+
+    const getWorkFlowById = (id: string) => {
+      return workflows.find((workflow) => workflow.id === id);
+    };
+
+    const currentWorkflow = getWorkFlowById(label!);
 
     return (
       <div
@@ -96,7 +103,7 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
       >
         {label ? (
           <div className={styles.Header} style={{ backgroundColor: token.colorBgElevated }}>
-            <Text>{label}</Text>
+            <Text>{currentWorkflow?.title}</Text>
             <div className={styles.Actions}>
               {onRemove ? <Remove onClick={onRemove} /> : undefined}
               <Handle {...handleProps} />
@@ -105,7 +112,8 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
         ) : null}
         {placeholder ? children : <ul className="flex-1">{children}</ul>}
         {hasAdd && (
-          <IssueModal onEnterPress={handleEnterClick} renderer={
+          <IssueModal 
+            onEnterPress={handleEnterClick} renderer={
             <Button
               type="dashed"
               className="w-100 flex justify-center items-center gap-1-2 m-0"

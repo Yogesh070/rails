@@ -20,7 +20,7 @@ const Analytics = () => {
   const data = workflows.map((workflow) => {
     return {
       name: workflow.title,
-      issueCount: workflow.issue.length,
+      issueCount: workflow.issues.length,
     };
   });
 

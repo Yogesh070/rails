@@ -83,20 +83,20 @@ export const projectRouter = createTRPCRouter({
             },
         });
     }),
-    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceShortName:z.string() })).mutation(async ({ ctx, input }) => {
+    createProject: protectedProcedure.input(z.object({ name: z.string(), projectType: z.nativeEnum(ProjectType),workspaceId:z.string() })).mutation(async ({ ctx, input }) => {
         const defaultWorkflows = projectTypesList[input.projectType].defaultWorkflows;
-        const workspace = await ctx.prisma.workspace.findFirst({
-            where:{
-                shortName:input.workspaceShortName
-            }
-        });
-                
         return ctx.prisma.project.create({
             data: {
                 name: input.name,
                 projectType: input.projectType,
                 //DEFAULT set the project lead to the user who created the project
                 projectLeadId: ctx.session.user.id,
+                //SET the creator as a member of the project as well
+                members: {
+                    connect: {
+                        id: ctx.session.user.id,
+                    },
+                },
                 workflows: {
                     createMany: {
                         data: defaultWorkflows.map((workflow, index) => ({
@@ -106,7 +106,7 @@ export const projectRouter = createTRPCRouter({
                         skipDuplicates: true,
                     },
                 },
-                workspaceId:workspace?.id,
+                workspaceId:input.workspaceId
             },
         });
     }),
@@ -153,13 +153,14 @@ export const projectRouter = createTRPCRouter({
         }
     }),
 
-    assignUserToProject: protectedProcedure.input(z.object({ projectId: z.string(), userId: z.string() })).mutation(({ ctx, input }) => {
-        return ctx.prisma.project.update({
+    assignUserToProject: protectedProcedure.input(z.object({ workspaceId:z.string(), projectId: z.string(), userId: z.string() })).mutation(({ ctx, input }) => {
+        return ctx.prisma.user.update({
             where: {
                 id: input.projectId,
+                workspaceId : input.workspaceId,
             },
             data: {
-                members: {
+                projects: {
                     connect: {
                         id: input.userId,
                     },
@@ -190,8 +191,10 @@ export const projectRouter = createTRPCRouter({
                         index: "asc",
                     },
                     include: {
-                        issue: {
+                        issues: {
                             include: {
+                                labels: true,
+                                attachments: true,
                                 _count: {
                                     select: {
                                         comments: true,

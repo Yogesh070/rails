@@ -17,7 +17,7 @@ import CommentSection from '../Comment/Comment';
 import {api} from '../../utils/api';
 import Checklist from '../Checklist/Checklist';
 import {useProjectStore} from '../../store/project.store';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import LabelSelect from '../Label/LabelDropdown/LabelSelect';
 import dayjs from 'dayjs';
 
@@ -27,13 +27,16 @@ import ButtonMenu from '../ButtonMenu/ButtonMenu';
 import {
   CheckSquareOutlined,
   CheckCircleOutlined,
-  LinkOutlined,
   ApartmentOutlined,
   FlagOutlined,
 } from '@ant-design/icons';
+import LinkedIssueList from '../Issue/LinkIssueList';
+import LinkIssueForm from '../Issue/LinkIssueForm';
+import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
+import Attachment from '../Attachment';
+import AttachmentList from '../Attachment/AttachmentList';
 interface DetailsModalProps {
   open: boolean;
-  title: string;
   item: Issue;
   onCancel: () => void;
 }
@@ -58,6 +61,10 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
 
   const checkListQuery = api.issue.getChecklistsInIssue.useQuery({
     issueId: props.item.id,
+  },);
+
+  const issueQuery = api.issue.getIssueById.useQuery({
+    id: props.item.id,
   });
 
   const getUserOptions = (users: User[]) => {
@@ -72,9 +79,17 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   const projectMembers = useProjectStore((state) => state.project?.members);
   const userOptions = getUserOptions(projectMembers ?? []);
 
-  const {mutate: updateIssueTitle} = api.issue.updateIssueTitle.useMutation();
+  const {mutate: updateIssueTitle} = api.issue.updateIssueTitle.useMutation({
+    onSuccess: (issue) => {
+      updateIssue(props.item.workFlowId,props.item.id,issue);
+    }
+  });
   const {mutate: updateDescription} =
-    api.issue.updateIssueDescription.useMutation();
+    api.issue.updateIssueDescription.useMutation({
+      onSuccess: (issue) => {
+        updateIssue(props.item.workFlowId,props.item.id,issue);
+      }
+    });
 
   const [issueTitle, setIssueTitle] = useState(props.item.title);
   const [issueDescription, setIssueDescription] = useState(
@@ -93,8 +108,9 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const {mutate: setDueDate, isLoading: isSettingDueDate} =
     api.issue.setDueDate.useMutation({
-      onSuccess: () => {
+      onSuccess: (issue) => {
         setIsDatePickerOpen(false);
+        updateIssue(props.item.workFlowId,props.item.id,issue);
       },
     });
 
@@ -102,6 +118,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
     onSuccess: () => {
       setSelectedDueDate(null);
       setIsDatePickerOpen(false);
+      updateIssue(props.item.workFlowId,props.item.id,issue);
     },
   });
 
@@ -123,13 +140,56 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
 
   //TODO:&& HANDLE OVERDUE STATE ON UI
 
-  //handling adding and removing flag
+  const updateIssue = useProjectStore((state) => state.updateIssue);
 
   const {mutate: addFlag, isLoading: addingFlag} =
-    api.issue.addFlag.useMutation();
+    api.issue.addFlag.useMutation({
+      onSuccess(issue) {
+        updateIssue(props.item.workFlowId,props.item.id,issue);
+    },
+    });
 
   const {mutate: removeFlag, isLoading: removingFlag} =
-    api.issue.addFlag.useMutation();
+    api.issue.removeFlag.useMutation({
+      onSuccess(issue) {
+          updateIssue(props.item.workFlowId,props.item.id,issue);
+      },
+    });
+
+  const [isLinkedIssueFormVisible, setIsLinkedIssueFormVisible] = useState(false);
+
+  const workflows= useProjectStore((state) => state.workflows);
+
+  const getIssueById=useCallback( (issueId: string):IssueWithCount=> {
+    let issue:IssueWithCount = {} as IssueWithCount;
+    workflows.forEach((workflow) => {
+      workflow.issues.forEach((issueItem) => {
+        if(issueItem.id === issueId) {
+          issue = issueItem;
+        }
+      })
+    })
+    return issue;
+  }
+  , [workflows]);
+
+  const issue = getIssueById(props.item.id);
+
+
+  //LABLE FUNCTIONALITY
+
+  const {updateIssueLabels} = useProjectStore((state) => state);
+  const {mutate:addLabelToIssue,isLoading:isAddingLabelToIssue} = api.issue.addLabelToIssue.useMutation({
+    onSuccess: (data) => {
+      updateIssueLabels(props.item.workFlowId,props.item.id,data.labels);
+    },
+  });
+
+  const {mutate:removeLabelFromIssue,isLoading:isRemovingLabelFromIssue} = api.issue.removeLabelFromIssue.useMutation({
+    onSuccess: (data) => {
+      updateIssueLabels(props.item.workFlowId,props.item.id,data.labels);
+    },
+  });
 
   return (
     <>
@@ -140,13 +200,13 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
             editable={{
               onChange: (val) => {
                 setIssueTitle(val);
-                updateIssueTitle({issueId: props.item.id, title: issueTitle});
+                updateIssueTitle({issueId: props.item.id, title: val});
               },
               triggerType: ['text'],
             }}
             className="m-0"
           >
-            {issueTitle}
+            {issue.title}
           </Paragraph>
         }
         width={800}
@@ -160,7 +220,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
           style={{backgroundColor: colorBgElevated}}
         >
           <Content style={{backgroundColor: colorBgElevated}}>
-             {props.item.flagged ? (
+             {issue.flagged ? (
              <Tag icon={<FlagOutlined />} color="warning">
                   Flagged
                 </Tag>
@@ -170,21 +230,37 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
             <div className="flex flex-col gap-1-2">
               <div>
                 <Text>Labels</Text>
-                <LabelSelect/>
+                <LabelSelect
+                loading={isAddingLabelToIssue || isRemovingLabelFromIssue}
+                defaultValue={issue.labels.map((label) => label.id)}
+                onSelect={(val)=>{
+                  addLabelToIssue({
+                    issueId: props.item.id,
+                    labelId: val
+                  })
+                }}
+                onDeselect={(val)=>{
+                  removeLabelFromIssue({
+                    issueId: props.item.id,
+                    labelId: val
+                  })
+                }
+                }
+                />
               </div>
-              {props.item.dueDate ? (
-                <div>
+              {issue.dueDate!=null ? (
+                <>
                   <Text strong>Due Date</Text>
                   <div className="flex gap-1-2">
                     <Checkbox
-                      value={isDueDateChecked}
+                      checked={isDueDateChecked}
                       onChange={(e) => {
                         setIsDueDateChecked(e.target.checked);
                       }}
                     />
                     <Button onClick={() => setIsDatePickerOpen(true)}>
-                      {dayjs(props.item.dueDate).format('MMM DD')} at{' '}
-                      {dayjs(props.item.dueDate).format('hh:mm A')}
+                      {dayjs(issue.dueDate).format('MMM DD')} at{' '}
+                      {dayjs(issue.dueDate).format('hh:mm A')}
                       {isDueDateChecked ? (
                         <Tag
                           icon={<CheckCircleOutlined />}
@@ -198,7 +274,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                       )}
                     </Button>
                   </div>
-                </div>
+                </>
               ) : (
                 <></>
               )}
@@ -217,6 +293,18 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   });
                 }}
               />
+              {
+                !issueQuery.isLoading && issueQuery.data!.linkedIssues.length > 0 &&
+                <LinkedIssueList issue={issueQuery.data!} isFormVisible={isLinkedIssueFormVisible} hideForm={()=>setIsLinkedIssueFormVisible(false)} showForm={()=>setIsLinkedIssueFormVisible(true)}/>
+              }
+               {isLinkedIssueFormVisible && (
+                <LinkIssueForm
+                  issue={props.item}
+                  hideForm={() => setIsLinkedIssueFormVisible(false)}
+                />
+              )}
+              <AttachmentList issueId={props.item.id} workflowId={props.item.workFlowId}/>
+
               {checkListQuery.data?.map((checklist, idx) => {
                 return <Checklist key={idx} {...checklist} />;
               })}
@@ -277,7 +365,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   });
                 }}
                 renderExtraFooter={() => {
-                  if (props.item.dueDate)
+                  if (issue.dueDate)
                     return (
                       <div className="flex flex-end p-2 w-full">
                         <Button
@@ -329,13 +417,11 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   Add
                 </Button>
               </ButtonMenu>
-              <Button type="default" icon={<LinkOutlined />} onClick={() => {}}>
-                Attach
-              </Button>
+              <Attachment workflowId={props.item.workFlowId} issueId={props.item.id}/>
               <Button
                 type="default"
                 icon={<ApartmentOutlined />}
-                onClick={() => {}}
+                onClick={() => setIsLinkedIssueFormVisible(true)}
               >
                 Link Child Issue
               </Button>
@@ -343,7 +429,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 type="default"
                 icon={<FlagOutlined />}
                 onClick={() => {
-                  if (props.item.flagged) {
+                  if (issue.flagged) {
                     removeFlag({
                       issueId: props.item.id,
                     });
@@ -355,7 +441,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                 }}
                 loading={addingFlag || removingFlag}
               >
-                {props.item.flagged ? 'Remove Flag' : 'Add Flag'}
+                {issue.flagged ? 'Remove Flag' : 'Add Flag'}
               </Button>
             </div>
           </Sider>
