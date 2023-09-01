@@ -1,20 +1,13 @@
 import React, {useState} from 'react';
-import type {UploadFile, UploadProps} from 'antd';
-import {Button, message, Modal, Upload} from 'antd';
+import {Button, Input, message, Modal, Progress} from 'antd';
 
-import {LinkOutlined, InboxOutlined} from '@ant-design/icons';
+import {LinkOutlined} from '@ant-design/icons';
 
 import {storage} from '../../../firebase.config';
-import {
-  getDownloadURL,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
+import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage';
 import {api} from '../../utils/api';
-import { useRouter } from 'next/router';
-import { useProjectStore } from '../../store/project.store';
-
-const {Dragger} = Upload;
+import {useRouter} from 'next/router';
+import {useProjectStore} from '../../store/project.store';
 
 interface AttachmentProps {
   issueId: string;
@@ -22,7 +15,6 @@ interface AttachmentProps {
 }
 
 const Attachment = (props: AttachmentProps) => {
-
   const router = useRouter();
   const projectId = router.query.projectId as string;
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,80 +31,75 @@ const Attachment = (props: AttachmentProps) => {
     setIsModalOpen(false);
   };
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState<File>();
+  const [isUploading, setIsUploading] = useState(false);
+  const [progressUpload, setProgressUpload] = useState(0);
 
-  const uploadProps: UploadProps = {
-    name: 'file',
-    multiple: true,
-    progress: {
-      strokeColor: {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      },
-      strokeWidth: 3,
-      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
-    },
-    onRemove: (file) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
-      newFileList.splice(index, 1);
-      setFileList(newFileList);
-    },
-    beforeUpload: (file) => {
-      setFileList([...fileList, file]);
-
-      return false;
-    },
-    fileList,
-  };
-
-  const addAttachment= useProjectStore(state=>state.addAttachmentToIssue)
+  const addAttachment = useProjectStore((state) => state.addAttachmentToIssue);
 
   const {mutate: addAttachmentToIssue} =
     api.issue.addAttachmentToIssue.useMutation({
       onSuccess: (data) => {
         addAttachment(props.workflowId, props.issueId, data);
-      }
+      },
     });
-    
 
-  const handleUpload = () => {
-    fileList.forEach((file) => {
-      const storageRef = ref(storage, `${projectId}/${props.issueId}/${file.name}`);
-      const uploadTask = uploadBytesResumable(
-        storageRef,
-        file.originFileObj as Blob
+  const handleSelectedFile = (files: any) => {
+    if (files && files[0].size < 10000000) {
+      setImageFile(files[0]);
+
+      console.log(files[0]);
+    } else {
+      message.error('File size to large');
+    }
+  };
+
+  const handleUploadFile = () => {
+    if (imageFile) {
+      const fileName = imageFile.name;
+      const storageRef = ref(
+        storage,
+        `${projectId}/${props.issueId}/${fileName}`
       );
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          setProgressUpload(progress); // to show progress upload
+
+          switch (snapshot.state) {
+            case 'paused':
+              console.log('Upload is paused');
+              break;
+            case 'running':
+              console.log('Upload is running');
+              break;
+          }
         },
         (error) => {
-          console.error(error);
-          message.error('upload failed.');
+          message.error(error.message);
         },
         () => {
-          // Upload completed successfully, now we can get the download URL
-          setFileList([]);
-          setUploading(false);
-          message.success('upload successfully.');
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log('File available at', downloadURL);
+          setProgressUpload(0);
+          setIsUploading(false);
+          message.success('File uploaded successfully');
+          handleOk();
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
             addAttachmentToIssue({
               issueId: props.issueId,
-              url: downloadURL,
-              displayName: file.name,
+              url: url,
+              displayName: fileName,
             });
           });
         }
       );
-    });
-    setUploading(true);
+    } else {
+      message.error('File not found');
+    }
   };
 
   return (
@@ -122,15 +109,14 @@ const Attachment = (props: AttachmentProps) => {
       </Button>
       <Modal
         title="Attach a file"
+        destroyOnClose={true}
         footer={
           <Button
+            loading={isUploading}
             type="primary"
-            onClick={handleUpload}
-            disabled={fileList.length === 0}
-            loading={uploading}
-            style={{marginTop: 16}}
+            onClick={handleUploadFile}
           >
-            {uploading ? 'Uploading' : 'Start Upload'}
+            Upload
           </Button>
         }
         closable={true}
@@ -138,15 +124,13 @@ const Attachment = (props: AttachmentProps) => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Dragger {...uploadProps} className="m-0">
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p>Attach a file from your computer </p>
-        </Dragger>
+        <Input
+          type="file"
+          placeholder="Select file to upload"
+          accept="image/png"
+          onChange={(files) => handleSelectedFile(files.target.files)}
+        />
+        <Progress percent={progressUpload} />
       </Modal>
     </>
   );
