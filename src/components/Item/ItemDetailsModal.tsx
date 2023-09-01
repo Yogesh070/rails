@@ -17,7 +17,7 @@ import CommentSection from '../Comment/Comment';
 import {api} from '../../utils/api';
 import Checklist from '../Checklist/Checklist';
 import {useProjectStore} from '../../store/project.store';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useState} from 'react';
 import LabelSelect from '../Label/LabelDropdown/LabelSelect';
 import dayjs from 'dayjs';
 
@@ -27,13 +27,14 @@ import ButtonMenu from '../ButtonMenu/ButtonMenu';
 import {
   CheckSquareOutlined,
   CheckCircleOutlined,
-  LinkOutlined,
   ApartmentOutlined,
   FlagOutlined,
 } from '@ant-design/icons';
 import LinkedIssueList from '../Issue/LinkIssueList';
 import LinkIssueForm from '../Issue/LinkIssueForm';
 import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
+import Attachment from '../Attachment';
+import AttachmentList from '../Attachment/AttachmentList';
 interface DetailsModalProps {
   open: boolean;
   item: Issue;
@@ -162,7 +163,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
   const getIssueById=useCallback( (issueId: string):IssueWithCount=> {
     let issue:IssueWithCount = {} as IssueWithCount;
     workflows.forEach((workflow) => {
-      workflow.issue.forEach((issueItem) => {
+      workflow.issues.forEach((issueItem) => {
         if(issueItem.id === issueId) {
           issue = issueItem;
         }
@@ -302,6 +303,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   hideForm={() => setIsLinkedIssueFormVisible(false)}
                 />
               )}
+              <AttachmentList issueId={props.item.id} workflowId={props.item.workFlowId}/>
 
               {checkListQuery.data?.map((checklist, idx) => {
                 return <Checklist key={idx} {...checklist} />;
@@ -415,9 +417,7 @@ const ItemDetailsModal: React.FC<DetailsModalProps> = (
                   Add
                 </Button>
               </ButtonMenu>
-              <Button type="default" icon={<LinkOutlined />} onClick={() => {}}>
-                Attach
-              </Button>
+              <Attachment workflowId={props.item.workFlowId} issueId={props.item.id}/>
               <Button
                 type="default"
                 icon={<ApartmentOutlined />}
