@@ -3,9 +3,10 @@ import { Page } from "@playwright/test";
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-test('has title', async ({ page }: { page: Page }) => {
+test('login', async ({ page }: { page: Page }) => {
   await page.goto('http://localhost:3000/');
   await page.click('button.btn-signin')
+  await page.click('button.ant-btn-default')
 });
 
 // test('get started link', async ({ page }: { page: Page }) => {
