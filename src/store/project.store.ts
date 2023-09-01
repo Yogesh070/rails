@@ -46,7 +46,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workflowId) {
                     return {
                         ...workflow,
-                        issue: [...workflow.issues, {
+                        issues: [...workflow.issues, {
                             ...issue,
                             _count: {
                                 comments: 0,
@@ -117,7 +117,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -158,7 +158,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -180,7 +180,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -202,7 +202,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((i) => {
+                        issues: workflow.issues.map((i) => {
                             if (i.id === issueId) {
                                 return {
                                     ...issue,
@@ -225,11 +225,12 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((i) => {
+                        issues: workflow.issues.map((i) => {
                             if (i.id === issueId) {
                                 return {
                                     ...i,
                                     labels,
+                                    attachments: [...i.attachments],
                                 };
                             }
                             return i;
@@ -247,7 +248,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -270,7 +271,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issues.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,

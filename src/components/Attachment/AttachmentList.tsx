@@ -39,13 +39,14 @@ const AttachmentList = (props: AttachmentListProps) => {
                   <Image
                     src={attachment.url}
                     alt={attachment.displayName ?? attachment.id}
+                    width={60}
                   />
                 }
                 title={<Text strong>{attachment.displayName}</Text>}
                 description={
                   <div className="flex gap-1-2-3 items-center">
                     <Text className="font-small">
-                      Added on{dayjs(attachment.createdAt).format('MMM DD')}
+                      Added on {dayjs(attachment.createdAt).format('MMM DD')}
                     </Text>
                     <Button
                       type="link"
