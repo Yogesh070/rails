@@ -18,7 +18,7 @@ export const workflowRouter = createTRPCRouter({
                 projectId: input.projectId,
             },
             include: {
-                issue: true,
+                issues: true,
             },
         });
     }),

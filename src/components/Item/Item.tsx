@@ -101,7 +101,7 @@ const Item = React.memo(
       const getIssueById=useCallback((issueId: string):IssueWithCount=> {
         let issue:IssueWithCount = item;
         workflows.forEach((workflow) => {
-          workflow.issue.forEach((issueItem) => {
+          workflow.issues.forEach((issueItem) => {
             if(issueItem.id === issueId) {
               issue = issueItem;
             }

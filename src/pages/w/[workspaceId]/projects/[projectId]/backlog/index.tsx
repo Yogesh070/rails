@@ -62,7 +62,7 @@ const Backlog = () => {
         (workflow) => workflow.title === 'Backlog'
       );
       if (backlog) {
-        setBacklogIssues(backlog.issue);
+        setBacklogIssues(backlog.issues);
       }
     }
   }, [setBacklogIssues, workflowQuery.data]);
