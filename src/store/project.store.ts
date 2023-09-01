@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { RouterOutputs } from '../utils/api';
-import type { Issue } from '@prisma/client';
+import type { Attachment, Issue } from '@prisma/client';
 import { devtools } from 'zustand/middleware';
 import type { Label as PLabel} from '@prisma/client';
 
@@ -30,6 +30,8 @@ type Action = {
     deleteComment: (workflowId: string, issueId: string, commentId: string) => void,
     updateIssue: (workflowId: string, issueId: string, issue: Issue) => void,
     updateIssueLabels: (workflowId: string, issueId: string, labels: PLabel[]) => void,
+    addAttachmentToIssue: (workflowId: string, issueId: string, attachment: Attachment) => void,
+    deleteAttachmentFromIssue: (workflowId: string, issueId: string, attachmentId: string) => void,
 }
 
 export const useProjectStore = create<State & Action>()(
@@ -44,7 +46,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workflowId) {
                     return {
                         ...workflow,
-                        issue: [...workflow.issue, {
+                        issues: [...workflow.issues, {
                             ...issue,
                             _count: {
                                 comments: 0,
@@ -53,6 +55,7 @@ export const useProjectStore = create<State & Action>()(
                                 linkedIssues: 0,
                             },
                             labels: [],
+                            attachments: [],
                         }],
                     };
                 }
@@ -114,7 +117,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issue.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -135,7 +138,7 @@ export const useProjectStore = create<State & Action>()(
         //     workflows: state.workflows.map((workflow) => {
         //         return {
         //             ...workflow,
-        //             issue: workflow.issue.map((issue) => {
+        //             issue: workflow.issues.map((issue) => {
         //                 if (issue.id === issueId) {
         //                     return {
         //                         ...issue,
@@ -155,7 +158,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issue.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -177,7 +180,7 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issue.map((issue) => {
+                        issues: workflow.issues.map((issue) => {
                             if (issue.id === issueId) {
                                 return {
                                     ...issue,
@@ -199,12 +202,13 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issue.map((i) => {
+                        issues: workflow.issues.map((i) => {
                             if (i.id === issueId) {
                                 return {
                                     ...issue,
                                     _count: {...i._count},
                                     labels: [...i.labels],
+                                    attachments: [...i.attachments],
                                 };
                             }
                             return i;
@@ -221,11 +225,12 @@ export const useProjectStore = create<State & Action>()(
                 if (workflow.id === workFlowId) {
                     return {
                         ...workflow,
-                        issue: workflow.issue.map((i) => {
+                        issues: workflow.issues.map((i) => {
                             if (i.id === issueId) {
                                 return {
                                     ...i,
                                     labels,
+                                    attachments: [...i.attachments],
                                 };
                             }
                             return i;
@@ -235,7 +240,54 @@ export const useProjectStore = create<State & Action>()(
                 return workflow;
             }),
         }));
-    }
+    },
+
+    addAttachmentToIssue(workFlowId, issueId, attachment) {
+        set((state) => ({
+            workflows: state.workflows.map((workflow) => {
+                if (workflow.id === workFlowId) {
+                    return {
+                        ...workflow,
+                        issues: workflow.issues.map((issue) => {
+                            if (issue.id === issueId) {
+                                return {
+                                    ...issue,
+                                    _count: {...issue._count},
+                                    labels: [...issue.labels],
+                                    attachments: [...issue.attachments, attachment],
+                                };
+                            }
+                            return issue;
+                        }),
+                    };
+                }
+                return workflow;
+            }),
+        }));
+    },
+    deleteAttachmentFromIssue(workFlowId, issueId, attachmentId) {
+        set((state) => ({
+            workflows: state.workflows.map((workflow) => {
+                if (workflow.id === workFlowId) {
+                    return {
+                        ...workflow,
+                        issues: workflow.issues.map((issue) => {
+                            if (issue.id === issueId) {
+                                return {
+                                    ...issue,
+                                    labels: [...issue.labels],
+                                    _count: {...issue._count},
+                                    attachments: issue.attachments.filter((attachment) => attachment.id !== attachmentId),
+                                };
+                            }
+                            return issue;
+                        }),
+                    };
+                }
+                return workflow;
+            }),
+        }));
+    },
 
 }))
 );

@@ -65,18 +65,18 @@ model VerificationToken {
 }
 
 model Workspace {
-  id              String            @id @default(cuid())
-  name            String
-  shortName       String            @unique
-  description     String?
-  website         String?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  createdById     String
-  color           String
-  projects        Project[]
-  members         User[]
-  createdBy       User              @relation("createdBy", fields: [createdById], references: [id])
+  id               String            @id @default(cuid())
+  name             String
+  shortName        String            @unique
+  description      String?
+  website          String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  createdById      String
+  color            String
+  projects         Project[]
+  members          User[]
+  createdBy        User              @relation("createdBy", fields: [createdById], references: [id])
   invitationTokens InvitationToken[]
 }
 
@@ -89,11 +89,11 @@ model Project {
   status            ProjectStatus @default(ACTIVE)
   projectLeadId     String
   defaultAssigneeId String?
-  workspaceId       String?
+  workspaceId       String
   labels            Label[]
   defaultAssignee   User?         @relation("defaultAssignee", fields: [defaultAssigneeId], references: [id])
   projectLead       User          @relation(fields: [projectLeadId], references: [id])
-  Workspace         Workspace?    @relation(fields: [workspaceId], references: [id])
+  workspace         Workspace     @relation(fields: [workspaceId], references: [id])
   sprints           Sprint[]
   userActions       UserActions[]
   workflows         WorkFlow[]
@@ -107,7 +107,7 @@ model WorkFlow {
   updatedAt DateTime @updatedAt
   projectId String
   index     Int
-  issue     Issue[]
+  issues    Issue[]
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
@@ -124,27 +124,28 @@ model Label {
 }
 
 model Issue {
-  id           String      @id @default(cuid())
+  id           String       @id @default(cuid())
   title        String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   index        Int
   createdById  String
   workFlowId   String
   description  String?
-  flagged      Boolean     @default(false)
+  flagged      Boolean      @default(false)
   dueDate      DateTime?
   issueId      String?
   sprintId     String?
   checkLists   CheckList[]
   comments     Comment[]
-  createdBy    User        @relation("createdBy", fields: [createdById], references: [id])
-  issue        Issue?      @relation("linkedIssues", fields: [issueId], references: [id])
-  linkedIssues Issue[]     @relation("linkedIssues")
-  sprint       Sprint?     @relation(fields: [sprintId], references: [id])
-  workFlow     WorkFlow    @relation(fields: [workFlowId], references: [id], onDelete: Cascade)
+  createdBy    User         @relation("createdBy", fields: [createdById], references: [id])
+  issue        Issue?       @relation("linkedIssues", fields: [issueId], references: [id])
+  linkedIssues Issue[]      @relation("linkedIssues")
+  sprint       Sprint?      @relation(fields: [sprintId], references: [id])
+  workFlow     WorkFlow     @relation(fields: [workFlowId], references: [id], onDelete: Cascade)
   labels       Label[]
-  assignees    User[]      @relation("IssueToUser")
+  assignees    User[]       @relation("IssueToUser")
+  attachments  Attachment[]
 }
 
 model Comment {
@@ -208,14 +209,24 @@ model Sprint {
 }
 
 model InvitationToken {
-  id          String    @id @default(cuid())
-  expiresAt   DateTime
-  email       String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  workspaceId String
-  token       String    @unique @default(cuid())
-  createdAt   DateTime  @default(now())
+  id             String    @id @default(cuid())
+  expiresAt      DateTime
+  email          String
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId    String
+  token          String    @unique @default(cuid())
+  createdAt      DateTime  @default(now())
   createdByEmail String
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  issueId     String
+  url         String
+  displayName String?
+  Issue       Issue    @relation(fields: [issueId], references: [id])
 }
 
 enum ProjectType {

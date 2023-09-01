@@ -542,4 +542,21 @@ export const issueRouter = createTRPCRouter({
         });
     }),
 
+    addAttachmentToIssue:protectedProcedure.input(z.object({issueId:z.string(),url:z.string(),displayName:z.string().optional()})).mutation(({ctx,input})=>{
+        return ctx.prisma.attachment.create({
+            data:{
+                url:input.url,
+                displayName:input.displayName,
+                issueId:input.issueId,
+            }
+        })
+    }),
+    removeAttachmentFromIssue:protectedProcedure.input(z.object({attachmentId:z.string()})).mutation(({ctx,input})=>{
+        return ctx.prisma.attachment.delete({
+            where:{
+                id:input.attachmentId
+            }
+        })
+    })
+
 });
