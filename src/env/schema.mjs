@@ -26,6 +26,7 @@ export const serverSchema = z.object({
   SMTP_USERNAME: z.string(),
   SMTP_PASSWORD: z.string(),
   EMAIL_FROM: z.string().email(),
+  FIREBASE_API_KEY: z.string(),
 });
 
 /**
@@ -45,6 +46,7 @@ export const serverEnv = {
   SMTP_USERNAME: process.env.SMTP_USERNAME,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
   EMAIL_FROM: process.env.EMAIL_FROM,
+  FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
 };
 
 /**
