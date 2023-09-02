@@ -1,26 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-}
-
-::-webkit-scrollbar {
-  width: .3em;
-  background-color: white;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgb(24, 17, 17);
-}
-
 .flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.gap-1 {
+.gap1 {
   gap: 0.3em;
 }
 
@@ -40,28 +26,26 @@ body {
 }
 
 .container {
-  max-width: 70%;
+  max-width: 75%;
   margin: 0 auto;
 }
 
-ul {
+
+.listedItems {
+  display: flex;
+  gap: 3.5em;
   list-style: none;
 }
 
-.listed-items {
-  display: flex;
-  gap: 3.5em;
-}
 
-a {
-  text-decoration: none;
-  color: white;
-}
-
-.top-section {
+.topSection {
   background-image: url("/wb.svg");
   background-repeat: no-repeat;
   background-size: 119%;
+}
+
+.About {
+  margin-bottom: 5rem;
 }
 
 #Footer {
@@ -69,17 +53,17 @@ a {
   padding-block: 2em;
 }
 
-.btn-signin {
+.btnSignin {
   border-radius: 100px;
   padding: 0.6em 1.7em;
-  background-color: #ffffff32;
+  background-color: #fe4365;
   border: 1px solid transparent;
   color: white;
   font-weight: 550;
   font-size: 16px;
 }
 
-.btn-start {
+.btnStart {
   border-radius: 100px;
   padding: 0.6em 1.7em;
   background-color: #fe4365;
@@ -90,13 +74,8 @@ a {
   margin-top: 2.5em;
 }
 
-.btn-send {
+.btnSend {
   margin-top: 0;
-}
-
-* {
-  scroll-behavior: smooth;
-  margin: 0;
 }
 
 .btn svg {
@@ -104,28 +83,28 @@ a {
   height: 15px;
 }
 
-.btn-signin:hover {
-  background-color: #ffffff80;
-}
-
-.btn-start:hover {
+.btnSignin:hover {
   background-color: #fe436599;
 }
 
-.hero-img {
+.btnStart:hover {
+  background-color: #fe436599;
+}
+
+.heroImg {
   width: 450px;
   height: 400px;
   object-fit: cover;
 }
 
-.features-body {
+.featuresBody {
   max-width: 80%;
   padding-block: 1em;
   margin: 0 auto;
   font-size: 20px;
 }
 
-.features-body2 {
+.featuresBody2 {
   max-width: 80%;
   padding-block: 2em;
   margin: 0 auto;
@@ -157,12 +136,7 @@ a {
   color: black;
 }
 
-h2 {
-  font-size: 40px;
-  text-align: center;
-}
-
-.about-card {
+.aboutCard {
   min-height: 260px;
   border: 2px solid black;
   text-align: center;
@@ -178,7 +152,7 @@ h2 {
   margin-bottom: 1em;
 }
 
-.footer-nav {
+.footerNav {
   background-color: #fe436590;
   padding: 3em;
   margin-top: 3em;

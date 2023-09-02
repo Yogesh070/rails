@@ -1,4 +1,3 @@
-import Navbar from "../components/Landing/Navbar"
 import HeroSection from "../components/Landing/HeroSection"
 import Features from "../components/Landing/Features"
 import AboutUs from "../components/Landing/AboutUs"
@@ -18,7 +17,6 @@ const Home: NextPage = () => {
 
       <main id="Home">
         <div className="top-section">
-          <Navbar />
           <HeroSection />
           <Features />
           <AboutUs />

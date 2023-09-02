@@ -4,6 +4,15 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(93, 92, 92);
 }
 
 a {
@@ -67,9 +76,10 @@ a {
   flex: 1 1 auto;
 }
 
-.flex-col{
+.flex-col {
   flex-direction: column;
 }
+
 .flex-1 {
   flex: 1;
 }
@@ -78,7 +88,7 @@ a {
   align-items: center;
 }
 
-.items-end{
+.items-end {
   align-items: flex-end;
 }
 
@@ -149,7 +159,8 @@ a {
 .p-4 {
   padding: 16px;
 }
-.p-5{
+
+.p-5 {
   padding: 20px;
 }
 
@@ -232,9 +243,11 @@ a {
 .m-4 {
   margin: 16px;
 }
-.mb-0{
+
+.mb-0 {
   margin-bottom: 0 !important;
 }
+
 .mb-1-2 {
   margin-bottom: 0.5rem;
 }
@@ -263,6 +276,7 @@ a {
   margin-top: 16px;
   margin-bottom: 16px;
 }
+
 .mt-1 {
   margin-top: 4px;
 }
@@ -298,10 +312,12 @@ a {
 .mr-1 {
   margin-right: 4px;
 }
-.ml-1{
+
+.ml-1 {
   margin-left: 4px;
 }
-.ml-2{
+
+.ml-2 {
   margin-left: 8px;
 }
 
@@ -324,10 +340,12 @@ a {
   margin-left: 12px;
   margin-right: 12px;
 }
+
 .mx-4 {
   margin-left: 16px;
   margin-right: 16px;
 }
+
 .w-100 {
   width: 100%;
 }
@@ -343,6 +361,7 @@ a {
 .overflow-x-scroll {
   overflow-x: scroll;
 }
+
 .overflow-y-scroll {
   overflow-y: scroll;
 }
@@ -350,9 +369,11 @@ a {
 .text-center {
   text-align: center;
 }
+
 .bottom-0 {
   bottom: 10px;
 }
+
 .h-97 {
   height: 97%;
 }
@@ -365,30 +386,35 @@ a {
   text-decoration: line-through;
 }
 
-.shadow-sm{
+.shadow-sm {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.shadow-md{
+.shadow-md {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .border-bottom {
   border-bottom: 1px solid #e2e8f0;
 }
-.max-w-sm{
+
+.max-w-sm {
   max-width: 400px;
 }
-.text-small{
+
+.text-small {
   font-size: 12px;
 }
-.line-h-normal{
+
+.line-h-normal {
   line-height: normal;
 }
-.img-cover{
+
+.img-cover {
   object-fit: cover;
 }
-.font-small{
+
+.font-small {
   font-size: 12px;
 }
