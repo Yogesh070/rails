@@ -7,7 +7,9 @@ test('login', async ({ page }: { page: Page }) => {
   await page.goto('http://localhost:3000/');
   await page.click('button.btn-signin')
   await page.click('button.ant-btn-default')
-  await page.click('button.ant-btn-primary')
+  await page.type('input[aria-label="Email or phone"]', "grgutsab66@gmail.com")
+  await page.click('div#identifierNext')
+  // await page.click('button')
 });
 test('create workspace', async ({ page }: { page: Page }) => {
   await page.goto('http://localhost:3000/w/home');
