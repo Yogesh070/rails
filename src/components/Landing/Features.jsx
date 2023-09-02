@@ -12,8 +12,8 @@ const Features = () => {
   }, []);
   return (
     <div id="Features">
-      <h2>Features</h2>
-      <div className={classNames(style.flex,style.featureBody)}>
+      <h1 className={classNames(style.center)}>Features</h1>
+      <div className={classNames(style.flex,style.featuresBody)}>
         <span>
           <h3>Scrum Board</h3>
           <p>
@@ -27,17 +27,17 @@ const Features = () => {
           alt=""
           height={400}
           width={400}
-          className="hero-img"
+          className={classNames(style.heroImg,)}
           data-aos="fade-left"
         />
       </div>
-      <div className={classNames(style.flex, style.featureBody2)}>
+      <div className={classNames(style.flex, style.featuresBody2)}>
         <Image
           src="/scrum.png"
           alt=""
           height={400}
           width={400}
-          className="hero-img"
+          className={classNames(style.heroImg,)}
           data-aos="fade-right"
         />
         <span>
@@ -48,7 +48,7 @@ const Features = () => {
           </p>
         </span>
       </div>
-      <div className={classNames(style.flex, style.featureBody)}>
+      <div className={classNames(style.flex, style.featuresBody)}>
         <span>
           <h3>Reports and Insights</h3>
           <p>
@@ -62,7 +62,7 @@ const Features = () => {
           width={400}
           src="/scrum.png"
           alt=""
-          className="hero-img"
+          className={classNames(style.heroImg,)}
           data-aos="fade-left"
         />
       </div>

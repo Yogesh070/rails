@@ -1,18 +1,19 @@
+import style from './App.module.css';
+import classNames from 'classnames';
 import { ArrowRightIcon } from "@heroicons/react/24/outline"
-
 const Footer = () => {
   return (
     <div id="Footer" >
-      <div className="footer">
+      <div className={classNames(style.footer)}>
         <div>
-        <h2>Contact Us</h2>
-        <p className="center">Send us a message</p>
-        <div className="flex contact">
-        <input type="text" placeholder="Name" className="input" />
-        <input type="email" placeholder="Email" className="input" />
-        <input type="text" placeholder="Subject" className="input" />
-        <textarea rows={"5"} cols={"23"} placeholder="Message" className="input"></textarea>
-        <button className="btn-start btn-send flex gap-1 center">Send <ArrowRightIcon height={20} /></button>
+        <h1 className={classNames(style.center)}>Contact Us</h1>
+        <p className={classNames(style.center)}>Send us a message</p>
+        <div className={classNames(style.flex,style.contact)}>
+        <input type="text" placeholder="Name" className={classNames(style.input)} />
+        <input type="email" placeholder="Email" className={classNames(style.input)} />
+        <input type="text" placeholder="Subject" className={classNames(style.input)} />
+        <textarea rows={"5"} cols={"23"} placeholder="Message" className={classNames(style.input)}></textarea>
+        <button className={classNames(style.btnStart,style.btnSend,style.flex,style.gap1,style.center)}>Send <ArrowRightIcon height={20} /></button>
       </div>
       </div>
       </div>

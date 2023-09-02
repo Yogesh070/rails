@@ -11,8 +11,8 @@ const AboutUs = () => {
     Aos.init({duration:2200});
     },[])
   return (
-    <div id="About">
-      <h2>About Us</h2>
+    <div id="About"className={classNames(style.About)}>
+      <h1 className={classNames(style.center)}>About Us</h1>
       <div className={classNames(style.flex,style.container)}>
      <div data-aos="flip-up" className={style.story}>
       <AboutCard logo={<BookOpenIcon height={40}/>} title="Our Story" descp=" Currently, we are Software Engineering Students and as a part of the curriculum it's mandatory to do a college project for everyone.Therefore we decided to build RAILS as our college project this year. "/>

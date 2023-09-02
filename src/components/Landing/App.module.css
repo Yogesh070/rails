@@ -6,7 +6,7 @@
   align-items: center;
 }
 
-.gap-1 {
+.gap1 {
   gap: 0.3em;
 }
 
@@ -26,21 +26,26 @@
 }
 
 .container {
-  max-width: 70%;
+  max-width: 75%;
   margin: 0 auto;
 }
 
 
-.listed-items {
+.listedItems {
   display: flex;
   gap: 3.5em;
+  list-style: none;
 }
 
 
-.top-section {
+.topSection {
   background-image: url("/wb.svg");
   background-repeat: no-repeat;
   background-size: 119%;
+}
+
+.About {
+  margin-bottom: 5rem;
 }
 
 #Footer {
@@ -48,17 +53,17 @@
   padding-block: 2em;
 }
 
-.btn-signin {
+.btnSignin {
   border-radius: 100px;
   padding: 0.6em 1.7em;
-  background-color: #ffffff32;
+  background-color: #fe4365;
   border: 1px solid transparent;
   color: white;
   font-weight: 550;
   font-size: 16px;
 }
 
-.btn-start {
+.btnStart {
   border-radius: 100px;
   padding: 0.6em 1.7em;
   background-color: #fe4365;
@@ -69,7 +74,7 @@
   margin-top: 2.5em;
 }
 
-.btn-send {
+.btnSend {
   margin-top: 0;
 }
 
@@ -78,15 +83,15 @@
   height: 15px;
 }
 
-.btn-signin:hover {
-  background-color: #ffffff80;
-}
-
-.btn-start:hover {
+.btnSignin:hover {
   background-color: #fe436599;
 }
 
-.hero-img {
+.btnStart:hover {
+  background-color: #fe436599;
+}
+
+.heroImg {
   width: 450px;
   height: 400px;
   object-fit: cover;
@@ -147,7 +152,7 @@
   margin-bottom: 1em;
 }
 
-.footer-nav {
+.footerNav {
   background-color: #fe436590;
   padding: 3em;
   margin-top: 3em;
