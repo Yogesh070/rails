@@ -40,6 +40,8 @@ const AttachmentList = (props: AttachmentListProps) => {
                     src={attachment.url}
                     alt={attachment.displayName ?? attachment.id}
                     width={60}
+                    height={40}
+                    style={{objectFit: 'cover'}}
                   />
                 }
                 title={<Text strong>{attachment.displayName}</Text>}

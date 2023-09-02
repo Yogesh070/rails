@@ -357,6 +357,9 @@ export const issueRouter = createTRPCRouter({
             where: {
                 checkListId: input.checklistId,
             },
+            orderBy: {
+                createdAt: 'asc',
+            },
         });
     }),
 
