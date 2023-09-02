@@ -1,7 +1,7 @@
 import React, {Suspense, useCallback, useEffect, useState} from 'react';
 import classNames from 'classnames';
 
-import {Button, Typography, theme} from 'antd';
+import {Button, Tag, Typography, theme} from 'antd';
 
 import {
   EllipsisHorizontalIcon,
@@ -17,8 +17,11 @@ import dynamic from 'next/dynamic';
 import Handle from '../Handle/Handle';
 import Remove from '../Remove/Remove';
 import LabelIndicator from '../Label/LabelIndicator/LabelIndicator';
-import type { IssueWithCount } from '../../pages/w/[workspaceId]/projects/[projectId]';
-import { useProjectStore } from '../../store/project.store';
+import type {IssueWithCount} from '../../pages/w/[workspaceId]/projects/[projectId]';
+import {useProjectStore} from '../../store/project.store';
+import dayjs from 'dayjs';
+
+import {CheckCircleOutlined} from '@ant-design/icons';
 
 const ItemDetailsModal = dynamic(() => import('./ItemDetailsModal'), {
   ssr: true,
@@ -96,21 +99,23 @@ const Item = React.memo(
 
       const {token} = useToken();
 
-      const workflows= useProjectStore((state) => state.workflows);
+      const workflows = useProjectStore((state) => state.workflows);
 
-      const getIssueById=useCallback((issueId: string):IssueWithCount=> {
-        let issue:IssueWithCount = item;
-        workflows.forEach((workflow) => {
-          workflow.issues.forEach((issueItem) => {
-            if(issueItem.id === issueId) {
-              issue = issueItem;
-            }
-          })
-        })
-        return issue;
-      }
-      ,[item, workflows]);
-    
+      const getIssueById = useCallback(
+        (issueId: string): IssueWithCount => {
+          let issue: IssueWithCount = item;
+          workflows.forEach((workflow) => {
+            workflow.issues.forEach((issueItem) => {
+              if (issueItem.id === issueId) {
+                issue = issueItem;
+              }
+            });
+          });
+          return issue;
+        },
+        [item, workflows]
+      );
+
       const issue = getIssueById(item.id);
 
       return (
@@ -140,7 +145,9 @@ const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               '--index': index,
-              backgroundColor: item.flagged ? token.colorWarningHover : token.colorBgElevated,
+              backgroundColor: item.flagged
+                ? token.colorWarningHover
+                : token.colorBgElevated,
             } as React.CSSProperties
           }
           ref={ref}
@@ -180,20 +187,34 @@ const Item = React.memo(
                 />
               </div>
               <Text className="m-0"> {issue.title}</Text>
+              <div>
+                {issue.dueDate ? (
+                  <Tag
+                    icon={<CheckCircleOutlined />}
+                    color={'warning'}
+                    className="mt-1"
+                  >
+                    {dayjs(issue.dueDate).format('MMM DD')}
+                  </Tag>
+                ) : (
+                  <></>
+                )}
+              </div>
               <div className="flex flex-end gap-1-2-3 py-1">
-                {
-                  item._count.comments > 0 ? (
-                    <div className="flex items-center font-small gap-1-2-3">
-                        <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
-                        <Text className='font-small'>{item._count.comments}</Text>
-                    </div>
-                  ) : null
-                }
-                {
-                  item._count.linkedIssues > 0 ? (
+                {item._count.comments > 0 ? (
+                  <div className="flex items-center font-small gap-1-2-3">
+                    <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
+                    <Text className="font-small">{item._count.comments}</Text>
+                  </div>
+                ) : null}
+                {item.attachments.length > 0 ? (
+                  <div className="flex items-center font-small gap-1-2-3">
                     <PaperClipIcon height={14} color="#8C8C8C" />
-                  ) : null
-                }
+                    <Text className="font-small">
+                      {item.attachments.length}
+                    </Text>
+                  </div>
+                ) : null}
               </div>
             </>
           </div>
