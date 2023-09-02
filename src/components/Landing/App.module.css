@@ -1,19 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-}
-
-::-webkit-scrollbar {
-  width: .3em;
-  background-color: white;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgb(24, 17, 17);
-}
-
 .flex {
   display: flex;
   justify-content: space-between;
@@ -44,19 +30,12 @@ body {
   margin: 0 auto;
 }
 
-ul {
-  list-style: none;
-}
 
 .listed-items {
   display: flex;
   gap: 3.5em;
 }
 
-a {
-  text-decoration: none;
-  color: white;
-}
 
 .top-section {
   background-image: url("/wb.svg");
@@ -94,11 +73,6 @@ a {
   margin-top: 0;
 }
 
-* {
-  scroll-behavior: smooth;
-  margin: 0;
-}
-
 .btn svg {
   width: 15px;
   height: 15px;
@@ -118,14 +92,14 @@ a {
   object-fit: cover;
 }
 
-.features-body {
+.featuresBody {
   max-width: 80%;
   padding-block: 1em;
   margin: 0 auto;
   font-size: 20px;
 }
 
-.features-body2 {
+.featuresBody2 {
   max-width: 80%;
   padding-block: 2em;
   margin: 0 auto;
@@ -157,12 +131,7 @@ a {
   color: black;
 }
 
-h2 {
-  font-size: 40px;
-  text-align: center;
-}
-
-.about-card {
+.aboutCard {
   min-height: 260px;
   border: 2px solid black;
   text-align: center;
