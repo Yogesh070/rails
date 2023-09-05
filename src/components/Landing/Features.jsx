@@ -23,7 +23,7 @@ const Features = () => {
           </p>
         </span>
         <Image
-          src="/scrum.png"
+          src="/landing/kanban.webp"
           alt=""
           height={400}
           width={400}
@@ -33,7 +33,7 @@ const Features = () => {
       </div>
       <div className={classNames(style.flex, style.featuresBody2)}>
         <Image
-          src="/scrum.png"
+          src="/landing/list.webp"
           alt=""
           height={400}
           width={400}
@@ -60,7 +60,7 @@ const Features = () => {
         <Image
           height={400}
           width={400}
-          src="/scrum.png"
+          src="/landing/stats.webp"
           alt=""
           className={classNames(style.heroImg,)}
           data-aos="fade-left"
