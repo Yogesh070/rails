@@ -31,7 +31,7 @@ const ProjectWrapper = (props: ProjectWrapperProps) => {
     }
   );
 
-  const {mutate:joinProject, isLoading} = api.project.assignUserToProject.useMutation({
+  const {mutate:joinProject, isLoading} = api.project.addUserToProject.useMutation({
     onSuccess(data) {
       addMemberToProject(data);
     },
