@@ -8,8 +8,7 @@
     "build:3-server": "tsc --project tsconfig.server.json",
     "build": "run-s build:*",
     "lint": "next lint",
-    "start": "cross-env NODE_ENV=production node dist/server/prodServer.ts",
-    "dev:wss": "cross-env PORT=3001 tsx watch src/server/wssDevServer.ts --tsconfig tsconfig.server.json ",
+    "start": "next start",
     "dev:next": "next dev",
     "dev": "run-p dev:*"
   },
