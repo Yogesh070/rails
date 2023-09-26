@@ -9,7 +9,7 @@ type ProjectWorkflowWithIssues = RouterOutputs['project']['getProjectWorkflows']
 type CheckList = RouterOutputs['issue']['getChecklistsInIssue'][0];
 type Comment = RouterOutputs['issue']['getCommentsByIssueId'];
 type Label = RouterOutputs['project']['getProjectLabels'][number];
-type Member = RouterOutputs['project']['assignUserToProject'];
+type Member = RouterOutputs['project']['addUserToProject'];
 
 type State = {
     project: Project | null,

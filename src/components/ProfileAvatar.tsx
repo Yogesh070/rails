@@ -50,9 +50,17 @@ export const ProfileAvatar = (props: Props) => {
   const router = useRouter();
 
   const handleMenuClick = (e: any) => {
-    if (e.key === 'logout') {
-      signOut();
-      router.push('/');
+
+    switch (e.key) {
+      case 'profile':
+        router.push(`/u/${props.user.id}`);
+        break;
+      case 'settings':
+        router.push(`/settings`);
+        break;
+      case 'logout':
+        signOut({callbackUrl: '/'});
+        break;
     }
   };
 
