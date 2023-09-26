@@ -145,7 +145,7 @@ const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               '--index': index,
-              backgroundColor: item.flagged
+              backgroundColor: issue.flagged
                 ? token.colorWarningHover
                 : token.colorBgElevated,
             } as React.CSSProperties
@@ -201,17 +201,17 @@ const Item = React.memo(
                 )}
               </div>
               <div className="flex flex-end gap-1-2-3 py-1">
-                {item._count.comments > 0 ? (
+                {issue._count.comments > 0 ? (
                   <div className="flex items-center font-small gap-1-2-3">
                     <ChatBubbleBottomCenterIcon height={14} color="#8C8C8C" />
-                    <Text className="font-small">{item._count.comments}</Text>
+                    <Text className="font-small">{issue._count.comments}</Text>
                   </div>
                 ) : null}
-                {item.attachments.length > 0 ? (
+                {issue.attachments.length > 0 ? (
                   <div className="flex items-center font-small gap-1-2-3">
                     <PaperClipIcon height={14} color="#8C8C8C" />
                     <Text className="font-small">
-                      {item.attachments.length}
+                      {issue.attachments.length}
                     </Text>
                   </div>
                 ) : null}

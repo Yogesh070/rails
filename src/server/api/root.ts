@@ -1,8 +1,7 @@
-import { createTRPCRouter, publicProcedure } from "./trpc";
+import { createTRPCRouter } from "./trpc";
 import { projectRouter } from "./routers/project";
 import { userRouter } from "./routers/user";
 import { workflowRouter } from "./routers/workflow";
-import { observable } from "@trpc/server/observable";
 import { issueRouter } from "./routers/issue";
 import { workspaceRouter } from "./routers/workspace";
 import { sprintRouter } from "./routers/sprint";
@@ -19,16 +18,6 @@ export const appRouter = createTRPCRouter({
   issue: issueRouter,
   workspace: workspaceRouter,
   sprint: sprintRouter,
-  randomNumber: publicProcedure.subscription(() => {
-    return observable<number>((emit) => {
-      const int = setInterval(() => {
-        emit.next(Math.random());
-      }, 500);
-      return () => {
-        clearInterval(int);
-      };
-    });
-  }),
 });
 
 // export type definition of API
