@@ -16,7 +16,6 @@ import { type AppRouter } from "../server/api/root";
 import type { NextPageContext } from 'next';
 import getConfig from 'next/config';
 
-import type { inferProcedureOutput } from '@trpc/server';
 const { publicRuntimeConfig } = getConfig();
 
 const { WS_URL } = publicRuntimeConfig;
@@ -75,7 +74,9 @@ export const api = createTRPCNext<AppRouter>({
               typeof window !== 'undefined') ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
-        getEndingLink(ctx),
+        httpBatchLink({
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
       ],
     };
   },
